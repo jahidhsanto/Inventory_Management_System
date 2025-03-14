@@ -84,8 +84,9 @@
                                 Form
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="/Forms/Requisition">Employee</a></li>
-                                <li><a class="dropdown-item" href="/Forms/AddNewMaterial">Material</a></li>
+                                <li><a class="dropdown-item" href="/Forms/RequisitionForm">Add New Requisition</a></li>
+                                <li><a class="dropdown-item" href="/Forms/AddNewMaterial">Add New Material</a></li>
+                                <li><a class="dropdown-item" href="/Forms/AddNewEmployee">Add New Employee</a></li>
                             </ul>
                         </li>
                         <!-- End of Dropdown -->

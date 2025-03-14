@@ -1,17 +1,41 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AddNewMaterial.aspx.cs" Inherits="STORE_FINAL.Forms.AddNewMaterial" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
         <h2>Add New Material</h2>
+    
+        <label>Com/Non-Com:</label>
+        <asp:DropDownList ID="ddlCom_NonCom" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Asset Status:</label>
+        <asp:DropDownList ID="ddlAssetStatus" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Asset Type:</label>
+        <asp:DropDownList ID="ddlAssetType" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Category:</label>
+        <asp:DropDownList ID="ddlCategory" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Sub Category:</label>
+        <asp:DropDownList ID="ddlSubCategory" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Model:</label>
+        <asp:DropDownList ID="ddlModel" runat="server"></asp:DropDownList>
+        <br /><br />
+
+        <label>Control:</label>
+        <asp:DropDownList ID="ddlControl" runat="server"></asp:DropDownList>
+        <br /><br />
         
         <label>Material Name:</label>
         <asp:TextBox ID="txtMaterialName" runat="server"></asp:TextBox>
         <br /><br />
 
-        <label>Description:</label>
-        <asp:TextBox ID="txtDescription" runat="server" TextMode="MultiLine"></asp:TextBox>
-        <br /><br />
-
-        <label>Category:</label>
-        <asp:TextBox ID="txtCategory" runat="server"></asp:TextBox>
+        <label>Part Id:</label>
+        <asp:TextBox ID="txtPart_Id" runat="server"></asp:TextBox>
         <br /><br />
 
         <label>Unit Price:</label>

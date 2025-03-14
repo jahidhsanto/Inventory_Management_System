@@ -1,4 +1,5 @@
-﻿using System;
+﻿using STORE_FINAL.Pages;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace STORE_FINAL.Forms
 {
@@ -13,7 +15,18 @@ namespace STORE_FINAL.Forms
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            if (!IsPostBack)
+            {
+                RESET();
+            }
+        }
 
+        protected void RESET()
+        {
+            txtEmployeeID.Text = "";
+            txtName.Text = "";
+            ddlDepartment.SelectedIndex = 0;
+            txtDesignation.Text = "";
         }
 
         protected void btnAddEmployee_Click(object sender, EventArgs e)
@@ -21,9 +34,9 @@ namespace STORE_FINAL.Forms
             string employeeID = txtEmployeeID.Text.Trim();
             string name = txtName.Text.Trim();
             string department = ddlDepartment.SelectedValue;
-            string role = txtRole.Text.Trim();
+            string designation = txtDesignation.Text.Trim();
 
-            if (string.IsNullOrEmpty(employeeID) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(department) || string.IsNullOrEmpty(role))
+            if (string.IsNullOrEmpty(employeeID) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(department) || string.IsNullOrEmpty(designation))
             {
                 lblMessage.Text = "All fields are required.";
                 return;
@@ -33,19 +46,21 @@ namespace STORE_FINAL.Forms
             
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = "INSERT INTO Employee (Office_ID, Name, Department, Role) VALUES (@EmployeeID, @Name, @Department, @Role)";
+                string query = "INSERT INTO Employee (Employee_ID, Name, Department, Designation) " +
+                               "VALUES (@EmployeeID, @Name, @Department, @Designation)";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
                 cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Department", department);
-                cmd.Parameters.AddWithValue("@Role", role);
+                cmd.Parameters.AddWithValue("@Designation", designation);
 
                 try
                 {
                     conn.Open();
                     cmd.ExecuteNonQuery();
                     lblMessage.Text = "Employee added successfully!";
+                    RESET();
                 }
                 catch (Exception ex)
                 {
