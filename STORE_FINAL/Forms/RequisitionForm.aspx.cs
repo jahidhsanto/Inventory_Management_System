@@ -13,6 +13,8 @@ namespace STORE_FINAL.Forms
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            ClearFields();
+
             if (!IsPostBack)
             {
                 LoadEmployee();
@@ -25,9 +27,10 @@ namespace STORE_FINAL.Forms
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT Employee_ID, Office_ID, Name, CONCAT(Office_ID,' - ', Name) AS ID_Name
-                                 FROM Employee
-                                 ORDER BY Office_ID;";
+                string query = @"
+                                SELECT Employee_ID, Name, CONCAT(Employee_ID,' - ', Name) AS ID_Name
+                                FROM Employee
+                                ORDER BY Employee_ID ASC;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 conn.Open();
@@ -49,14 +52,16 @@ namespace STORE_FINAL.Forms
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = "SELECT Material_ID, Name FROM Material";
+                string query = @"
+                                SELECT Material_ID, Materials_Name 
+                                FROM Material;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 conn.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 ddlMaterials.DataSource = reader;
-                ddlMaterials.DataTextField = "Name";
+                ddlMaterials.DataTextField = "Materials_Name";
                 ddlMaterials.DataValueField = "Material_ID";
                 ddlMaterials.DataBind();
             }
@@ -95,5 +100,13 @@ namespace STORE_FINAL.Forms
                 lblMessage.Text = "Requisition submitted successfully!";
             }
         }
+
+        private void ClearFields()
+        {
+            ddlEmployeeName.SelectedIndex = 0;
+            ddlMaterials.SelectedIndex = 0;
+            txtQuantity.Text = "";
+        }
+
     }
 }
