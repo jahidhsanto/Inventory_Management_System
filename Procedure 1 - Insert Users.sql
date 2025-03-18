@@ -4,7 +4,7 @@ CREATE TABLE Users (
     Username NVARCHAR(255) UNIQUE NOT NULL,
     Password_Hash VARBINARY(64) NOT NULL,
     Role NVARCHAR(50) NOT NULL CHECK (Role IN ('Admin', 'Employee', 'Manager')),
-    Employee_ID INT NOT NULL,
+    Employee_ID INT UNIQUE NOT NULL,
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
 );
 

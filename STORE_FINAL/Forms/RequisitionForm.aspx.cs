@@ -88,16 +88,24 @@ namespace STORE_FINAL.Forms
             {
                 string query = "INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status) " +
                                "VALUES (@EmployeeID, @MaterialID, @Quantity, @Status)";
-                SqlCommand cmd = new SqlCommand(query, conn);
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+                    cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
 
-                cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
-                cmd.Parameters.AddWithValue("@MaterialID", materialID);
-                cmd.Parameters.AddWithValue("@Quantity", quantity);
-                cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
-
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                lblMessage.Text = "Requisition submitted successfully!";
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        lblMessage.Text = "Requisition submitted successfully!";
+                    }
+                    catch (Exception ex)
+                    {
+                        lblMessage.Text = ex.Message;
+                    }
+                }
             }
         }
 
