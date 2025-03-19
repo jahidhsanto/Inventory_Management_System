@@ -90,6 +90,7 @@
                             </ul>
                         </li>
                         <!-- End of Dropdown -->
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/UserAuthentication/UserManagement">User Management</a></li>
                     </ul>
                 </div>
             </div>

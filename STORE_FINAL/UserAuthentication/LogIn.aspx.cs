@@ -29,7 +29,7 @@ namespace STORE_FINAL.UserAuthentication
 			{
 				Session["Username"] = username;
 				Session["Role"] = role;
-				Response.Redirect("Dashboard.aspx");
+				Response.Redirect("~/Dashboard.aspx");
 			}
 			else
 			{
