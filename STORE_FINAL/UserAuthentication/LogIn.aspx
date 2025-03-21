@@ -4,7 +4,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4"> <!-- Adjust width -->
             <div class="card card-primary card-outline mb-4">
-                <div class="card-header text-center">
+                <div class="card-header">
                     <div class="card-title">User Login</div>
                 </div>
                 <form>
@@ -20,7 +20,7 @@
                     </div>
                     <div class="card-footer">
                         <asp:Button ID="btnLogin" runat="server" Text="Login" OnClick="btnLogin_Click" />
-                    </div
+                    </div>
                         <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label>
                 </form>
             </div>

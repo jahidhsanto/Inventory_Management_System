@@ -11,15 +11,27 @@ namespace STORE_FINAL
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-            if (Session["Username"] != null && Session["Role"] != null)
+            // Check if the session values exist, otherwise redirect to login page
+            if (Session["Username"] == null)
             {
-                lblUsername.Text = Session["Username"].ToString();
-                lblUserRole.Text = Session["Role"].ToString();
+                Response.Redirect("~/");
             }
-            else
-            {
-                Response.Redirect("~/UserAuthentication/Login.aspx");
-            }
+
+            // Retrieve session values
+            string username = Session["Username"]?.ToString();
+            string role = Session["Role"]?.ToString();
+            string employeeID = Session["EmployeeID"]?.ToString();
+            string employeeName = Session["EmployeeName"]?.ToString();
+            string employeeDepartment = Session["EmployeeDepartment"]?.ToString();
+            string employeeDesignation = Session["EmployeeDesignation"]?.ToString();
+
+            // Bind session values to the corresponding labels
+            lblUsername.Text = username;
+            lblRole.Text = role;
+            lblID.Text = employeeID;
+            lblName.Text = employeeName;
+            lblDepartment.Text = employeeDepartment;
+            lblDesignation.Text = employeeDesignation;
         }
     }
 }

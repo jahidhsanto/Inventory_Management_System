@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -25,13 +26,19 @@ namespace STORE_FINAL.UserAuthentication
             string username = txtUserName.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-			if(AuthenticateUser(username, password, out string role))
+            if (AuthenticateUser(username, password, out string role))
 			{
-				Session["Username"] = username;
-				Session["Role"] = role;
-				Response.Redirect("~/Dashboard.aspx");
-			}
-			else
+                // If user authentication is pass then create session for the user
+                if (EmployeeInformation(username))
+                {
+                    Response.Redirect("~/Dashboard.aspx");
+                }
+                else
+                {
+                    lblMessage.Text = "Employee information could not be retrieved.";
+                }
+            }
+            else
 			{
                 lblMessage.Text = "Invalid username or password.";
             }
@@ -41,13 +48,13 @@ namespace STORE_FINAL.UserAuthentication
         {
 			role = string.Empty;
 
-			string connStr=ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
-			using(SqlConnection conn = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
 			{
 				using (SqlCommand cmd = new SqlCommand("UserLogin", conn))
 				{
-					cmd.CommandType=CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
 					cmd.Parameters.AddWithValue("username", username);
 					cmd.Parameters.AddWithValue("password", password);
 
@@ -69,6 +76,48 @@ namespace STORE_FINAL.UserAuthentication
 				}
 			}
 			return false;
+        }
+
+        private bool EmployeeInformation(string username)
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("GetEmployeeByUsername", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("username", username);
+
+                    try
+                    {
+                        conn.Open();
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            // Create session variables for employee details
+                            Session["Username"] = reader["Username"];
+                            Session["Role"] = reader["Role"]; 
+                            Session["EmployeeID"] = reader["Employee_ID"];
+                            Session["EmployeeName"] = reader["Name"];
+                            Session["EmployeeDepartment"] = reader["Department"];
+                            Session["EmployeeDesignation"] = reader["Designation"];
+                            return true;
+                        }
+                        else
+                        {
+                            lblMessage.Text = "No employee found for the given username.";
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        lblMessage.Text += " Error retrieving Employee ID: " + ex.Message;
+                        return false;
+                    }
+                }
+            }
         }
     }
 }

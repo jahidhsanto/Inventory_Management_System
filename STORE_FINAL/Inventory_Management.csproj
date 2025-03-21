@@ -124,8 +124,10 @@
     <Content Include="Forms\AddNewEmployee.aspx" />
     <Content Include="Forms\AddNewMaterial.aspx" />
     <Content Include="Forms\MaterialApprovalForm.aspx" />
+    <Content Include="Forms\Requisition.aspx" />
     <Content Include="Forms\RequisitionForm.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="images\jahidhsanto.jpg" />
     <Content Include="Pages\Challan.aspx" />
     <Content Include="Pages\Department.aspx" />
     <Content Include="Pages\Employee.aspx" />
@@ -257,6 +259,13 @@
     </Compile>
     <Compile Include="Forms\MaterialApprovalForm.aspx.designer.cs">
       <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Requisition.aspx.cs">
+      <DependentUpon>Requisition.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Forms\Requisition.aspx.designer.cs">
+      <DependentUpon>Requisition.aspx</DependentUpon>
     </Compile>
     <Compile Include="Forms\RequisitionForm.aspx.cs">
       <DependentUpon>RequisitionForm.aspx</DependentUpon>
