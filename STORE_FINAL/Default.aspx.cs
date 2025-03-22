@@ -100,7 +100,7 @@ namespace STORE_FINAL
                             Session["Role"] = reader["Role"];
                             Session["EmployeeID"] = reader["Employee_ID"];
                             Session["EmployeeName"] = reader["Name"];
-                            Session["EmployeeDepartment"] = reader["Department"];
+                            Session["EmployeeDepartmentID"] = reader["Department_ID"];
                             Session["EmployeeDesignation"] = reader["Designation"];
                             return true;
                         }

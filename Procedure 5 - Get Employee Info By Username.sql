@@ -1,6 +1,6 @@
 use STORE;
 
-CREATE PROCEDURE GetEmployeeByUsername
+ALTER PROCEDURE GetEmployeeByUsername
     @Username NVARCHAR(50)
 AS
 BEGIN
@@ -14,7 +14,7 @@ BEGIN
     END
 
     -- Fetch employee data linked to the username
-    SELECT e.Employee_ID, u.Username, e.Name, e.Department, e.Designation, u.Role
+    SELECT e.Employee_ID, u.Username, e.Name, e.Department_ID, e.Designation, u.Role
     FROM Employee e
     INNER JOIN users u ON e.Employee_ID = u.Employee_ID
     WHERE u.Username = @Username;

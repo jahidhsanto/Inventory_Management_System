@@ -59,6 +59,7 @@
                         <h5 class="card-title">Requisition</h5>
                         <a href="/Forms/RequisitionForm" class="btn btn-primary">+</a>
                         <a href="/Pages/Requisition" class="btn btn-primary">Requisition List</a>
+                        <a href="/Forms/ApproveRequisition" class="btn btn-primary">ApproveRequisition</a>
                     </div>
                 </div>
             </div>

@@ -123,8 +123,8 @@
     <Content Include="favicon.ico" />
     <Content Include="Forms\AddNewEmployee.aspx" />
     <Content Include="Forms\AddNewMaterial.aspx" />
+    <Content Include="Forms\ApproveRequisition.aspx" />
     <Content Include="Forms\MaterialApprovalForm.aspx" />
-    <Content Include="Forms\Requisition.aspx" />
     <Content Include="Forms\RequisitionForm.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\jahidhsanto.jpg" />
@@ -253,19 +253,19 @@
     <Compile Include="Forms\AddNewMaterial.aspx.designer.cs">
       <DependentUpon>AddNewMaterial.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ApproveRequisition.aspx.cs">
+      <DependentUpon>ApproveRequisition.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Forms\ApproveRequisition.aspx.designer.cs">
+      <DependentUpon>ApproveRequisition.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MaterialApprovalForm.aspx.cs">
       <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Forms\MaterialApprovalForm.aspx.designer.cs">
       <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Requisition.aspx.cs">
-      <DependentUpon>Requisition.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\Requisition.aspx.designer.cs">
-      <DependentUpon>Requisition.aspx</DependentUpon>
     </Compile>
     <Compile Include="Forms\RequisitionForm.aspx.cs">
       <DependentUpon>RequisitionForm.aspx</DependentUpon>

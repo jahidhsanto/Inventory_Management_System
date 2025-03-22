@@ -6,8 +6,9 @@ use STORE;
 CREATE TABLE Employee (
     Employee_ID INT PRIMARY KEY,
     Name NVARCHAR(255) NOT NULL,
-    Department NVARCHAR(255),
-    Designation NVARCHAR(255)
+    Department_ID INT,
+    Designation NVARCHAR(255),
+    FOREIGN KEY (Department_ID) REFERENCES Department(Department_ID)
 );
 
 -- Create Department Table

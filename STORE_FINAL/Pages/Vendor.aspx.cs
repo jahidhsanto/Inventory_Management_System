@@ -14,6 +14,12 @@ namespace STORE_FINAL.Pages
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            // Check if the session values exist, otherwise redirect to login page
+            if (Session["Username"] == null)
+            {
+                Response.Redirect("~/");
+            }
+            
             if (!IsPostBack)
             {
                 LoadVendor();

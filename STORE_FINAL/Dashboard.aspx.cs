@@ -22,7 +22,7 @@ namespace STORE_FINAL
             string role = Session["Role"]?.ToString();
             string employeeID = Session["EmployeeID"]?.ToString();
             string employeeName = Session["EmployeeName"]?.ToString();
-            string employeeDepartment = Session["EmployeeDepartment"]?.ToString();
+            string employeeDepartment = Session["EmployeeDepartmentID"]?.ToString();
             string employeeDesignation = Session["EmployeeDesignation"]?.ToString();
 
             // Bind session values to the corresponding labels

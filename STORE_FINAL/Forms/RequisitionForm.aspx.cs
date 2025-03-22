@@ -11,38 +11,63 @@ namespace STORE_FINAL.Forms
 {
 	public partial class RequisitionForm : System.Web.UI.Page
 	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-            ClearFields();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Check if the session values exist, otherwise redirect to login page
+            if (Session["Username"] == null)
+            {
+                Response.Redirect("~/");
+            }
 
             if (!IsPostBack)
             {
-                LoadEmployee();
+                RESET();
                 LoadMaterials();
             }
         }
-        private void LoadEmployee()
+
+        protected void btnSubmitRequisition_Click(object sender, EventArgs e)
         {
+            string employeeID = Session["EmployeeID"]?.ToString();
+            string departmentID = Session["EmployeeDepartmentID"]?.ToString();
+
+            string materialID = ddlMaterials.SelectedValue;
+            string quantity = txtQuantity.Text.Trim();
+
+            if (string.IsNullOrEmpty(materialID) || string.IsNullOrEmpty(quantity))
+            {
+                lblMessage.Text = "All fields are required.";
+                return;
+            }
+
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                                SELECT Employee_ID, Name, CONCAT(Employee_ID,' - ', Name) AS ID_Name
-                                FROM Employee
-                                ORDER BY Employee_ID ASC;";
-                SqlCommand cmd = new SqlCommand(query, conn);
+                                INSERT INTO Requisition (Employee_ID, Material_ID, Department_ID, Quantity, Status) 
+                                VALUES (@EmployeeID, @MaterialID, @DepartmentID, @Quantity, @Status)";
 
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                    cmd.Parameters.AddWithValue("@DepartmentID", departmentID);
+                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+                    cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
 
-                ddlEmployeeName.DataSource = reader;
-                ddlEmployeeName.DataTextField = "ID_Name";
-                ddlEmployeeName.DataValueField = "Employee_ID";
-                ddlEmployeeName.DataBind();
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        lblMessage.Text = "Requisition submitted successfully!";
+                    }
+                    catch (Exception ex)
+                    {
+                        lblMessage.Text = ex.Message;
+                    }
+                }
             }
-
-            ddlEmployeeName.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
 
         }
 
@@ -69,52 +94,10 @@ namespace STORE_FINAL.Forms
             ddlMaterials.Items.Insert(0, new ListItem("-- Select Material --", "0"));
         }
 
-
-        protected void btnSubmitRequisition_Click(object sender, EventArgs e)
+        protected void RESET()
         {
-            int employeeID = int.Parse(ddlEmployeeName.SelectedValue);
-            int materialID = int.Parse(ddlMaterials.SelectedValue);
-            int quantity;
-
-            if (materialID == 0 || !int.TryParse(txtQuantity.Text, out quantity) || quantity <= 0)
-            {
-                lblMessage.Text = "Please enter valid values.";
-                return;
-            }
-
-            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = "INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status) " +
-                               "VALUES (@EmployeeID, @MaterialID, @Quantity, @Status)";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
-                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
-                    cmd.Parameters.AddWithValue("@Quantity", quantity);
-                    cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
-
-                    try
-                    {
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        lblMessage.Text = "Requisition submitted successfully!";
-                    }
-                    catch (Exception ex)
-                    {
-                        lblMessage.Text = ex.Message;
-                    }
-                }
-            }
-        }
-
-        private void ClearFields()
-        {
-            ddlEmployeeName.SelectedIndex = 0;
             ddlMaterials.SelectedIndex = 0;
             txtQuantity.Text = "";
         }
-
     }
 }

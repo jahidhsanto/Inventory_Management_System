@@ -15,9 +15,16 @@ namespace STORE_FINAL.Forms
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            // Check if the session values exist, otherwise redirect to login page
+            if (Session["Username"] == null)
+            {
+                Response.Redirect("~/");
+            }
+
             if (!IsPostBack)
             {
                 RESET();
+                LoeadDepartments();
             }
         }
 
@@ -27,6 +34,29 @@ namespace STORE_FINAL.Forms
             txtName.Text = "";
             ddlDepartment.SelectedIndex = 0;
             txtDesignation.Text = "";
+        }
+
+        private void LoeadDepartments()
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Department_ID, DepartmentName 
+                                FROM Department;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                ddlDepartment.DataSource = reader;
+                ddlDepartment.DataTextField = "DepartmentName";
+                ddlDepartment.DataValueField = "Department_ID";
+                ddlDepartment.DataBind();
+            }
+
+            ddlDepartment.Items.Insert(0, new ListItem("-- Select Material --", "0"));
         }
 
         protected void btnAddEmployee_Click(object sender, EventArgs e)
