@@ -2,6 +2,17 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2 class="text-center">ApproveRequisition</h2>
 
+    <asp:Panel ID="PanelFilters" runat="server" CssClass="mb-3">
+        <label for="ddlStatus">Filter by Status:</label>
+        <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control" AutoPostBack="false">
+            <asp:ListItem Text="All" Value="All"></asp:ListItem>
+            <asp:ListItem Text="Pending" Value="Pending"></asp:ListItem>
+            <asp:ListItem Text="Approved" Value="Approved"></asp:ListItem>
+            <asp:ListItem Text="Rejected" Value="Rejected"></asp:ListItem>
+        </asp:DropDownList>
+        <asp:Button ID="btnFilter" runat="server" Text="Filter" CssClass="btn btn-primary mt-2" OnClick="btnFilter_Click" />
+    </asp:Panel>
+
     <asp:Panel ID="Panel1" runat="server" CssClass="table-responsive" style="overflow-x: auto; white-space: nowrap;">
         <asp:GridView 
             ID="ApproveRequisitionGridView" 
@@ -19,14 +30,19 @@
                 <asp:BoundField DataField="Status" HeaderText="Status" />
                 <asp:BoundField DataField="Created_Date" HeaderText="Requested Date" DataFormatString="{0:yyyy-MM-dd}" />
                 
-                <%-- Approve Button --%>
                 <asp:TemplateField HeaderText="Actions">
                     <ItemTemplate>
                         <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn btn-success"
-                            CommandName="Approve" CommandArgument='<%# Eval("Requisition_ID") %>' />
+                            CommandName="Approve" CommandArgument='<%# Eval("Requisition_ID") %>'
+                            Visible='<%# Eval("Status").ToString() == "Pending" %>' />
+                                                
+                        <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-warning"
+                            CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
+                            Visible='<%# Eval("Status").ToString() == "Approved" || Eval("Status").ToString() == "Rejected" %>' />
 
                         <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn btn-danger"
-                            CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>' />
+                            CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>'
+                            Visible='<%# Eval("Status").ToString() == "Pending" %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

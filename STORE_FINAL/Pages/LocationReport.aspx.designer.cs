@@ -7,56 +7,47 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Forms
+namespace STORE_FINAL.Pages
 {
 
 
-    public partial class ApproveRequisition
+    public partial class LocationReport
     {
 
         /// <summary>
-        /// PanelFilters control.
+        /// ddlRack control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelFilters;
+        protected global::System.Web.UI.WebControls.DropDownList ddlRack;
 
         /// <summary>
-        /// ddlStatus control.
+        /// ddlShelf control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.DropDownList ddlShelf;
 
         /// <summary>
-        /// btnFilter control.
+        /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFilter;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
-        /// Panel1 control.
+        /// gvLocationReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-
-        /// <summary>
-        /// ApproveRequisitionGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ApproveRequisitionGridView;
+        protected global::System.Web.UI.WebControls.GridView gvLocationReport;
     }
 }

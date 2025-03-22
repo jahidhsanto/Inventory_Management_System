@@ -131,9 +131,11 @@ CREATE TABLE Requisition (
 -- Create Stock Table
 CREATE TABLE Stock (
     Stock_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Material_ID INT,
+    Material_ID INT NOT NULL,
     Serial_Number NVARCHAR(255) UNIQUE,
-    Status NVARCHAR(50) CHECK (Status IN ('Available', 'Reserved', 'Delivered', 'Warranty')),
+	Status NVARCHAR(50) CHECK (Status IN ('Available', 'Reserved', 'Delivered', 'Warranty')) NOT NULL,
+	Rack_Number NVARCHAR(50) NOT NULL,
+    Shelf_Number NVARCHAR(50) NOT NULL,
     Received_Date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );

@@ -7,56 +7,56 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Forms
+namespace STORE_FINAL.Pages
 {
 
 
-    public partial class ApproveRequisition
+    public partial class MaterialList
     {
 
         /// <summary>
-        /// PanelFilters control.
+        /// txtSearchPartID control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelFilters;
+        protected global::System.Web.UI.WebControls.TextBox txtSearchPartID;
 
         /// <summary>
-        /// ddlStatus control.
+        /// txtSearchMaterialName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.TextBox txtSearchMaterialName;
 
         /// <summary>
-        /// btnFilter control.
+        /// ddlStockFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFilter;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStockFilter;
 
         /// <summary>
-        /// Panel1 control.
+        /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
-        /// ApproveRequisitionGridView control.
+        /// gvMaterials control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ApproveRequisitionGridView;
+        protected global::System.Web.UI.WebControls.GridView gvMaterials;
     }
 }

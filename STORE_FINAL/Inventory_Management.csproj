@@ -131,7 +131,11 @@
     <Content Include="Pages\Challan.aspx" />
     <Content Include="Pages\Department.aspx" />
     <Content Include="Pages\Employee.aspx" />
+    <Content Include="Pages\LocationDetails.aspx" />
+    <Content Include="Pages\LocationReport.aspx" />
     <Content Include="Pages\Material.aspx" />
+    <Content Include="Pages\MaterialDetails.aspx" />
+    <Content Include="Pages\MaterialList.aspx" />
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
     <Content Include="Pages\Purchase_Request.aspx" />
@@ -301,12 +305,40 @@
     <Compile Include="Pages\Employee.aspx.designer.cs">
       <DependentUpon>Employee.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\LocationDetails.aspx.cs">
+      <DependentUpon>LocationDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\LocationDetails.aspx.designer.cs">
+      <DependentUpon>LocationDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\LocationReport.aspx.cs">
+      <DependentUpon>LocationReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\LocationReport.aspx.designer.cs">
+      <DependentUpon>LocationReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Material.aspx.cs">
       <DependentUpon>Material.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Material.aspx.designer.cs">
       <DependentUpon>Material.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MaterialDetails.aspx.cs">
+      <DependentUpon>MaterialDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\MaterialDetails.aspx.designer.cs">
+      <DependentUpon>MaterialDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MaterialList.aspx.cs">
+      <DependentUpon>MaterialList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\MaterialList.aspx.designer.cs">
+      <DependentUpon>MaterialList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Material_Receipt.aspx.cs">
       <DependentUpon>Material_Receipt.aspx</DependentUpon>
