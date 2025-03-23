@@ -10,7 +10,7 @@
     <asp:TextBox ID="txtName" runat="server"></asp:TextBox>
     <br /><br />
     
-    <label>Select Material:</label>
+    <label>Select Department:</label>
     <asp:DropDownList ID="ddlDepartment" runat="server"></asp:DropDownList>
     <br /><br />
 

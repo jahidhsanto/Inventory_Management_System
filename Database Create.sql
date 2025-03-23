@@ -81,6 +81,14 @@ CREATE TABLE Control (
 -- Insert allowed values into the Control table
 INSERT INTO Control (Control)
 VALUES ('COMMON'), ('BIONIC-7'), ('MIC TX-GC'), ('SCALE ABLE'), ('BIONIC-5'), ('CUSTOM TX-GC'), ('MC2000'), ('MIC MX-GC'), ('MICONIC-SX'), ('WITTUR (SELCOM)'), ('V-30'), ('QKS-9/10'), ('SEMATIC'), ('QKS-11'), ('V-10'), ('V-35'), ('SEMATIC / V-35'), ('V-35/ FERMATOR'), ('SCALE ABLE / F3'), ('HYDRAULIC'), ('QKS-11/V-10'), ('QKS-09/10/11'), ('DO DSF9'), ('MELLER'), ('FERMATOR'), ('FERMATOR/V-35'), ('LOGOS'), ('NICE'), ('V-35 / SELCOM'), ('V-15 / V-35'), ('KST'), ('WITTUR (AGUSTA)'), ('QKS-8/9/10'), ('COMMON ITEMS'), ('MIC CX-GC'), ('V-15'), ('SEMATIC (WITTUR)'), ('WITTUR AGUSTA'), ('Miconic E'), ('SELCOM'), ('MILLER'), ('BIONIC-3'), ('SUZUKI'), ('ARL200S'), ('WITTUR (SELCOM) / V-35'), ('ARL300S'), ('V-50'), ('QSK-11'), ('BIONIC'), ('LINOVETRO'), ('FST'), ('QKS-9/10 VF / V-30'), ('QKS-11/QKS-9/10'), ('V-30/V-70'), ('FERMATOR / V-15'), ('FERMATOR / V-10'), ('LOGOS / V-35'), ('SEMATIC/SELCOM/LOGOS'), ('QKS-11/V-30/V-10/Fermator'), ('WITTUR (HYDRA PLUS)');
+--Create UoMList Table
+CREATE TABLE UoM (
+    UoM_ID INT IDENTITY(1,1) PRIMARY KEY,
+    UoM NVARCHAR(50) NOT NULL UNIQUE
+);
+-- Insert allowed values into the UoM table
+INSERT INTO UoM (UoM)
+VALUES ('set'), ('pcs'), ('pair'), ('ft'), ('m'), ('box'), ('ream'), ('pkt'), ('kg'), ('ltr'), ('coil'), ('pallet'), ('job'), ('can');
 
 -- Create Material Table
 CREATE TABLE Material (
@@ -96,9 +104,8 @@ CREATE TABLE Material (
     Materials_Name NVARCHAR(255) NOT NULL,
     Unit_Price DECIMAL(10,2),
     Stock_Quantity DECIMAL(10,2),
-    Rack_Number NVARCHAR(50),
-    Shelf_Number NVARCHAR(50),
-    
+    UoM INT NOT NULL,
+
     -- Add UNIQUE constraint on Part_Id to ensure it is unique
     CONSTRAINT UQ_Part_Id UNIQUE (Part_Id),
     
@@ -109,7 +116,8 @@ CREATE TABLE Material (
     FOREIGN KEY (Category_ID) REFERENCES Category(Category_ID),
     FOREIGN KEY (Sub_Category_ID) REFERENCES Sub_Category(Sub_Category_ID),
     FOREIGN KEY (Model_ID) REFERENCES Model(Model_ID),
-    FOREIGN KEY (Control_ID) REFERENCES Control(Control_ID)
+    FOREIGN KEY (Control_ID) REFERENCES Control(Control_ID),
+	FOREIGN KEY (UoM) REFERENCES UoM(UoM_ID)
 );
 
 -- Create Requisition Table
@@ -133,9 +141,10 @@ CREATE TABLE Stock (
     Stock_ID INT IDENTITY(1,1) PRIMARY KEY,
     Material_ID INT NOT NULL,
     Serial_Number NVARCHAR(255) UNIQUE,
-	Status NVARCHAR(50) CHECK (Status IN ('Available', 'Reserved', 'Delivered', 'Warranty')) NOT NULL,
 	Rack_Number NVARCHAR(50) NOT NULL,
     Shelf_Number NVARCHAR(50) NOT NULL,
+	Status NVARCHAR(50) CHECK (Status IN ('Available', 'Reserved', 'Delivered', 'Warranty')) NOT NULL,
+	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00;,
     Received_Date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );

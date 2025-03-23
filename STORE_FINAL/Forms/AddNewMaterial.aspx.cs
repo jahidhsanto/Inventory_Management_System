@@ -28,6 +28,7 @@ namespace STORE_FINAL.Forms
                 LoadSubCategory();
                 LoadModel();
                 LoadControl();
+                LoadUoM();
             }
 		}
 
@@ -185,6 +186,29 @@ namespace STORE_FINAL.Forms
             ddlControl.Items.Insert(0, new ListItem("-- Select Option --", "0"));
         }
 
+        private void LoadUoM()
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT UoM_ID, UoM
+                                FROM UoM;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                ddlUoM.DataSource = reader;
+                ddlUoM.DataTextField = "UoM";
+                ddlUoM.DataValueField = "UoM_ID";
+                ddlUoM.DataBind();
+            }
+
+            ddlUoM.Items.Insert(0, new ListItem("-- Select UoM --", "0"));
+        }
+
         protected void btnAddMaterial_Click(object sender, EventArgs e)
         {
 
@@ -198,18 +222,14 @@ namespace STORE_FINAL.Forms
             String materialName = txtMaterialName.Text.Trim();
             String part_Id = txtPart_Id.Text.Trim();
             String unitPriceText = txtUnitPrice.Text.Trim();
-            String stockQuantityText = txtStockQuantity.Text.Trim();
-            String rackNumber = txtRackNumber.Text.Trim();
-            String shelfNumber = txtShelfNumber.Text.Trim();
+            String uom = ddlUoM.SelectedValue;
 
             decimal unitPrice;
-            decimal stockQuantity;
 
             // Validation
             if (string.IsNullOrEmpty(materialName) ||
                 string.IsNullOrEmpty(category) ||
-                string.IsNullOrEmpty(unitPriceText) ||
-                string.IsNullOrEmpty(stockQuantityText))
+                string.IsNullOrEmpty(unitPriceText))
             {
                 lblMessage.Text = "Please fill in all required fields.";
                 return;
@@ -217,7 +237,8 @@ namespace STORE_FINAL.Forms
 
             if (com_NonCom == "0" || assetStatus == "0" || 
                 assetType == "0" || category == "0" || 
-                subCategory == "0" || model == "0" || control == "0")
+                subCategory == "0" || model == "0" || 
+                control == "0" || uom == "0")
             {
                 lblMessage.Text = "Please select all required options.";
                 return;
@@ -231,27 +252,18 @@ namespace STORE_FINAL.Forms
                 return;
             }
 
-            // Check if stockQuantity is a valid integer value
-            if (!decimal.TryParse(stockQuantityText, out stockQuantity) || stockQuantity < 0)
-            {
-                lblMessage.Text = "Please enter a valid non-negative value for stock quantity.";
-                return;
-            }
-
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Material (Part_Id, Materials_Name, Unit_Price, Stock_Quantity, Rack_Number, Shelf_Number, Com_Non_Com_ID, Asset_Status_ID, Asset_Type_Grouped_ID, Category_ID, Sub_Category_ID, Model_ID, Control_ID) 
-                                 VALUES (@part_Id, @materialName, @unitPrice, @stockQuantity, @rackNumber, @shelfNumber, @com_NonCom, @assetStatus, @assetType, @category, @subCategory, @model, @control)";
+                string query = @"INSERT INTO Material (Part_Id, Materials_Name, Unit_Price, Stock_Quantity, Com_Non_Com_ID, Asset_Status_ID, Asset_Type_Grouped_ID, Category_ID, Sub_Category_ID, Model_ID, Control_ID, UoM_ID) 
+                                 VALUES (@part_Id, @materialName, @unitPrice, @stockQuantity, @com_NonCom, @assetStatus, @assetType, @category, @subCategory, @model, @control, @uom)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@part_Id", part_Id);
                 cmd.Parameters.AddWithValue("@materialName", materialName);
                 cmd.Parameters.AddWithValue("@unitPrice", unitPrice);
-                cmd.Parameters.AddWithValue("@stockQuantity", stockQuantity);
-                cmd.Parameters.AddWithValue("@rackNumber", rackNumber);
-                cmd.Parameters.AddWithValue("@shelfNumber", shelfNumber);
+                cmd.Parameters.AddWithValue("@stockQuantity", "0");
                 cmd.Parameters.AddWithValue("@com_NonCom", com_NonCom);
                 cmd.Parameters.AddWithValue("@assetStatus", assetStatus);
                 cmd.Parameters.AddWithValue("@assetType", assetType);
@@ -259,6 +271,7 @@ namespace STORE_FINAL.Forms
                 cmd.Parameters.AddWithValue("@subCategory", subCategory);
                 cmd.Parameters.AddWithValue("@model", model);
                 cmd.Parameters.AddWithValue("@control", control);
+                cmd.Parameters.AddWithValue("@uom", uom);
 
                 try
                 {
@@ -279,9 +292,6 @@ namespace STORE_FINAL.Forms
             txtMaterialName.Text = "";
             txtPart_Id.Text = "";
             txtUnitPrice.Text = "";
-            txtStockQuantity.Text = "";
-            txtRackNumber.Text = "";
-            txtShelfNumber.Text = "";
             ddlCom_NonCom.SelectedIndex = 0;
             ddlAssetStatus.SelectedIndex = 0;
             ddlAssetType.SelectedIndex = 0;

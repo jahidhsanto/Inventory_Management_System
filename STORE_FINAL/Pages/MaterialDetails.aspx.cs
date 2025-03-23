@@ -50,8 +50,8 @@ namespace STORE_FINAL.Pages
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                                SELECT Serial_Number, Rack_Number, Shelf_Number, Status 
-                                FROM Material_Tracking 
+                                SELECT Serial_Number, Rack_Number, Shelf_Number, Status, Received_Date
+                                FROM Stock 
                                 WHERE Material_ID = @MaterialID";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 da.SelectCommand.Parameters.AddWithValue("@MaterialID", materialId);

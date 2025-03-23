@@ -12,9 +12,10 @@
             <asp:BoundField DataField="Rack_Number" HeaderText="Rack Number" />
             <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf Number" />
             <asp:BoundField DataField="Status" HeaderText="Status" />
+            <asp:BoundField DataField="Received_Date" HeaderText="Received Date" />
         </Columns>
     </asp:GridView>
 
-    <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="MaterialList.aspx" CssClass="btn btn-secondary">Back to List</asp:HyperLink>
+    <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="Material.aspx" CssClass="btn btn-secondary">Back to List</asp:HyperLink>
 
 </asp:Content>

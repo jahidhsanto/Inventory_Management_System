@@ -125,6 +125,7 @@
     <Content Include="Forms\AddNewMaterial.aspx" />
     <Content Include="Forms\ApproveRequisition.aspx" />
     <Content Include="Forms\MaterialApprovalForm.aspx" />
+    <Content Include="Forms\ReceiveStock.aspx" />
     <Content Include="Forms\RequisitionForm.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\jahidhsanto.jpg" />
@@ -135,7 +136,6 @@
     <Content Include="Pages\LocationReport.aspx" />
     <Content Include="Pages\Material.aspx" />
     <Content Include="Pages\MaterialDetails.aspx" />
-    <Content Include="Pages\MaterialList.aspx" />
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
     <Content Include="Pages\Purchase_Request.aspx" />
@@ -204,6 +204,7 @@
     <Content Include="TEST\Dashboard.aspx" />
     <Content Include="TEST\Default.aspx" />
     <Content Include="TEST\Login.aspx" />
+    <Content Include="TEST\ReceiveStock.aspx" />
     <Content Include="TEST\Styles.css" />
     <Content Include="UserAuthentication\LogIn.aspx" />
     <Content Include="UserAuthentication\UserManagement.aspx" />
@@ -271,6 +272,13 @@
     <Compile Include="Forms\MaterialApprovalForm.aspx.designer.cs">
       <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ReceiveStock.aspx.cs">
+      <DependentUpon>ReceiveStock.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Forms\ReceiveStock.aspx.designer.cs">
+      <DependentUpon>ReceiveStock.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Forms\RequisitionForm.aspx.cs">
       <DependentUpon>RequisitionForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -332,13 +340,6 @@
     </Compile>
     <Compile Include="Pages\MaterialDetails.aspx.designer.cs">
       <DependentUpon>MaterialDetails.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MaterialList.aspx.cs">
-      <DependentUpon>MaterialList.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\MaterialList.aspx.designer.cs">
-      <DependentUpon>MaterialList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Material_Receipt.aspx.cs">
       <DependentUpon>Material_Receipt.aspx</DependentUpon>
@@ -438,6 +439,13 @@
     </Compile>
     <Compile Include="TEST\MasterPage.Master.designer.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
+    </Compile>
+    <Compile Include="TEST\ReceiveStock.aspx.cs">
+      <DependentUpon>ReceiveStock.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TEST\ReceiveStock.aspx.designer.cs">
+      <DependentUpon>ReceiveStock.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserAuthentication\LogIn.aspx.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>

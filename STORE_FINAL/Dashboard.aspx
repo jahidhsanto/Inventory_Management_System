@@ -46,8 +46,9 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Material</h5>
-                        <a href="#" class="btn btn-primary">+</a>
+                        <a href="/Forms/AddNewMaterial" class="btn btn-primary">+</a>
                         <a href="/Pages/Material" class="btn btn-primary">Material List</a>
+                        <a href="/Forms/ReceiveStock" class="btn btn-primary">Receive Stock</a>
                     </div>
                 </div>
             </div>
