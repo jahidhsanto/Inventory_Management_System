@@ -65,31 +65,6 @@ namespace STORE_FINAL.Forms
             LoadRequisitions(selectedStatus);
         }
 
-        private void LoadPendingRequisitions()
-        {
-            int departmentHeadID = Convert.ToInt32(Session["EmployeeID"]); // Logged-in Department Head
-
-            string query = @"
-                            SELECT R.Requisition_ID, E.Name AS Requested_By, M.Materials_Name AS Material_Name, R.Quantity, R.Status, R.Created_Date
-                            FROM Requisition R
-                            JOIN Employee E ON R.Employee_ID = E.Employee_ID
-                            JOIN Material M ON R.Material_ID = M.Material_ID
-                            JOIN Department D ON R.Department_ID = D.Department_ID
-                            WHERE D.Department_Head_ID = @DepartmentHeadID
-                            AND R.Status = 'Pending'";
-
-            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@DepartmentHeadID", departmentHeadID);
-                    conn.Open();
-                    ApproveRequisitionGridView.DataSource = cmd.ExecuteReader();
-                    ApproveRequisitionGridView.DataBind();
-                }
-            }
-        }
-
         protected void ApproveRequisitionGridView_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Approve" || e.CommandName == "Reject" || e.CommandName == "Pending")
@@ -132,8 +107,7 @@ namespace STORE_FINAL.Forms
                     cmd.ExecuteNonQuery();
                 }
             }
-
-            LoadPendingRequisitions(); // Refresh the list
+            LoadRequisitions("All"); // Refresh the list
         }
     }
 }

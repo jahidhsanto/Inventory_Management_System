@@ -124,12 +124,13 @@
     <Content Include="Forms\AddNewEmployee.aspx" />
     <Content Include="Forms\AddNewMaterial.aspx" />
     <Content Include="Forms\ApproveRequisition.aspx" />
+    <Content Include="Forms\Challan.aspx" />
     <Content Include="Forms\MaterialApprovalForm.aspx" />
     <Content Include="Forms\ReceiveStock.aspx" />
     <Content Include="Forms\RequisitionForm.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\jahidhsanto.jpg" />
-    <Content Include="Pages\Challan.aspx" />
+    <Content Include="Pages\ChallanList.aspx" />
     <Content Include="Pages\Department.aspx" />
     <Content Include="Pages\Employee.aspx" />
     <Content Include="Pages\LocationDetails.aspx" />
@@ -142,6 +143,7 @@
     <Content Include="Pages\Requisition.aspx" />
     <Content Include="Pages\Return_Table.aspx" />
     <Content Include="Pages\Stock.aspx" />
+    <Content Include="Pages\StockReview.aspx" />
     <Content Include="Pages\Vendor.aspx" />
     <Content Include="Pages\Warranty.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -173,6 +175,7 @@
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="GetMaterials.ashx" />
+    <Content Include="TEST\WebForm1.aspx" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -204,7 +207,6 @@
     <Content Include="TEST\Dashboard.aspx" />
     <Content Include="TEST\Default.aspx" />
     <Content Include="TEST\Login.aspx" />
-    <Content Include="TEST\ReceiveStock.aspx" />
     <Content Include="TEST\Styles.css" />
     <Content Include="UserAuthentication\LogIn.aspx" />
     <Content Include="UserAuthentication\UserManagement.aspx" />
@@ -265,6 +267,13 @@
     <Compile Include="Forms\ApproveRequisition.aspx.designer.cs">
       <DependentUpon>ApproveRequisition.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Challan.aspx.cs">
+      <DependentUpon>Challan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Forms\Challan.aspx.designer.cs">
+      <DependentUpon>Challan.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MaterialApprovalForm.aspx.cs">
       <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -292,12 +301,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Challan.aspx.cs">
-      <DependentUpon>Challan.aspx</DependentUpon>
+    <Compile Include="Pages\ChallanList.aspx.cs">
+      <DependentUpon>ChallanList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Challan.aspx.designer.cs">
-      <DependentUpon>Challan.aspx</DependentUpon>
+    <Compile Include="Pages\ChallanList.aspx.designer.cs">
+      <DependentUpon>ChallanList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Department.aspx.cs">
       <DependentUpon>Department.aspx</DependentUpon>
@@ -383,6 +392,13 @@
     <Compile Include="Pages\Stock.aspx.designer.cs">
       <DependentUpon>Stock.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\StockReview.aspx.cs">
+      <DependentUpon>StockReview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StockReview.aspx.designer.cs">
+      <DependentUpon>StockReview.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Vendor.aspx.cs">
       <DependentUpon>Vendor.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -440,12 +456,12 @@
     <Compile Include="TEST\MasterPage.Master.designer.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
     </Compile>
-    <Compile Include="TEST\ReceiveStock.aspx.cs">
-      <DependentUpon>ReceiveStock.aspx</DependentUpon>
+    <Compile Include="TEST\WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="TEST\ReceiveStock.aspx.designer.cs">
-      <DependentUpon>ReceiveStock.aspx</DependentUpon>
+    <Compile Include="TEST\WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserAuthentication\LogIn.aspx.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>

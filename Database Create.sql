@@ -128,6 +128,7 @@ CREATE TABLE Requisition (
     Department_ID INT,
     Quantity INT NOT NULL,
     Status NVARCHAR(50) CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Delivered', 'Not Available')),
+	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Delivered', 'Out of Stock', 'Ordered')),
     Created_Date DATETIME DEFAULT GETDATE(),
     Approved_By INT,
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
