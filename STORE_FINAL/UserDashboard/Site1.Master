@@ -1,0 +1,126 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs" Inherits="STORE_FINAL.UserDashboard.Site1" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #1e1e2f;
+            color: white;
+            position: fixed;
+            padding: 20px;
+        }
+
+            .sidebar .logo {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+                .sidebar .logo img {
+                    width: 60px;
+                    border-radius: 50%;
+                }
+
+                .sidebar .logo h4 {
+                    margin-top: 10px;
+                }
+
+            .sidebar a {
+                padding: 10px 15px;
+                display: block;
+                color: white;
+                text-decoration: none;
+            }
+
+                .sidebar a:hover {
+                    background: #495057;
+                    border-radius: 5px;
+                }
+
+            .sidebar .active {
+                background: #007bff;
+                border-radius: 5px;
+            }
+
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: #007bff;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .user-info {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form runat="server">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <span class="navbar-brand">
+                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">
+                    Inventory Management System
+                </span>
+                <span class="user-info">Welcome,
+                    <asp:Label ID="lblUserName" runat="server" /></span>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="/images/LoGo.jpg" alt="Logo">
+                <h4>📦 Inventory Management</h4>
+            </div>
+            <hr />
+            <a href="Dashboard.aspx" class="active">🏠 Dashboard</a>
+            <div id="storePersonDashboard" runat="server" visible="true">
+                <a href="StockManagement.aspx">📊 Manage Stock</a>
+                <a href="Challan.aspx">🚚 Deliver Materials</a>
+                <a href="PendingRequisitions.aspx">📑 Pending Requisitions</a>
+            </div>
+            <div id="employeeDashboard" runat="server" visible="true">
+                <a href="Requisition.aspx">📝 Place Requisition</a>
+                <a href="MyRequisitions.aspx">📋 View My Requisitions</a>
+                <a href="RequisitionStatus.aspx">🔍 Check Status</a>
+            </div>
+            <div id="departmentHeadDashboard" runat="server" visible="true">
+                <a href="ApproveRequisitions.aspx">✅ Approve Requisitions</a>
+                <a href="DepartmentStock.aspx">🏢 View Stock</a>
+                <a href="Reports.aspx">📈 Generate Reports</a>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div class="content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+        </div>
+    </form>
+</body>
+</html>

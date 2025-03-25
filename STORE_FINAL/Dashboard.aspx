@@ -23,6 +23,22 @@
                         Employee
                     </div>--%>
                     <div class="card-body">
+                        <h5 class="card-title">Dashboard</h5>
+                        <a href="/UserDashboard/Dashboard_1" class="btn btn-primary">Dashboard_1</a>
+                        <a href="/UserDashboard/Dashboard_2" class="btn btn-primary">Dashboard_2</a>
+                        <a href="/UserDashboard/Dashboard_3" class="btn btn-primary">Dashboard_3</a>
+                        <a href="/UserDashboard/Dashboard_4" class="btn btn-primary">Dashboard_4</a>                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 1 -->
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                <div class="card">
+<%--                    <div class="card-header">
+                        Employee
+                    </div>--%>
+                    <div class="card-body">
                         <h5 class="card-title">Employee</h5>
                         <a href="/Forms/AddNewEmployee" class="btn btn-primary">+</a>
                         <a href="/Pages/Employee" class="btn btn-primary">Employee List</a>
