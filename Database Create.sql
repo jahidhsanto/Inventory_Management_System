@@ -19,6 +19,23 @@ CREATE TABLE Department (
     FOREIGN KEY (Department_Head_ID) REFERENCES Employee(Employee_ID)
 );
 
+-- Create the Role table
+CREATE TABLE Role (
+    Role_ID INT PRIMARY KEY IDENTITY(1,1),
+    Role NVARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Create the Users table
+CREATE TABLE Users (
+    User_ID INT PRIMARY KEY IDENTITY(1,1),
+    Username NVARCHAR(255) NOT NULL,
+    Password_Hash VARBINARY(64) NOT NULL,
+    Role_ID INT NOT NULL, 
+    Employee_ID INT NOT NULL,
+    CONSTRAINT FK_Users_Role FOREIGN KEY (Role_ID) REFERENCES Role(Role_ID),
+    CONSTRAINT FK_Users_Employee FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+);
+
 -- Create Com_Non_Com Table
 CREATE TABLE Com_Non_Com (
     Com_Non_Com_ID INT IDENTITY(1,1) PRIMARY KEY,

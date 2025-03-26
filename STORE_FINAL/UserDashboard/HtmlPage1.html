@@ -1,148 +1,156 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head runat="server">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
-
-    <!-- Bootstrap CSS -->
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #f4f7f6;
+            display: flex;
+            margin: 0;
         }
 
         .sidebar {
             width: 250px;
-            height: 100vh;
-            background: #1e1e2f;
+            min-height: 100vh;
+            background-color: #343a40;
             color: white;
+            padding-top: 20px;
             position: fixed;
-            padding: 20px;
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
         }
 
-            .sidebar .logo {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-
-                .sidebar .logo img {
-                    width: 60px;
-                    border-radius: 50%;
-                }
-
-                .sidebar .logo h4 {
-                    margin-top: 10px;
-                }
-
             .sidebar a {
-                padding: 10px 15px;
-                display: block;
                 color: white;
                 text-decoration: none;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: background 0.3s;
             }
 
-                .sidebar a:hover {
-                    background: #495057;
-                    border-radius: 5px;
+                .sidebar a:hover, .sidebar a.active {
+                    background-color: #007bff;
                 }
 
-            .sidebar .active {
-                background: #007bff;
-                border-radius: 5px;
-            }
-
         .content {
-            margin-left: 260px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
             padding: 20px;
+            transition: all 0.3s ease-in-out;
         }
 
         .navbar {
-            background: #007bff;
+            background-color: #007bff;
             color: white;
         }
-
-        .navbar-brand {
-            font-weight: bold;
+        /* Sidebar Collapsed */
+        .collapsed-sidebar {
+            width: 80px;
         }
 
-        .user-info {
-            color: white;
-            font-weight: bold;
+            .collapsed-sidebar h4, .collapsed-sidebar a span {
+                display: none;
+            }
+
+            .collapsed-sidebar a {
+                justify-content: center;
+            }
+
+        .expanded-content {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        /* Responsive Behavior */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+
+                .sidebar h4, .sidebar a span {
+                    display: none;
+                }
+
+                .sidebar a {
+                    justify-content: center;
+                }
+
+            .content {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+        /* Toggle Button Styling */
+        #toggleSidebar {
+            border: none;
+            font-size: 1.5rem;
         }
 
-        .dashboard-container {
-            display: flex;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .top-bar h3 {
-            font-size: 24px;
-            font-weight: bold;
-        }
+            #toggleSidebar:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
     </style>
-
 </head>
 <body>
-    <form runat="server">
-        <!-- Top Navbar -->
+    <div class="sidebar" id="sidebar">
+        <h4 class="text-center">Dashboard</h4>
+        <a href="#" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
+        <a href="#"><i class="fas fa-chart-line"></i> <span>Analytics</span></a>
+        <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
+    </div>
+    <div class="content" id="content">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <span class="navbar-brand">
-                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">
-                    Inventory Management System
-                </span>
-                <span class="user-info">Welcome, <asp:Label ID="lblUserName" runat="server" /></span>
+                <button class="btn btn-outline-light" id="toggleSidebar">☰</button>
+                <span class="navbar-brand ms-3">Welcome</span>
             </div>
         </nav>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <img src="/images/LoGo.jpg" alt="Logo">
-                <h4>Inventory Management</h4>
-            </div>            <hr />
-            <a href="Dashboard.aspx" class="active">🏠 Dashboard</a>
-
-            <asp:Panel ID="storePersonMenu" runat="server" Visible="false">
-                <a href="StockManagement.aspx">📊 Manage Stock</a>
-                <a href="Challan.aspx">🚚 Deliver Materials</a>
-                <a href="PendingRequisitions.aspx">📑 Pending Requisitions</a>
-            </asp:Panel>
-
-            <asp:Panel ID="employeeMenu" runat="server" Visible="false">
-                <a href="Requisition.aspx">📝 Place Requisition</a>
-                <a href="MyRequisitions.aspx">📋 View My Requisitions</a>
-                <a href="RequisitionStatus.aspx">🔍 Check Status</a>
-            </asp:Panel>
-
-            <asp:Panel ID="departmentHeadMenu" runat="server" Visible="false">
-                <a href="ApproveRequisitions.aspx">✅ Approve Requisitions</a>
-                <a href="DepartmentStock.aspx">🏢 View Stock</a>
-                <a href="Reports.aspx">📈 Generate Reports</a>
-            </asp:Panel>
+        <div class="container mt-3">
+            <h2>Main Content</h2>
+            <p>This is where your dashboard content goes.</p>
         </div>
+    </div>
 
-        <!-- Page Content -->
-        <div class="content">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server">
-                <div class="dashboard-container">
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('collapsed-sidebar');
+            content.classList.toggle('expanded-content');
+        }
 
-                    <!-- Main Content -->
-                    <div class="main-content">
-                        <div class="top-bar">
-                            <h3>Welcome, <asp:Label ID="lblUserName" runat="server" /></h3>
-                        </div>
+        document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
 
-                    </div>
-                </div>
-            </asp:ContentPlaceHolder>
-        </div>
-    </form>
+        // Handle Active Sidebar Link Highlight
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Responsive Sidebar Adjustment
+        window.addEventListener('resize', function () {
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('collapsed-sidebar');
+                document.getElementById('content').classList.add('expanded-content');
+            } else {
+                document.getElementById('sidebar').classList.remove('collapsed-sidebar');
+                document.getElementById('content').classList.remove('expanded-content');
+            }
+        });
+
+        // Auto-collapse on smaller screens
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.add('collapsed-sidebar');
+            document.getElementById('content').classList.add('expanded-content');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

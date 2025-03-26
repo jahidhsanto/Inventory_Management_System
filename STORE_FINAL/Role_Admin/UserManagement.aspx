@@ -1,9 +1,9 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="UserManagement.aspx.cs" Inherits="STORE_FINAL.UserAuthentication.UserManagement" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="UserManagement.aspx.cs" Inherits="STORE_FINAL.UserAuthentication.UserManagement" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <h2 class="mt-3 text-center">User Management</h2>
 
-        <asp:Label ID="lblMessage" runat="server" CssClass="alert alert-danger d-none"></asp:Label>
+        <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none"></asp:Label>
 
         <div class="accordion mt-4" id="userManagementAccordion">
 
@@ -18,24 +18,20 @@
                     <div class="accordion-body">
                         <div class="row">
                             <div class="col-md-6">
+                                <label>Employee ID:</label>
+                                <asp:TextBox ID="txtEmployeeID" runat="server" CssClass="form-control"></asp:TextBox>
+                            </div>
+                            <div class="col-md-6">
                                 <label>Username:</label>
                                 <asp:TextBox ID="txtUsername" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="col-md-6">
+                                <label>Role:</label>
+                                <asp:DropDownList ID="ddlRole" runat="server" CssClass="form-control"></asp:DropDownList>
+                            </div>
+                            <div class="col-md-6">
                                 <label>Password:</label>
                                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Role:</label>
-                                <asp:DropDownList ID="ddlRole" runat="server" CssClass="form-control">
-                                    <asp:ListItem Value="Admin">Admin</asp:ListItem>
-                                    <asp:ListItem Value="Employee">Employee</asp:ListItem>
-                                    <asp:ListItem Value="Manager">Manager</asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Employee ID:</label>
-                                <asp:TextBox ID="txtEmployeeID" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                         </div>
                         <div class="text-center mt-3">
@@ -61,11 +57,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label>New Role:</label>
-                                <asp:DropDownList ID="ddlNewRole" runat="server" CssClass="form-control">
-                                    <asp:ListItem Value="Admin">Admin</asp:ListItem>
-                                    <asp:ListItem Value="Employee">Employee</asp:ListItem>
-                                    <asp:ListItem Value="Manager">Manager</asp:ListItem>
-                                </asp:DropDownList>
+                                <asp:DropDownList ID="ddlNewRole" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                         </div>
                         <div class="text-center mt-3">
@@ -137,6 +129,8 @@
                 <asp:BoundField DataField="Username" HeaderText="Username" />
                 <asp:BoundField DataField="Role" HeaderText="Role" />
                 <asp:BoundField DataField="Employee_ID" HeaderText="Employee ID" />
+                <asp:BoundField DataField="Name" HeaderText="Employee Name" />
+                <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
             </Columns>
         </asp:GridView>
     </div>

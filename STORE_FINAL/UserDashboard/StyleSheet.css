@@ -1,15 +1,17 @@
-﻿<style >
-body {
-    background-color: #f4f7f6;
+﻿body {
+    display: flex;
+    margin: 0;
 }
 
 .sidebar {
     width: 250px;
-    height: 100vh;
-    background: #1e1e2f;
+    min-height: 100vh;
+    background-color: #343a40;
     color: white;
+    padding-top: 20px;
     position: fixed;
-    padding: 20px;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
 }
 
     .sidebar .logo {
@@ -27,39 +29,72 @@ body {
         }
 
     .sidebar a {
-        padding: 10px 15px;
-        display: block;
         color: white;
         text-decoration: none;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.3s;
     }
 
-        .sidebar a:hover {
-            background: #495057;
-            border-radius: 5px;
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #007bff;
         }
 
-    .sidebar .active {
-        background: #007bff;
-        border-radius: 5px;
-    }
-
 .content {
-    margin-left: 260px;
+    margin-left: 250px;
+    width: calc(100% - 250px);
     padding: 20px;
+    transition: all 0.3s ease-in-out;
 }
 
 .navbar {
-    background: #007bff;
+    background-color: #007bff;
     color: white;
 }
-
-.navbar-brand {
-    font-weight: bold;
+/* Sidebar Collapsed */
+.collapsed-sidebar {
+    width: 80px;
 }
 
-.user-info {
-    color: white;
-    font-weight: bold;
+    .collapsed-sidebar h4, .collapsed-sidebar a span {
+        display: none;
+    }
+
+    .collapsed-sidebar a {
+        justify-content: center;
+    }
+
+.expanded-content {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+}
+/* Responsive Behavior */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+    }
+
+        .sidebar h4, .sidebar a span {
+            display: none;
+        }
+
+        .sidebar a {
+            justify-content: center;
+        }
+
+    .content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}
+/* Toggle Button Styling */
+#toggleSidebar {
+    border: none;
+    font-size: 1.5rem;
 }
 
-</style >
+    #toggleSidebar:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }

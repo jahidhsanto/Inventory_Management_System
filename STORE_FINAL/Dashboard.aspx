@@ -24,10 +24,7 @@
                     </div>--%>
                     <div class="card-body">
                         <h5 class="card-title">Dashboard</h5>
-                        <a href="/UserDashboard/Dashboard_1" class="btn btn-primary">Dashboard_1</a>
-                        <a href="/UserDashboard/Dashboard_2" class="btn btn-primary">Dashboard_2</a>
-                        <a href="/UserDashboard/Dashboard_3" class="btn btn-primary">Dashboard_3</a>
-                        <a href="/UserDashboard/Dashboard_4" class="btn btn-primary">Dashboard_4</a>                        
+                        <a href="/UserDashboard/UserDashboard" class="btn btn-primary">Switch Dashboard</a>
                     </div>
                 </div>
             </div>

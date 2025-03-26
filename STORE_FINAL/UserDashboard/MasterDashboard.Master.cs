@@ -11,7 +11,17 @@ namespace STORE_FINAL.UserDashboard
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            if (!IsPostBack)
+            {
+                string role = Session["Role"] != null ? Session["Role"].ToString() : "Guest";
 
-		}
+                // Show different dashboards based on role
+                adminMenu.Visible = (role == "Admin");
+                
+                //departmentHeadMenu.Visible = (role == "Admin");
+                //employeeMenu.Visible = (role == "Employee");
+                //storePersonMenu.Visible = (role == "Store InCharge");
+            }
+        }
 	}
 }

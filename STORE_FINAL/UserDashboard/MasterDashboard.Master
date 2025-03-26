@@ -10,6 +10,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="StyleSheet.css">
 
@@ -17,32 +18,135 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <img src="/images/LoGo.jpg" alt="Logo">
+            <h4>Inventory Management</h4>
+        </div>
+        <hr />
+        <a href="#" class="active"><i class="fas fa-home"></i><span>Home</span></a>
 
 
-        <%-- <!-- Page Content -->
-        <div class="content">
-            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-                <div class="dashboard-container">
+        <%--===================================================================================--%>
+        <asp:Panel ID="adminMenu" runat="server" Visible="true">
+            <a href="/Role_Admin/UserManagement"><i class="fas fa-users"></i><span>User Management</span></a>
+        </asp:Panel>
+        <%--===================================================================================--%>
+        <hr />
+        
+        <asp:Panel ID="storePersonMenu" runat="server" Visible="true">
+            <a href="StockManagement.aspx">📊<span>Manage Stock</span></a>
+            <a href="Challan.aspx">🚚<span>Deliver Materials</span></a>
+            <a href="PendingRequisitions.aspx">📑<span>Pending Requisitions</span></a>
+        </asp:Panel>
 
-                    <!-- Main Content -->
-                    <div class="main-content">
-                        <div class="top-bar">
-                            <h3>Welcome, <asp:Label ID="lblUserName" runat="server" /></h3>
-                        </div>
+        <asp:Panel ID="employeeMenu" runat="server" Visible="true">
+            <a href="Requisition.aspx">📝<span>Place Requisition</span></a>
+            <a href="MyRequisitions.aspx">📋<span>View My Requisitions</span></a>
+            <a href="RequisitionStatus.aspx">🔍<span>Check Status</span></a>
+        </asp:Panel>
 
-                    </div>
-                </div>
-            </asp:ContentPlaceHolder>
-        </div>--%>
+        <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
+            <a href="ApproveRequisitions.aspx">✅<span>Approve Requisitions</span></a>
+            <a href="DepartmentStock.aspx">🏢<span>View Stock</span></a>
+            <a href="Reports.aspx">📈<span>Generate Reports</span></a>
+        </asp:Panel>
 
 
-        <div class="container">
-            <div>
+        <a href="#"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+        <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
+        <a href="#"><i class="fas fa-cog"></i><span>Logout</span></a>
+    </div>
+    <div class="content" id="content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <button class="btn btn-outline-light" id="toggleSidebar">☰</button>
+                <span class="navbar-brand">Inventory Management System
+                </span>
+                <span class="navbar-brand ms-3">
+                    <asp:Label ID="lblUserName" runat="server" />
+                </span>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="container mt-3">
+            <form id="form1" runat="server">
                 <asp:ContentPlaceHolder ID="MainContent" runat="server">
                 </asp:ContentPlaceHolder>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
+
+
+
+    <!-- Top Navbar -->
+    <%--        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <span class="navbar-brand">
+                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">
+                    Inventory Management System
+                </span>
+                <span class="user-info">Welcome, <asp:Label ID="lblUserName" runat="server" /></span>
+            </div>
+        </nav>--%>
+
+    <%--
+    🏠 Dashboard
+        
+    📊 Manage Stock
+    🚚 Deliver Materials
+    📑 Pending Requisitions
+        
+    📝 Place Requisition
+    📋 View My Requisitions
+    🔍 Check Status
+        
+    ✅ Approve Requisitions
+    🏢 View Stock
+    📈 Generate Reports    
+    --%>
+
+
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('collapsed-sidebar');
+            content.classList.toggle('expanded-content');
+        }
+
+        document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+
+        // Handle Active Sidebar Link Highlight
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Responsive Sidebar Adjustment
+        window.addEventListener('resize', function () {
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('collapsed-sidebar');
+                document.getElementById('content').classList.add('expanded-content');
+            } else {
+                document.getElementById('sidebar').classList.remove('collapsed-sidebar');
+                document.getElementById('content').classList.remove('expanded-content');
+            }
+        });
+
+        // Auto-collapse on smaller screens
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.add('collapsed-sidebar');
+            document.getElementById('content').classList.add('expanded-content');
+        }
+    </script>
+
+
 </body>
 </html>

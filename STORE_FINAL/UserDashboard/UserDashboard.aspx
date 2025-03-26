@@ -22,6 +22,15 @@
         <p class="text-muted">Manage your tasks efficiently based on your role</p>
         <hr>
 
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dashboard</h5>
+                    <a href="/Dashboard" class="btn btn-primary">Switch Dashboard</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Dashboard Content -->
         <div id="storePersonDashboard" runat="server" visible="true" class="card bg-light p-3">
             <h4>📦 Store Management</h4>

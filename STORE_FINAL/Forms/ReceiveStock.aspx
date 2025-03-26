@@ -42,6 +42,6 @@
 
     <asp:Button ID="btnAddStock" runat="server" Text="Add Stock" CssClass="btn btn-primary" OnClick="btnAddStock_Click" />
 
-    <asp:Label ID="lblMessage" runat="server" CssClass="alert" Visible="false"></asp:Label>
+    <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>
 
 </asp:Content>

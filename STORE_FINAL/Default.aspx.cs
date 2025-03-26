@@ -25,17 +25,10 @@ namespace STORE_FINAL
             string username = txtUserName.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            if (AuthenticateUser(username, password, out string role))
+            if (AuthenticateUser(username, password))
             {
-                // If user authentication is pass then create session for the user
-                if (EmployeeInformation(username))
-                {
                     Response.Redirect("~/Dashboard.aspx");
-                }
-                else
-                {
                     lblMessage.Text = "Employee information could not be retrieved.";
-                }
             }
             else
             {
@@ -43,10 +36,8 @@ namespace STORE_FINAL
             }
         }
 
-        private bool AuthenticateUser(string username, string password, out string role)
+        private bool AuthenticateUser(string username, string password)
         {
-            role = string.Empty;
-
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -64,7 +55,13 @@ namespace STORE_FINAL
 
                         if (reader.Read())
                         {
-                            role = reader["Role"].ToString();
+                            Session["Username"] = reader["Username"];
+                            Session["Role"] = reader["Role"];
+                            Session["EmployeeID"] = reader["Employee_ID"];
+                            Session["EmployeeName"] = reader["EmployeeName"];
+                            Session["EmployeeDepartmentID"] = reader["DepartmentName"];
+                            Session["EmployeeDesignation"] = reader["Designation"];
+
                             return true;
                         }
                     }
@@ -75,48 +72,6 @@ namespace STORE_FINAL
                 }
             }
             return false;
-        }
-
-        private bool EmployeeInformation(string username)
-        {
-            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                using (SqlCommand cmd = new SqlCommand("GetEmployeeByUsername", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("username", username);
-
-                    try
-                    {
-                        conn.Open();
-                        SqlDataReader reader = cmd.ExecuteReader();
-
-                        if (reader.Read())
-                        {
-                            // Create session variables for employee details
-                            Session["Username"] = reader["Username"];
-                            Session["Role"] = reader["Role"];
-                            Session["EmployeeID"] = reader["Employee_ID"];
-                            Session["EmployeeName"] = reader["Name"];
-                            Session["EmployeeDepartmentID"] = reader["Department_ID"];
-                            Session["EmployeeDesignation"] = reader["Designation"];
-                            return true;
-                        }
-                        else
-                        {
-                            lblMessage.Text = "No employee found for the given username.";
-                            return false;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        lblMessage.Text += " Error retrieving Employee ID: " + ex.Message;
-                        return false;
-                    }
-                }
-            }
         }
     }
 }

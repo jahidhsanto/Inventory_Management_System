@@ -5,8 +5,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @AdminRole NVARCHAR(50)
-
     -- Check if the user exists
     IF NOT EXISTS (SELECT 1 FROM Users WHERE Username = @Username)
     BEGIN
@@ -22,5 +20,4 @@ BEGIN
     PRINT 'Password reset successful.';
 END;
 
-
-EXEC ResetPassword @Username = 'jahid', @NewPassword = 'jahid@123';
+EXEC ResetPassword @Username = 'admin', @NewPassword = 'Admin@123';

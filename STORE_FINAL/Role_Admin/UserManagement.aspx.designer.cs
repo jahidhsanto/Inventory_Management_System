@@ -24,6 +24,15 @@ namespace STORE_FINAL.UserAuthentication
         protected global::System.Web.UI.WebControls.Label lblMessage;
 
         /// <summary>
+        /// txtEmployeeID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEmployeeID;
+
+        /// <summary>
         /// txtUsername control.
         /// </summary>
         /// <remarks>
@@ -31,15 +40,6 @@ namespace STORE_FINAL.UserAuthentication
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtUsername;
-
-        /// <summary>
-        /// txtPassword control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
         /// ddlRole control.
@@ -51,13 +51,13 @@ namespace STORE_FINAL.UserAuthentication
         protected global::System.Web.UI.WebControls.DropDownList ddlRole;
 
         /// <summary>
-        /// txtEmployeeID control.
+        /// txtPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmployeeID;
+        protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
         /// btnCreateUser control.
