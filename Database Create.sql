@@ -142,7 +142,6 @@ CREATE TABLE Requisition (
     Requisition_ID INT IDENTITY(1,1) PRIMARY KEY,
     Employee_ID INT,
     Material_ID INT,
-    Department_ID INT,
     Quantity INT NOT NULL,
     Status NVARCHAR(50) CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Delivered', 'Not Available')),
 	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Delivered', 'Out of Stock', 'Ordered')),

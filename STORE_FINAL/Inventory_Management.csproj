@@ -121,7 +121,6 @@
     <Content Include="Dashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
-    <Content Include="Forms\AddNewEmployee.aspx" />
     <Content Include="Forms\AddNewMaterial.aspx" />
     <Content Include="Forms\ApproveRequisition.aspx" />
     <Content Include="Forms\Challan.aspx" />
@@ -132,8 +131,6 @@
     <Content Include="images\LoGo.png" />
     <Content Include="images\jahidhsanto.jpg" />
     <Content Include="Pages\ChallanList.aspx" />
-    <Content Include="Pages\Department.aspx" />
-    <Content Include="Pages\Employee.aspx" />
     <Content Include="Pages\LocationDetails.aspx" />
     <Content Include="Pages\LocationReport.aspx" />
     <Content Include="Pages\Material.aspx" />
@@ -147,6 +144,9 @@
     <Content Include="Pages\StockReview.aspx" />
     <Content Include="Pages\Vendor.aspx" />
     <Content Include="Pages\Warranty.aspx" />
+    <Content Include="Role_Admin\Employee.aspx" />
+    <Content Include="Role_Admin\Departments.aspx" />
+    <Content Include="Role_Employee\Requisition.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -244,13 +244,6 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddNewEmployee.aspx.cs">
-      <DependentUpon>AddNewEmployee.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\AddNewEmployee.aspx.designer.cs">
-      <DependentUpon>AddNewEmployee.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Forms\AddNewMaterial.aspx.cs">
       <DependentUpon>AddNewMaterial.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -305,20 +298,6 @@
     </Compile>
     <Compile Include="Pages\ChallanList.aspx.designer.cs">
       <DependentUpon>ChallanList.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Department.aspx.cs">
-      <DependentUpon>Department.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Department.aspx.designer.cs">
-      <DependentUpon>Department.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Employee.aspx.cs">
-      <DependentUpon>Employee.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Employee.aspx.designer.cs">
-      <DependentUpon>Employee.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\LocationDetails.aspx.cs">
       <DependentUpon>LocationDetails.aspx</DependentUpon>
@@ -412,6 +391,27 @@
       <DependentUpon>Warranty.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Role_Admin\Employee.aspx.cs">
+      <DependentUpon>Employee.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_Admin\Employee.aspx.designer.cs">
+      <DependentUpon>Employee.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_Admin\Departments.aspx.cs">
+      <DependentUpon>Departments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_Admin\Departments.aspx.designer.cs">
+      <DependentUpon>Departments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_Employee\Requisition.aspx.cs">
+      <DependentUpon>Requisition.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_Employee\Requisition.aspx.designer.cs">
+      <DependentUpon>Requisition.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -8,9 +8,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace STORE_FINAL.Pages
+namespace STORE_FINAL.Role_Admin
 {
-	public partial class Department : System.Web.UI.Page
+	public partial class Departments : System.Web.UI.Page
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -25,14 +25,17 @@ namespace STORE_FINAL.Pages
                 LoadDepartment();
             }
         }
+
         private void LoadDepartment()
         {
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-						SELECT *
-						FROM Department";
+                                SELECT d.DepartmentName, d.Department_Head_ID, e.Name, e.Designation
+                                FROM Department d
+                                JOIN 
+	                                Employee e ON d.Department_Head_ID = e.Employee_ID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

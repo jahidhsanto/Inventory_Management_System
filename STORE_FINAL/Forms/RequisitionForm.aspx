@@ -15,35 +15,4 @@
 
     <asp:Label ID="lblMessage" runat="server" ForeColor="Red"></asp:Label>
 
-<%--    <script>
-        $(document).ready(function () {
-            $('#ddlMaterials').select2({
-                placeholder: "Search Material...",
-                allowClear: true,  // Adds a clear button
-                minimumInputLength: 1, // Requires at least 1 character to start searching
-                ajax: {
-                    url: 'GetMaterials.ashx',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            searchTerm: params.term
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    id: item.MaterialID,
-                                    text: item.Name
-                                };
-                            })
-                        };
-                    },
-                    cache: true
-                }
-            });
-        });
-    </script>--%>
-
 </asp:Content>

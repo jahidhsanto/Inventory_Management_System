@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Pages
+namespace STORE_FINAL.Role_Admin
 {
 
 
-    public partial class Department
+    public partial class Departments
     {
 
         /// <summary>

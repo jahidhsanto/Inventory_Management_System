@@ -25,13 +25,25 @@
             <h4>Inventory Management</h4>
         </div>
         <hr />
-        <a href="#" class="active"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/UserDashboard/UserDashboard" class="active"><i class="fas fa-home"></i><span>Home</span></a>
 
 
         <%--===================================================================================--%>
         <asp:Panel ID="adminMenu" runat="server" Visible="true">
             <a href="/Role_Admin/UserManagement"><i class="fas fa-users"></i><span>User Management</span></a>
+            <a href="/Role_Admin/Employee"><i class="fas fa-user-tie"></i><span>Add New Employee</span></a>
+            <a href="/Role_Admin/Departments"><i class="fa-solid fa-building-user"></i><span>Departments</span></a>
         </asp:Panel>
+
+        <asp:Panel ID="employeeMenu" runat="server" Visible="true">
+            <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
+<%--            <a href="Requisition.aspx">📝<span>Place Requisition</span></a>
+            <a href="MyRequisitions.aspx">📋<span>View My Requisitions</span></a>
+            <a href="RequisitionStatus.aspx">🔍<span>Check Status</span></a>--%>
+
+        </asp:Panel>
+
+
         <%--===================================================================================--%>
         <hr />
         
@@ -41,7 +53,7 @@
             <a href="PendingRequisitions.aspx">📑<span>Pending Requisitions</span></a>
         </asp:Panel>
 
-        <asp:Panel ID="employeeMenu" runat="server" Visible="true">
+        <asp:Panel ID="Panel1" runat="server" Visible="true">
             <a href="Requisition.aspx">📝<span>Place Requisition</span></a>
             <a href="MyRequisitions.aspx">📋<span>View My Requisitions</span></a>
             <a href="RequisitionStatus.aspx">🔍<span>Check Status</span></a>
