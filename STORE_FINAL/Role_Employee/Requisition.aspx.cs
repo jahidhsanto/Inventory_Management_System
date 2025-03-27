@@ -114,8 +114,7 @@ namespace STORE_FINAL.Role_Employee
                         cmd.ExecuteNonQuery();
                         ShowMessage("Requisition submitted successfully!", true);
                         RESET();
-                        LoadRequisition();
-
+                        Response.Redirect("Requisition");
                     }
                     catch (Exception ex)
                     {

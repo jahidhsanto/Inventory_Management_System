@@ -149,7 +149,6 @@ CREATE TABLE Requisition (
     Approved_By INT,
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-    FOREIGN KEY (Department_ID) REFERENCES Department(Department_ID),
     FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID)
 );
 

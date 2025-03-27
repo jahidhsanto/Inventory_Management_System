@@ -58,7 +58,7 @@
 
     <!-- JavaScript for Live Search -->
     <script>
-        function filterEmployee() {
+        function filterRequisition() {
             var input, filter, table, tr, td, i, j, txtValue, found;
             input = document.getElementById("searchRequisition");
             filter = input.value.toUpperCase();
@@ -84,6 +84,5 @@
             }
         }
     </script>
-
 </asp:Content>
 
