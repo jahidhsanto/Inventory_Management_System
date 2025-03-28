@@ -18,7 +18,8 @@ namespace STORE_FINAL.Role_Employee
         protected void Page_Load(object sender, EventArgs e)
         {
             // Ensure only admins can access this page
-            if (Session["Username"] == null || Session["Role"] == null || Session["Role"].ToString() != "Employee")
+            if (Session["Username"] == null || Session["Role"] == null ||
+                Session["Role"].ToString() != "Employee" && Session["Role"].ToString() != "Department Head")
             {
                 Response.Redirect("~/");
             }
@@ -41,15 +42,16 @@ namespace STORE_FINAL.Role_Employee
                 string query = @"
                         SELECT 
                             r.Requisition_ID, m.Materials_Name, r.Quantity, r.Created_Date, r.Status AS Dept_Status, 
-                            e1.Name AS Dept_Head, 
-                            e2.Name AS Store_Status
+                            r.Store_Status, eh.Name AS Dept_Head
                         FROM requisition r
-                        JOIN Employee e1 
-                            ON r.Employee_ID = e1.Employee_ID
-                        LEFT JOIN Employee e2 
-                            ON r.Approved_By = e2.Employee_ID
                         JOIN Material m 
                             ON r.Material_ID = m.Material_ID
+                        LEFT JOIN Employee emp 
+                            ON r.Employee_ID = emp.Employee_ID
+                        LEFT JOIN Department d 
+                            ON emp.Department_ID = d.Department_ID
+                        LEFT JOIN Employee eh 
+                            ON d.Department_Head_ID = eh.Employee_ID
                         WHERE r.Employee_ID = @EmployeeID";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

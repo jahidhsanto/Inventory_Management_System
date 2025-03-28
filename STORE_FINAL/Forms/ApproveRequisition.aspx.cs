@@ -42,7 +42,8 @@ namespace STORE_FINAL.Forms
                 query += " AND R.Status = @Status";
             }
 
-            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

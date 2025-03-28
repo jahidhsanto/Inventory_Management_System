@@ -17,7 +17,7 @@ namespace STORE_FINAL.UserDashboard
 
                 // Show different dashboards based on role
                 adminMenu.Visible = (role == "Admin");
-                employeeMenu.Visible = (role == "Employee");
+                employeeMenu.Visible = (role == "Employee" || role == "Department Head");
                 departmentHeadMenu.Visible = (role == "Department Head");
 
                 //storePersonMenu.Visible = (role == "Store InCharge");

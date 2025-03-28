@@ -59,7 +59,7 @@
         <hr />
 
         <asp:Panel ID="Panel3" runat="server" Visible="true">
-            <a href="#" id="logoutLink" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+            <a href="#" id="logoutLink" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
         </asp:Panel>
 
 
