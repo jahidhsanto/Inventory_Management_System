@@ -205,6 +205,7 @@
     <Content Include="Site.Master" />
     <Content Include="Role_Admin\UserManagement.aspx" />
     <Content Include="UserDashboard\HtmlPage1.html" />
+    <Content Include="UserDashboard\Logout.aspx" />
     <Content Include="UserDashboard\StyleSheet.css" />
     <Content Include="UserDashboard\UserDashboard.aspx" />
     <Content Include="ViewSwitcher.ascx" />
@@ -424,6 +425,13 @@
     </Compile>
     <Compile Include="Role_Admin\UserManagement.aspx.designer.cs">
       <DependentUpon>UserManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UserDashboard\Logout.aspx.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserDashboard\Logout.aspx.designer.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserDashboard\MasterDashboard.Master.cs">
       <DependentUpon>MasterDashboard.Master</DependentUpon>

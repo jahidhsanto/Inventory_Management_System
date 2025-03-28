@@ -59,7 +59,7 @@
         <hr />
 
         <asp:Panel ID="Panel3" runat="server" Visible="true">
-            <a href="/Role_Employee/Requisition.aspx" onclick="LogoutButton_Click"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+            <a href="#" id="logoutLink" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
         </asp:Panel>
 
 
@@ -195,6 +195,18 @@
                 });
             });
         });
+
+        function logout() {
+            event.preventDefault();
+            
+            var form = document.createElement("form");
+            form.method = "POST"; // POST method
+            form.action = "/UserDashboard/Logout.aspx"; // Redirect to a logout page (we'll create this page)
+            
+            // Append the form to the document and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
 
 
     </script>
