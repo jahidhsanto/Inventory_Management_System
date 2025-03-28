@@ -35,9 +35,7 @@ namespace STORE_FINAL.Forms
                     SELECT R.Requisition_ID, E.Name AS Requested_By, M.Materials_Name AS Material_Name, R.Quantity, R.Status, R.Created_Date
                     FROM Requisition R
                     JOIN Employee E ON R.Employee_ID = E.Employee_ID
-                    JOIN Material M ON R.Material_ID = M.Material_ID
-                    JOIN Department D ON R.Department_ID = D.Department_ID
-                    WHERE D.Department_Head_ID = @DepartmentHeadID";
+                    JOIN Material M ON R.Material_ID = M.Material_ID";
 
             if (status != "All")
             {

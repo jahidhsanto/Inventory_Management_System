@@ -144,6 +144,7 @@
     <Content Include="Pages\Warranty.aspx" />
     <Content Include="Role_Admin\Employee.aspx" />
     <Content Include="Role_Admin\Departments.aspx" />
+    <Content Include="Role_DepartmentHead\RequisitionApproval.aspx" />
     <Content Include="Role_Employee\Requisition.aspx" />
     <Content Include="Role_Employee\StockAvailability.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -390,6 +391,13 @@
     </Compile>
     <Compile Include="Role_Admin\Departments.aspx.designer.cs">
       <DependentUpon>Departments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_DepartmentHead\RequisitionApproval.aspx.cs">
+      <DependentUpon>RequisitionApproval.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_DepartmentHead\RequisitionApproval.aspx.designer.cs">
+      <DependentUpon>RequisitionApproval.aspx</DependentUpon>
     </Compile>
     <Compile Include="Role_Employee\Requisition.aspx.cs">
       <DependentUpon>Requisition.aspx</DependentUpon>

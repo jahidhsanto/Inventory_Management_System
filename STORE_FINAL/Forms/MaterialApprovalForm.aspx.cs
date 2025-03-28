@@ -36,7 +36,7 @@ namespace STORE_FINAL.Forms
                                      R.Employee_ID AS EmployeeID,
                                      E.Name AS EmployeeName,
                                      R.Material_ID AS MaterialID,
-                                     M.Name AS MaterialName
+                                     M.Materials_Name AS MaterialName
                                  FROM 
                                      Requisition R
                                  JOIN 

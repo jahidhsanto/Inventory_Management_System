@@ -52,8 +52,8 @@
         </asp:Panel>
 
         <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
-            <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
-            <a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>
+            <a href="/Role_DepartmentHead/RequisitionApproval.aspx">📋<span>Approval Requisition</span></a>
+            <%--<a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>--%>
         </asp:Panel>
 
         <hr />
