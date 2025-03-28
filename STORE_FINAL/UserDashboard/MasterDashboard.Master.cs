@@ -23,5 +23,23 @@ namespace STORE_FINAL.UserDashboard
                 //storePersonMenu.Visible = (role == "Store InCharge");
             }
         }
-	}
+
+        protected void LogoutButton_Click(object sender, EventArgs e)
+        {
+            // Clear the session and log out the user
+            Session.Abandon();  // End the session
+            Session.Clear();    // Clear session data
+
+            // Optionally, clear any authentication cookies if needed (if using forms authentication)
+            if (Request.Cookies[".ASPXAUTH"] != null)
+            {
+                var authCookie = new HttpCookie(".ASPXAUTH");
+                authCookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(authCookie);
+            }
+
+            // Redirect to the login page after logout
+            Response.Redirect("~/");
+        }
+    }
 }

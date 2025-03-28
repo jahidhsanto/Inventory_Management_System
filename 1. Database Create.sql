@@ -122,6 +122,7 @@ CREATE TABLE Material (
     Unit_Price DECIMAL(10,2),
     Stock_Quantity DECIMAL(10,2),
     UoM INT NOT NULL,
+	MSQ DECIMAL(10, 2) NOT NULL,
 
     -- Add UNIQUE constraint on Part_Id to ensure it is unique
     CONSTRAINT UQ_Part_Id UNIQUE (Part_Id),

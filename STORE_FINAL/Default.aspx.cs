@@ -27,8 +27,7 @@ namespace STORE_FINAL
 
             if (AuthenticateUser(username, password))
             {
-                    Response.Redirect("~/Dashboard.aspx");
-                    lblMessage.Text = "Employee information could not be retrieved.";
+                    Response.Redirect("~/UserDashboard/UserDashboard.aspx");
             }
             else
             {

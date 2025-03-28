@@ -7,29 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Pages
+namespace STORE_FINAL.Role_Employee
 {
 
 
-    public partial class Requisition
+    public partial class StockAvailability
     {
 
         /// <summary>
-        /// Panel1 control.
+        /// StockAvailabilityGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-
-        /// <summary>
-        /// RequisitionGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView RequisitionGridView;
+        protected global::System.Web.UI.WebControls.GridView StockAvailabilityGridView;
     }
 }

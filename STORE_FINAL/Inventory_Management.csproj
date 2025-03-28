@@ -126,7 +126,6 @@
     <Content Include="Forms\Challan.aspx" />
     <Content Include="Forms\MaterialApprovalForm.aspx" />
     <Content Include="Forms\ReceiveStock.aspx" />
-    <Content Include="Forms\RequisitionForm.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\LoGo.png" />
     <Content Include="images\jahidhsanto.jpg" />
@@ -138,7 +137,6 @@
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
     <Content Include="Pages\Purchase_Request.aspx" />
-    <Content Include="Pages\Requisition.aspx" />
     <Content Include="Pages\Return_Table.aspx" />
     <Content Include="Pages\Stock.aspx" />
     <Content Include="Pages\StockReview.aspx" />
@@ -147,6 +145,7 @@
     <Content Include="Role_Admin\Employee.aspx" />
     <Content Include="Role_Admin\Departments.aspx" />
     <Content Include="Role_Employee\Requisition.aspx" />
+    <Content Include="Role_Employee\StockAvailability.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -279,13 +278,6 @@
     <Compile Include="Forms\ReceiveStock.aspx.designer.cs">
       <DependentUpon>ReceiveStock.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Forms\RequisitionForm.aspx.cs">
-      <DependentUpon>RequisitionForm.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\RequisitionForm.aspx.designer.cs">
-      <DependentUpon>RequisitionForm.aspx</DependentUpon>
-    </Compile>
     <Compile Include="GetMaterials.ashx.cs">
       <DependentUpon>GetMaterials.ashx</DependentUpon>
     </Compile>
@@ -348,13 +340,6 @@
     <Compile Include="Pages\Purchase_Request.aspx.designer.cs">
       <DependentUpon>Purchase_Request.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Requisition.aspx.cs">
-      <DependentUpon>Requisition.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Requisition.aspx.designer.cs">
-      <DependentUpon>Requisition.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Return_Table.aspx.cs">
       <DependentUpon>Return_Table.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -411,6 +396,13 @@
     </Compile>
     <Compile Include="Role_Employee\Requisition.aspx.designer.cs">
       <DependentUpon>Requisition.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_Employee\StockAvailability.aspx.cs">
+      <DependentUpon>StockAvailability.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_Employee\StockAvailability.aspx.designer.cs">
+      <DependentUpon>StockAvailability.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

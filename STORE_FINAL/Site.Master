@@ -12,29 +12,19 @@
         <%: Scripts.Render("~/bundles/modernizr") %>
     </asp:PlaceHolder>
 
-    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <webopt:BundleReference runat="server" Path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    
-    <!-- jQuery -->
+
+
+    <%--select2--%>
+
+    <!-- Select2 CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (must be loaded before Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <%--select2--%>
-    <!-- Select2 CSS & JS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-    <!-- Select2 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <%--select2--%>
-    
-    <script>
-        $(document).ready(function () {
-            $(".select2").select2();
-        });
-    </script>
-
-
-
 </head>
 <body>
     <form runat="server">
@@ -72,8 +62,7 @@
 
                         <!-- New Dropdown Navigation Item -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Database
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">Database
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="/Pages/Employee">Employee</a></li>
@@ -93,8 +82,7 @@
                         <!-- End of Dropdown -->
                         <!-- New Dropdown Navigation Item -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Form
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">Form
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="/Forms/RequisitionForm">Add New Requisition</a></li>
@@ -128,7 +116,7 @@
 
         <!-- Bootstrap CSS (Add this in the <head> section of your HTML) -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        
+
         <!-- Bootstrap JavaScript (Add this just before the closing </body> tag) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     </asp:PlaceHolder>
@@ -137,17 +125,6 @@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    
-    <script>
-        $(document).ready(function () {
-            $(".select2").select2(); // Apply Select2 to dropdown
-        });
-    </script>
-    <%--select2--%>
-
 
     <script>
         document.getElementById('btnAddRow').addEventListener('click', function () {
@@ -161,6 +138,16 @@
             });
         });
     </script>
+
+    <!-- Select2 JS -->
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2();
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <!-- Select2 JS -->
 
 </body>
 </html>

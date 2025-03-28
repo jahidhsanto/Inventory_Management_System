@@ -51,7 +51,7 @@ END;
 
 EXEC InsertUser 
     @Username = 'admin',
-    @Password = 'Admin',
+    @Password = 'Admin@123',
     @Role_ID = 1,
     @Employee_ID = 1;
 

@@ -17,8 +17,8 @@ namespace STORE_FINAL.Role_Employee
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Check if the session values exist, otherwise redirect to login page
-            if (Session["Username"] == null)
+            // Ensure only admins can access this page
+            if (Session["Username"] == null || Session["Role"] == null || Session["Role"].ToString() != "Employee")
             {
                 Response.Redirect("~/");
             }

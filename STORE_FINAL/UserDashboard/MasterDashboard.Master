@@ -14,6 +14,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="StyleSheet.css">
 
+
+    <%--select2--%>
+
+    <!-- Select2 CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery (must be loaded before Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <%--select2--%>
+
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
@@ -25,28 +36,36 @@
             <h4>Inventory Management</h4>
         </div>
         <hr />
-        <a href="/UserDashboard/UserDashboard" class="active"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/UserDashboard/UserDashboard"><i class="fas fa-home"></i><span>Home</span></a>
 
 
         <%--===================================================================================--%>
         <asp:Panel ID="adminMenu" runat="server" Visible="true">
             <a href="/Role_Admin/UserManagement"><i class="fas fa-users"></i><span>User Management</span></a>
-            <a href="/Role_Admin/Employee"><i class="fas fa-user-tie"></i><span>Add New Employee</span></a>
+            <a href="/Role_Admin/Employee"><i class="fas fa-user-tie"></i><span>Employee Management</span></a>
             <a href="/Role_Admin/Departments"><i class="fa-solid fa-building-user"></i><span>Departments</span></a>
         </asp:Panel>
 
         <asp:Panel ID="employeeMenu" runat="server" Visible="true">
             <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
-<%--            <a href="Requisition.aspx">📝<span>Place Requisition</span></a>
-            <a href="MyRequisitions.aspx">📋<span>View My Requisitions</span></a>
-            <a href="RequisitionStatus.aspx">🔍<span>Check Status</span></a>--%>
+            <a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>
+        </asp:Panel>
 
+        <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
+            <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
+            <a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>
+        </asp:Panel>
+
+        <hr />
+
+        <asp:Panel ID="Panel3" runat="server" Visible="true">
+            <a href="/Role_Employee/Requisition.aspx" onclick="LogoutButton_Click"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
         </asp:Panel>
 
 
         <%--===================================================================================--%>
         <hr />
-        
+
         <asp:Panel ID="storePersonMenu" runat="server" Visible="true">
             <a href="StockManagement.aspx">📊<span>Manage Stock</span></a>
             <a href="Challan.aspx">🚚<span>Deliver Materials</span></a>
@@ -59,7 +78,7 @@
             <a href="RequisitionStatus.aspx">🔍<span>Check Status</span></a>
         </asp:Panel>
 
-        <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
+        <asp:Panel ID="departmentHeadMenu0" runat="server" Visible="true">
             <a href="ApproveRequisitions.aspx">✅<span>Approve Requisitions</span></a>
             <a href="DepartmentStock.aspx">🏢<span>View Stock</span></a>
             <a href="Reports.aspx">📈<span>Generate Reports</span></a>
@@ -70,6 +89,7 @@
         <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
         <a href="#"><i class="fas fa-cog"></i><span>Logout</span></a>
     </div>
+
     <div class="content" id="content">
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark">
@@ -157,8 +177,36 @@
             document.getElementById('sidebar').classList.add('collapsed-sidebar');
             document.getElementById('content').classList.add('expanded-content');
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+            // Loop through all the sidebar links and check if the link corresponds to the current page
+            sidebarLinks.forEach(link => {
+                // Check if the link's href matches the current page URL
+                if (link.href === window.location.href) {
+                    link.classList.add('active');  // Add 'active' class to the matching link
+                }
+
+                // Handle click event for sidebar links to set 'active' class on click
+                link.addEventListener('click', function () {
+                    sidebarLinks.forEach(a => a.classList.remove('active')); // Remove 'active' class from all links
+                    this.classList.add('active'); // Add 'active' class to the clicked link
+                });
+            });
+        });
+
+
     </script>
 
+    <!-- Select2 JS -->
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2();
+        });
+    </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <%--select2--%>
 </body>
 </html>

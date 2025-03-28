@@ -42,6 +42,24 @@ namespace STORE_FINAL.UserDashboard
         protected global::System.Web.UI.WebControls.Panel employeeMenu;
 
         /// <summary>
+        /// departmentHeadMenu control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel departmentHeadMenu;
+
+        /// <summary>
+        /// Panel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+
+        /// <summary>
         /// storePersonMenu control.
         /// </summary>
         /// <remarks>
@@ -60,13 +78,13 @@ namespace STORE_FINAL.UserDashboard
         protected global::System.Web.UI.WebControls.Panel Panel1;
 
         /// <summary>
-        /// departmentHeadMenu control.
+        /// departmentHeadMenu0 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel departmentHeadMenu;
+        protected global::System.Web.UI.WebControls.Panel departmentHeadMenu0;
 
         /// <summary>
         /// lblUserName control.

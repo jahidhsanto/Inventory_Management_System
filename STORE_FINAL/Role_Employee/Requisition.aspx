@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label>Select Material:</label>
-                                <asp:DropDownList ID="ddlMaterials" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                                <asp:DropDownList ID="ddlMaterials" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
                             </div>
                             <div class="col-md-6">
                                 <label>Quantity:</label>
@@ -42,7 +42,7 @@
         </div>
 
         <!-- Employee List Table -->
-        <h3 class="mt-3 text-center">📋 All Requisition</h3>
+        <h3 class="mt-3 text-center">📋 My All Requisition</h3>
         <asp:GridView ID="RequisitionGridView" runat="server" AutoGenerateColumns="false" CssClass="table table-striped table-bordered mt-3">
             <Columns>
                 <asp:BoundField DataField="Requisition_ID" HeaderText="Requisition ID" />
