@@ -159,14 +159,19 @@ CREATE TABLE Requisition (
 CREATE TABLE Stock (
     Stock_ID INT IDENTITY(1,1) PRIMARY KEY,
     Material_ID INT NOT NULL,
-    Serial_Number NVARCHAR(255) UNIQUE,
+    Serial_Number NVARCHAR(255),
 	Rack_Number NVARCHAR(50) NOT NULL,
     Shelf_Number NVARCHAR(50) NOT NULL,
-	Status NVARCHAR(50) CHECK (Status IN ('Available', 'Reserved', 'Delivered', 'Warranty')) NOT NULL,
-	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00;,
+	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('Active', 'Defective')),
+	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00,
     Received_Date DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
 );
+-- Create a filtered unique index for Serial_Number to allow multiple NULLs
+CREATE UNIQUE INDEX UQ_Serial_Number 
+ON Stock (Serial_Number)
+WHERE Serial_Number IS NOT NULL;
+
 
 -- Create Challan Table
 CREATE TABLE Challan (

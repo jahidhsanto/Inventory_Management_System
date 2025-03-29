@@ -42,6 +42,15 @@ namespace STORE_FINAL.Role_StoreIncharge
         protected global::System.Web.UI.WebControls.TextBox txtSerialNumber;
 
         /// <summary>
+        /// txtQuantity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtQuantity;
+
+        /// <summary>
         /// txtRackNumber control.
         /// </summary>
         /// <remarks>

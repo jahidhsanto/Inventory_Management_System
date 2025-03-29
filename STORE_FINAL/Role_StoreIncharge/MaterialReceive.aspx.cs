@@ -74,6 +74,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 string rackNumber = txtRackNumber.Text.Trim();
                 string shelfNumber = txtShelfNumber.Text.Trim();
                 string status = ddlStatus.SelectedValue;
+                string quantityText = txtQuantity.Text.Trim();
 
                 // Validate that all required fields are filled in
                 if (materialID == "0")
@@ -101,13 +102,18 @@ namespace STORE_FINAL.Role_StoreIncharge
                     ShowMessage("Please select a valid Status.", false);
                     return;
                 }
+                if (string.IsNullOrEmpty(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
+                {
+                    ShowMessage("Please enter a valid quantity.", false);
+                    return;
+                }
 
                 string connString = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     string query = @"
                                     INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity, Received_Date) 
-                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, 1, GETDATE())";
+                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, @Quantity, GETDATE())";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@MaterialID", materialID);
@@ -115,6 +121,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     cmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                     cmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
                     cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
 
                     conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
