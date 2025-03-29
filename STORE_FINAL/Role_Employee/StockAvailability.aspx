@@ -33,9 +33,9 @@
 
                 <asp:TemplateField HeaderText="Stock Status">
                     <ItemTemplate>
-                        <span class='<%# Eval("Stock_Status") == "In Stock" ? "badge rounded-pill bg-success" : 
-                        Eval("Stock_Status") == "Low Stock" ? "badge rounded-pill bg-warning text-dark" : 
-                        "badge rounded-pill bg-danger" %>'>
+                        <span class='<%# Eval("Stock_Status").ToString().Trim() == "In Stock" ? "badge rounded-pill bg-success" : 
+                                Eval("Stock_Status").ToString().Trim()  == "Low Stock" ? "badge rounded-pill bg-warning text-dark" : 
+                                "badge rounded-pill bg-danger" %>'>
                             <%# Eval("Stock_Status") %>
                         </span>
                     </ItemTemplate>

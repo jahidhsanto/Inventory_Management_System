@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Forms
+namespace STORE_FINAL.Role_StoreIncharge
 {
 
 
-    public partial class ApproveRequisition
+    public partial class RequisitionList
     {
 
         /// <summary>
@@ -24,13 +24,13 @@ namespace STORE_FINAL.Forms
         protected global::System.Web.UI.WebControls.Panel PanelFilters;
 
         /// <summary>
-        /// ddlStatus control.
+        /// ddlStoreStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStoreStatus;
 
         /// <summary>
         /// btnFilter control.
@@ -51,12 +51,12 @@ namespace STORE_FINAL.Forms
         protected global::System.Web.UI.WebControls.Panel Panel1;
 
         /// <summary>
-        /// ApproveRequisitionGridView control.
+        /// RequisitionApprovalGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ApproveRequisitionGridView;
+        protected global::System.Web.UI.WebControls.GridView RequisitionApprovalGridView;
     }
 }

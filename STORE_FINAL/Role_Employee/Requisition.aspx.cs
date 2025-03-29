@@ -17,7 +17,6 @@ namespace STORE_FINAL.Role_Employee
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Ensure only admins can access this page
             if (Session["Username"] == null || Session["Role"] == null ||
                 Session["Role"].ToString() != "Employee" && Session["Role"].ToString() != "Department Head")
             {

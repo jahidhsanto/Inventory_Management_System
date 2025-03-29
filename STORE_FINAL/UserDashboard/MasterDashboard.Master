@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="StyleSheet.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 
     <%--select2--%>
@@ -52,8 +53,14 @@
         </asp:Panel>
 
         <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
-            <a href="/Role_DepartmentHead/RequisitionApproval.aspx">📋<span>Approval Requisition</span></a>
+            <a href="/Role_DepartmentHead/RequisitionApproval.aspx">✅<span>Approval Requisition</span></a>
             <%--<a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>--%>
+        </asp:Panel>
+
+        <asp:Panel ID="StoreInChargeMenu" runat="server" Visible="true">
+            <a href="/Role_StoreIncharge/MaterialList.aspx">📊<span>Material List</span></a>
+            <%--<a href="/Role_StoreIncharge/MaterialList.aspx">🏢<span>View Stock</span></a>--%>
+            <a href="/Role_StoreIncharge/RequisitionList.aspx">📑<span>Pending Requisitions</span></a>
         </asp:Panel>
 
         <hr />
@@ -198,11 +205,11 @@
 
         function logout() {
             event.preventDefault();
-            
+
             var form = document.createElement("form");
             form.method = "POST"; // POST method
             form.action = "/UserDashboard/Logout.aspx"; // Redirect to a logout page (we'll create this page)
-            
+
             // Append the form to the document and submit it
             document.body.appendChild(form);
             form.submit();

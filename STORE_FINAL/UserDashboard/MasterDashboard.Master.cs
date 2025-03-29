@@ -1,4 +1,5 @@
-﻿using System;
+﻿using STORE_FINAL.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -19,8 +20,7 @@ namespace STORE_FINAL.UserDashboard
                 adminMenu.Visible = (role == "Admin");
                 employeeMenu.Visible = (role == "Employee" || role == "Department Head");
                 departmentHeadMenu.Visible = (role == "Department Head");
-
-                //storePersonMenu.Visible = (role == "Store InCharge");
+                StoreInChargeMenu.Visible = (role == "Store InCharge");
             }
         }
 

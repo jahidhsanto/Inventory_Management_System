@@ -121,10 +121,7 @@
     <Content Include="Dashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
-    <Content Include="Forms\AddNewMaterial.aspx" />
-    <Content Include="Forms\ApproveRequisition.aspx" />
     <Content Include="Forms\Challan.aspx" />
-    <Content Include="Forms\MaterialApprovalForm.aspx" />
     <Content Include="Forms\ReceiveStock.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\LoGo.png" />
@@ -132,7 +129,6 @@
     <Content Include="Pages\ChallanList.aspx" />
     <Content Include="Pages\LocationDetails.aspx" />
     <Content Include="Pages\LocationReport.aspx" />
-    <Content Include="Pages\Material.aspx" />
     <Content Include="Pages\MaterialDetails.aspx" />
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
@@ -147,6 +143,10 @@
     <Content Include="Role_DepartmentHead\RequisitionApproval.aspx" />
     <Content Include="Role_Employee\Requisition.aspx" />
     <Content Include="Role_Employee\StockAvailability.aspx" />
+    <Content Include="Role_StoreIncharge\MaterialDetail.aspx" />
+    <Content Include="Role_StoreIncharge\MaterialList.aspx" />
+    <Content Include="Role_StoreIncharge\MaterialReceive.aspx" />
+    <Content Include="Role_StoreIncharge\RequisitionList.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -245,33 +245,12 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddNewMaterial.aspx.cs">
-      <DependentUpon>AddNewMaterial.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\AddNewMaterial.aspx.designer.cs">
-      <DependentUpon>AddNewMaterial.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ApproveRequisition.aspx.cs">
-      <DependentUpon>ApproveRequisition.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\ApproveRequisition.aspx.designer.cs">
-      <DependentUpon>ApproveRequisition.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Challan.aspx.cs">
       <DependentUpon>Challan.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Forms\Challan.aspx.designer.cs">
       <DependentUpon>Challan.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MaterialApprovalForm.aspx.cs">
-      <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\MaterialApprovalForm.aspx.designer.cs">
-      <DependentUpon>MaterialApprovalForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Forms\ReceiveStock.aspx.cs">
       <DependentUpon>ReceiveStock.aspx</DependentUpon>
@@ -306,13 +285,6 @@
     </Compile>
     <Compile Include="Pages\LocationReport.aspx.designer.cs">
       <DependentUpon>LocationReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Material.aspx.cs">
-      <DependentUpon>Material.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Material.aspx.designer.cs">
-      <DependentUpon>Material.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\MaterialDetails.aspx.cs">
       <DependentUpon>MaterialDetails.aspx</DependentUpon>
@@ -412,6 +384,34 @@
     </Compile>
     <Compile Include="Role_Employee\StockAvailability.aspx.designer.cs">
       <DependentUpon>StockAvailability.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialDetail.aspx.cs">
+      <DependentUpon>MaterialDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialDetail.aspx.designer.cs">
+      <DependentUpon>MaterialDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialList.aspx.cs">
+      <DependentUpon>MaterialList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialList.aspx.designer.cs">
+      <DependentUpon>MaterialList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialReceive.aspx.cs">
+      <DependentUpon>MaterialReceive.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialReceive.aspx.designer.cs">
+      <DependentUpon>MaterialReceive.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\RequisitionList.aspx.cs">
+      <DependentUpon>RequisitionList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\RequisitionList.aspx.designer.cs">
+      <DependentUpon>RequisitionList.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

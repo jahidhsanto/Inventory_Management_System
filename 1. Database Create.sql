@@ -144,13 +144,15 @@ CREATE TABLE Requisition (
     Employee_ID INT,
     Material_ID INT,
     Quantity INT NOT NULL,
-    Status NVARCHAR(50) CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Delivered', 'Not Available')),
-	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Delivered', 'Out of Stock', 'Ordered')),
+    Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
+	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
     Created_Date DATETIME DEFAULT GETDATE(),
     Approved_By INT,
+	Store_Status_By INT,
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-    FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID)
+    FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
+	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
 );
 
 -- Create Stock Table

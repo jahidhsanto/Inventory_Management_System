@@ -7,21 +7,57 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Forms
+namespace STORE_FINAL.Role_StoreIncharge
 {
 
 
-    public partial class MaterialApprovalForm
+    public partial class MaterialReceive
     {
 
         /// <summary>
-        /// ddlRequisitions control.
+        /// ddlMaterial control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlRequisitions;
+        protected global::System.Web.UI.WebControls.DropDownList ddlMaterial;
+
+        /// <summary>
+        /// ddlPartID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPartID;
+
+        /// <summary>
+        /// txtSerialNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtSerialNumber;
+
+        /// <summary>
+        /// txtRackNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRackNumber;
+
+        /// <summary>
+        /// txtShelfNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtShelfNumber;
 
         /// <summary>
         /// ddlStatus control.
@@ -33,22 +69,13 @@ namespace STORE_FINAL.Forms
         protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
 
         /// <summary>
-        /// txtRemarks control.
+        /// btnAddStock control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRemarks;
-
-        /// <summary>
-        /// btnApprove control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnApprove;
+        protected global::System.Web.UI.WebControls.Button btnAddStock;
 
         /// <summary>
         /// lblMessage control.

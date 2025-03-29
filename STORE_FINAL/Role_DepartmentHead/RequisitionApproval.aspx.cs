@@ -108,10 +108,21 @@ namespace STORE_FINAL.Role_DepartmentHead
 
             string query = @"
                             UPDATE Requisition 
-                            SET Status = @Status, Approved_By = @DepartmentHeadID 
-                            WHERE Requisition_ID = @RequisitionID";
+                            SET Status = @Status, Approved_By = @DepartmentHeadID";
 
-            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))
+            if (status == "Approved")
+            {
+                query += ", Store_Status = 'Pending'"; // Update Store_Status to 'Pending' when approved
+            }
+            else if (status == "Pending" || status == "Rejected")
+            {
+                query += ", Store_Status = NULL"; // Set Store_Status to NULL for Pending or Rejected
+            }
+
+            query += " WHERE Requisition_ID = @RequisitionID"; // Ensure we're updating the correct requisition
+
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
