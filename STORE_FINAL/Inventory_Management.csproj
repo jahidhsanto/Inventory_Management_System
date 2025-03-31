@@ -139,7 +139,9 @@
     <Content Include="Role_DepartmentHead\RequisitionApproval.aspx" />
     <Content Include="Role_Employee\Requisition.aspx" />
     <Content Include="Role_Employee\StockAvailability.aspx" />
+    <Content Include="Role_StoreIncharge\ClearTempData.aspx" />
     <Content Include="Role_StoreIncharge\MaterialDelivery.aspx" />
+    <Content Include="Role_StoreIncharge\MaterialDelivery_Test.aspx" />
     <Content Include="Role_StoreIncharge\MaterialDetail.aspx" />
     <Content Include="Role_StoreIncharge\MaterialList.aspx" />
     <Content Include="Role_StoreIncharge\MaterialReceive.aspx" />
@@ -375,12 +377,26 @@
     <Compile Include="Role_Employee\StockAvailability.aspx.designer.cs">
       <DependentUpon>StockAvailability.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Role_StoreIncharge\ClearTempData.aspx.cs">
+      <DependentUpon>ClearTempData.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\ClearTempData.aspx.designer.cs">
+      <DependentUpon>ClearTempData.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Role_StoreIncharge\MaterialDelivery.aspx.cs">
       <DependentUpon>MaterialDelivery.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Role_StoreIncharge\MaterialDelivery.aspx.designer.cs">
       <DependentUpon>MaterialDelivery.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialDelivery_Test.aspx.cs">
+      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\MaterialDelivery_Test.aspx.designer.cs">
+      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
     </Compile>
     <Compile Include="Role_StoreIncharge\MaterialDetail.aspx.cs">
       <DependentUpon>MaterialDetail.aspx</DependentUpon>

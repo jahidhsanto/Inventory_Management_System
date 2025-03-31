@@ -11,7 +11,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 {
 
 
-    public partial class MaterialDelivery
+    public partial class MaterialDelivery_Test
     {
 
         /// <summary>
@@ -31,6 +31,42 @@ namespace STORE_FINAL.Role_StoreIncharge
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlEmployee;
+
+        /// <summary>
+        /// lblMaterialName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMaterialName;
+
+        /// <summary>
+        /// lblRequestedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRequestedBy;
+
+        /// <summary>
+        /// lblRequestedDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRequestedDate;
+
+        /// <summary>
+        /// imgRequisition control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgRequisition;
 
         /// <summary>
         /// ddlStock control.

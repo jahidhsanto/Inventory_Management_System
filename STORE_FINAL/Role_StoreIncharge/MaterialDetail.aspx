@@ -72,6 +72,7 @@
 
     <asp:GridView ID="gvMaterialTracking" runat="server" AutoGenerateColumns="False" CssClass="table table-bordered">
         <Columns>
+            <asp:BoundField DataField="Stock_ID" HeaderText="Stock ID" />
             <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
             <asp:BoundField DataField="Rack_Number" HeaderText="Rack Number" />
             <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf Number" />

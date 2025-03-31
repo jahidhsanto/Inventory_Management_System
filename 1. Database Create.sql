@@ -162,7 +162,7 @@ CREATE TABLE Stock (
     Serial_Number NVARCHAR(255),
 	Rack_Number NVARCHAR(50) NOT NULL,
     Shelf_Number NVARCHAR(50) NOT NULL,
-	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('Active', 'Defective')),
+	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('Available', 'Delivered')),
 	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00,
     Received_Date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),

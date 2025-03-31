@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -18,104 +19,138 @@ namespace STORE_FINAL.Role_StoreIncharge
         {
             if (!IsPostBack)
             {
-                // If session key doesn't exist, create a new one
-                if (Session["DeliverySessionID"] == null)
+                //// If session key doesn't exist, create a new one
+                //if (Session["DeliverySessionID"] == null)
+                //{
+                //    Session["DeliverySessionID"] = Guid.NewGuid().ToString();  // Unique session key
+                //}
+
+                // Get the session ID from the hidden field sent by JavaScript
+                if (Request.Form["hfDeliverySessionID"] != null)
                 {
-                    Session["DeliverySessionID"] = Guid.NewGuid().ToString();  // Unique session key
+                    Session["DeliverySessionID"] = Request.Form["hfDeliverySessionID"];
+                }
+                else if (Session["DeliverySessionID"] == null)
+                {
+                    Session["DeliverySessionID"] = Guid.NewGuid().ToString();
                 }
 
-                LoadRequisitionDropdown();
-                LoadEmployeeDropdown();
-                LoadStockDropdown();
-                LoadMaterialDropdown();
-                LoadDeliveryItems();
+
+                //LoadRequisitionDropdown();
+                //LoadEmployeeDropdown();
+                //LoadStockDropdown();
+                //LoadMaterialDropdown();
+                //LoadDeliveryItems();
+
+                LoadRequisitions();
+                LoadEmployees();
             }
         }
 
         // 1️⃣ Load Dropdowns
-        void LoadRequisitionDropdown()
+        private void LoadRequisitions()
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                                
+            string query = "SELECT Requisition_ID, CONCAT('Req#', Requisition_ID, ' - ', Status) AS ReqDetails FROM Requisition WHERE Status = 'Approved'";
+            DataTable dt = GetData(query);
 
-                string query = "SELECT DISTINCT r.Requisition_ID, CONCAT(r.Requisition_ID, ' - ', m.Materials_Name) AS Materials_Name FROM Requisition r JOIN Material m ON r.Material_ID = m.Material_ID WHERE Store_Status = 'Processing';";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+            ddlRequisition.DataSource = dt;
+            ddlRequisition.DataTextField = "ReqDetails";
+            ddlRequisition.DataValueField = "Requisition_ID";
+            ddlRequisition.DataBind();
 
-                DataTable dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
-
-                ddlRequisition.DataSource = dt;
-                ddlRequisition.DataTextField = "Materials_Name";
-                ddlRequisition.DataValueField = "Requisition_ID";
-                ddlRequisition.DataBind();
-
-                ddlRequisition.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Requisition --", "0"));
-            }
+            ddlRequisition.Items.Insert(0, new ListItem("-- Select Requisition --", "0"));
         }
-        void LoadEmployeeDropdown()
+        private void LoadEmployees()
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = "select Employee_ID, Name, CONCAT(Employee_ID, ' - ', Name) AS List from Employee;";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+            string query = "select Employee_ID, CONCAT(Employee_ID, ' - ', Name) AS Name from Employee";
+            DataTable dt = GetData(query);
 
-                DataTable dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
+            ddlEmployee.DataSource = dt;
+            ddlEmployee.DataTextField = "Name";
+            ddlEmployee.DataValueField = "Employee_ID";
+            ddlEmployee.DataBind();
 
-                ddlEmployee.DataSource = dt;
-                ddlEmployee.DataTextField = "List";
-                ddlEmployee.DataValueField = "Employee_ID";
-                ddlEmployee.DataBind();
-
-                ddlEmployee.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Employee --", "0"));
-            }
+            ddlEmployee.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
         }
-        void LoadStockDropdown()
+        protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
+            int requisitionID = Convert.ToInt32(ddlRequisition.SelectedValue);
+            if (requisitionID > 0)
             {
-                string query = "select Stock_ID from Stock;";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+                string query = @"
+                                SELECT DISTINCT M.Material_ID, M.Materials_Name 
+                                FROM Requisition R
+                                INNER JOIN Material M ON R.Material_ID = M.Material_ID
+                                WHERE R.Requisition_ID = @Requisition_ID";
 
-                DataTable dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
+                SqlParameter[] parameters = {
+            new SqlParameter("@Requisition_ID", requisitionID)
+        };
 
-                ddlStock.DataSource = dt;
-                ddlStock.DataTextField = "Stock_ID";
-                ddlStock.DataValueField = "Stock_ID";
-                ddlStock.DataBind();
-
-                ddlStock.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Stock ID --", "0"));
-            }
-        }
-        void LoadMaterialDropdown()
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = "select Material_ID, Materials_Name from Material;";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
-
-                DataTable dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
+                DataTable dt = GetData(query, parameters);
 
                 ddlMaterial.DataSource = dt;
                 ddlMaterial.DataTextField = "Materials_Name";
                 ddlMaterial.DataValueField = "Material_ID";
                 ddlMaterial.DataBind();
 
-                ddlMaterial.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Material --", "0"));
+                ddlMaterial.Items.Insert(0, new ListItem("-- Select Material --", "0"));
             }
         }
+        protected void ddlMaterial_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int materialID = Convert.ToInt32(ddlMaterial.SelectedValue);
+            if (materialID > 0)
+            {
+                string query = @"
+                                SELECT Stock_ID, 
+                                       ISNULL(Serial_Number, 'No Serial') AS Serial_Number 
+                                FROM Stock 
+                                WHERE Material_ID = @Material_ID 
+                                  AND Status = 'Available' 
+                                  AND Quantity > 0";
+
+                SqlParameter[] parameters = {
+            new SqlParameter("@Material_ID", materialID)
+        };
+
+                DataTable dt = GetData(query, parameters);
+
+                ddlStock.DataSource = dt;
+                ddlStock.DataTextField = "Serial_Number";
+                ddlStock.DataValueField = "Stock_ID";
+                ddlStock.DataBind();
+
+                ddlStock.Items.Insert(0, new ListItem("-- Select Stock --", "0"));
+            }
+        }
+        private DataTable GetData(string query, SqlParameter[] parameters = null)
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    if (parameters != null)
+                    {
+                        cmd.Parameters.AddRange(parameters);
+                    }
+
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        return dt;
+                    }
+                }
+            }
+        }
+
 
         // 2️⃣ Insert Selected Item into Temp_Delivery
         protected void btnAddToDelivery_Click(object sender, EventArgs e)
         {
-            string sessionID = Session["DeliverySessionID"].ToString();  // Get fixed session key
+            string sessionID = Session["DeliverySessionID"].ToString();  // Get tab-specific session ID
             //string sessionID = Session.SessionID;
             int stockID = int.Parse(ddlStock.SelectedValue);
             int materialID = int.Parse(ddlMaterial.SelectedValue);
@@ -168,46 +203,76 @@ namespace STORE_FINAL.Role_StoreIncharge
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction();
+                //SqlTransaction transaction = conn.BeginTransaction();
 
+                int challanID = 0; // ✅ Declare challanID once
                 try
                 {
-                    // 1️⃣ Insert into Challan
+                    //1️⃣ Insert into Challan
                     string insertChallan = "INSERT INTO Challan (Requisition_ID, Received_Employee_ID, Status, Remarks) " +
                                            "VALUES (@Requisition_ID, @Employee_ID, 'Delivered', 'All items delivered'); " +
                                            "SELECT SCOPE_IDENTITY();";
 
-                    SqlCommand cmd = new SqlCommand(insertChallan, conn, transaction);
+                    SqlCommand cmd = new SqlCommand(insertChallan, conn/*, transaction*/);
                     cmd.Parameters.AddWithValue("@Requisition_ID", requisitionID);
                     cmd.Parameters.AddWithValue("@Employee_ID", employeeID);
-                    int challanID = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    object result = cmd.ExecuteScalar();
+                    challanID = result != null ? Convert.ToInt32(result) : 0; // ✅ No duplicate declaration
 
                     // 2️⃣ Move items to Challan_Items
                     string insertItems = "INSERT INTO Challan_Items (Challan_ID, Stock_ID, Material_ID, Serial_Number, Delivered_Quantity) " +
                                          "SELECT @Challan_ID, Stock_ID, Material_ID, Serial_Number, Delivered_Quantity FROM Temp_Delivery WHERE Session_ID = @Session_ID";
-                    SqlCommand cmdItems = new SqlCommand(insertItems, conn, transaction);
+                    SqlCommand cmdItems = new SqlCommand(insertItems, conn/*, transaction*/);
                     cmdItems.Parameters.AddWithValue("@Challan_ID", challanID);
                     cmdItems.Parameters.AddWithValue("@Session_ID", sessionID);
                     cmdItems.ExecuteNonQuery();
 
                     // 3️⃣ Update Stock
-                    new SqlCommand("UPDATE Stock SET Quantity = Quantity - Delivered_Quantity FROM Stock S JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID WHERE TD.Session_ID = @Session_ID AND TD.Serial_Number IS NULL", conn, transaction).ExecuteNonQuery();
-                    new SqlCommand("UPDATE Stock SET Status = 'Delivered' WHERE Stock_ID IN (SELECT Stock_ID FROM Temp_Delivery WHERE Serial_Number IS NOT NULL AND Session_ID = @Session_ID)", conn, transaction).ExecuteNonQuery();
-                    new SqlCommand("UPDATE Stock SET Status = 'Delivered' WHERE Quantity = 0", conn, transaction).ExecuteNonQuery();
+                    //new SqlCommand("UPDATE Stock SET Quantity = Quantity - Delivered_Quantity FROM Stock S JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID WHERE TD.Session_ID = @Session_ID AND TD.Serial_Number IS NULL", conn, transaction).ExecuteNonQuery();
+                    //new SqlCommand("UPDATE Stock SET Status = 'Delivered' WHERE Stock_ID IN (SELECT Stock_ID FROM Temp_Delivery WHERE Serial_Number IS NOT NULL AND Session_ID = @Session_ID)", conn, transaction).ExecuteNonQuery();
+                    //new SqlCommand("UPDATE Stock SET Status = 'Delivered' WHERE Quantity = 0", conn, transaction).ExecuteNonQuery();
+
+                    string updateStockWithSerial = @"
+                                                    UPDATE Stock 
+                                                    SET Status = 'Delivered', Quantity = Quantity - TD.Delivered_Quantity
+                                                    FROM Stock S
+                                                    JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
+                                                    WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
+                    SqlCommand cmdUpdateStockWithSerial = new SqlCommand(updateStockWithSerial, conn/*, transaction*/);
+                    cmdUpdateStockWithSerial.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdUpdateStockWithSerial.ExecuteNonQuery();
+
+                    string updateStockWithoutSerial = @"
+                                                        UPDATE Stock 
+                                                        SET Quantity = Quantity - TD.Delivered_Quantity
+                                                        FROM Stock S
+                                                        JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
+                                                        WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NULL;";
+                    SqlCommand cmdUpdateStockWithoutSerial = new SqlCommand(updateStockWithoutSerial, conn/*, transaction*/);
+                    cmdUpdateStockWithoutSerial.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdUpdateStockWithoutSerial.ExecuteNonQuery();
+
+                    string markStockAsDelivered = @"
+                                                    UPDATE Stock 
+                                                    SET Status = 'Delivered' 
+                                                    WHERE Quantity = 0;";
+                    SqlCommand cmdMarkStockAsDelivered = new SqlCommand(markStockAsDelivered, conn/*, transaction*/);
+                    cmdMarkStockAsDelivered.ExecuteNonQuery();
 
                     // 4️⃣ Clear Temp_Delivery
-                    new SqlCommand("DELETE FROM Temp_Delivery WHERE Session_ID = @Session_ID", conn, transaction).ExecuteNonQuery();
+                    new SqlCommand("DELETE FROM Temp_Delivery WHERE Session_ID = @Session_ID", conn/*, transaction*/).ExecuteNonQuery();
 
                     // 5️⃣ Reset Session Key for Next Transaction
                     Session["DeliverySessionID"] = Guid.NewGuid().ToString();
 
-                    transaction.Commit();
+                    //transaction.Commit();
                     Response.Write("<script>alert('Delivery Successful');</script>");
                     LoadDeliveryItems();
                 }
                 catch
                 {
-                    transaction.Rollback();
+                    //transaction.Rollback();
                 }
             }
         }
