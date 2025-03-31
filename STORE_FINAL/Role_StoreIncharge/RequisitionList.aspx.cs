@@ -32,15 +32,10 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             string query = @"
                             SELECT 
-                                r.Requisition_ID, 
-	                            m.Materials_Name, 
-                                r.Quantity, 
-	                            r.Created_Date, 
-                                emp.Name AS Requested_By,
-                                r.Status AS Dept_Status, 
-                                r.Store_Status, 
-                                eh.Name AS Dept_Head,
-                                r.Store_Status_By
+                                r.Requisition_ID, m.Materials_Name, r.Quantity, 
+	                            r.Created_Date, emp.Name AS Requested_By, r.Status AS Dept_Status, 
+                                r.Store_Status, eh.Name AS Dept_Head, r.Store_Status_By, 
+	                            SUM(s.Quantity) AS Stock_Quantity
                             FROM requisition r
                             JOIN Material m 
                                 ON r.Material_ID = m.Material_ID
@@ -50,12 +45,18 @@ namespace STORE_FINAL.Role_StoreIncharge
                                 ON emp.Department_ID = d.Department_ID
                             LEFT JOIN Employee eh 
                                 ON d.Department_Head_ID = eh.Employee_ID
+                            JOIN Stock s
+	                            ON r.Material_ID = s.Material_ID
                             WHERE r.Status = 'Approved'";
 
             if (status != "All")
             {
                 query += " AND r.Store_Status = @Status";
             }
+
+            query += " GROUP BY r.Requisition_ID, m.Materials_Name, r.Quantity, " +
+                "r.Created_Date, emp.Name, r.Status, " +
+                "r.Store_Status, eh.Name, r.Store_Status_By;";
 
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))

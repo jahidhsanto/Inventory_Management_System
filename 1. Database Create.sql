@@ -172,17 +172,29 @@ CREATE UNIQUE INDEX UQ_Serial_Number
 ON Stock (Serial_Number)
 WHERE Serial_Number IS NOT NULL;
 
-
 -- Create Challan Table
 CREATE TABLE Challan (
     Challan_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Requisition_ID INT,
-    Employee_ID INT,
+    Requisition_ID INT NOT NULL,
+    Received_Employee_ID INT NOT NULL,
     Delivery_Date DATETIME DEFAULT GETDATE(),
-    Status NVARCHAR(50) CHECK (Status IN ('Dispatched', 'Delivered', 'Rejected')),
+    Status NVARCHAR(50) CHECK (Status IN ('Delivered')),
     Remarks NVARCHAR(1000),
     FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID),
-    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID)
+    FOREIGN KEY (Received_Employee_ID) REFERENCES Employee(Employee_ID)
+);
+
+-- Create Challan_Items Table
+CREATE TABLE Challan_Items (
+    Challan_Item_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Challan_ID INT NOT NULL,
+    Stock_ID INT NOT NULL,
+    Material_ID INT NOT NULL,
+    Serial_Number NVARCHAR(50) NULL,
+    Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0),
+    FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID),
+    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );
 
 -- Create Purchase_Request Table
@@ -252,4 +264,15 @@ CREATE TABLE Warranty (
     Status NVARCHAR(50) CHECK (Status IN ('Under Warranty', 'Expired')),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
     FOREIGN KEY (Serial_Number) REFERENCES Stock(Serial_Number)
+);
+
+CREATE TABLE Temp_Delivery (
+    Temp_ID INT IDENTITY(1,1) PRIMARY KEY, 
+    Stock_ID INT NOT NULL, 
+    Material_ID INT NOT NULL, 
+    Serial_Number NVARCHAR(50) NULL,  
+    Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0), 
+    Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
+    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );

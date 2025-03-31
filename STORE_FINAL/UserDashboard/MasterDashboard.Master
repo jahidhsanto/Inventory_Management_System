@@ -62,6 +62,7 @@
             <%--<a href="/Role_StoreIncharge/MaterialList.aspx">🏢<span>View Stock</span></a>--%>
             <a href="/Role_StoreIncharge/RequisitionList.aspx">📑<span>Pending Requisitions</span></a>
             <a href="/Role_StoreIncharge/MaterialReceive.aspx"><i class="fas fa-box"></i><span>Receive Materials</span></a>
+            <a href="/Role_StoreIncharge/MaterialDelivery.aspx">🚚<span>Deliver Materials</span></a>
         </asp:Panel>
 
         <hr />

@@ -40,6 +40,7 @@
                     <asp:BoundField DataField="Requisition_ID" HeaderText="Req ID" />
                     <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                     <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="Stock_Quantity" HeaderText="Stock" />
                     <asp:BoundField DataField="Requested_By" HeaderText="Requested By" />
                     <asp:BoundField DataField="Created_Date" HeaderText="Req Date" DataFormatString="{0:yyyy-MM-dd}" />
                     <asp:BoundField DataField="Dept_Head" HeaderText="Reviewed By" />

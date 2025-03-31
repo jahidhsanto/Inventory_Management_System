@@ -7,12 +7,39 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace STORE_FINAL.Forms
+namespace STORE_FINAL.Role_StoreIncharge
 {
 
 
-    public partial class ReceiveStock
+    public partial class MaterialDelivery
     {
+
+        /// <summary>
+        /// ddlRequisition control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlRequisition;
+
+        /// <summary>
+        /// ddlEmployee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEmployee;
+
+        /// <summary>
+        /// ddlStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlStock;
 
         /// <summary>
         /// ddlMaterial control.
@@ -24,15 +51,6 @@ namespace STORE_FINAL.Forms
         protected global::System.Web.UI.WebControls.DropDownList ddlMaterial;
 
         /// <summary>
-        /// ddlPartID control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPartID;
-
-        /// <summary>
         /// txtSerialNumber control.
         /// </summary>
         /// <remarks>
@@ -42,48 +60,39 @@ namespace STORE_FINAL.Forms
         protected global::System.Web.UI.WebControls.TextBox txtSerialNumber;
 
         /// <summary>
-        /// txtRackNumber control.
+        /// txtQuantity control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRackNumber;
+        protected global::System.Web.UI.WebControls.TextBox txtQuantity;
 
         /// <summary>
-        /// txtShelfNumber control.
+        /// btnAddToDelivery control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtShelfNumber;
+        protected global::System.Web.UI.WebControls.Button btnAddToDelivery;
 
         /// <summary>
-        /// ddlStatus control.
+        /// gvDeliveryItems control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.GridView gvDeliveryItems;
 
         /// <summary>
-        /// btnAddStock control.
+        /// btnDeliver control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddStock;
-
-        /// <summary>
-        /// lblMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMessage;
+        protected global::System.Web.UI.WebControls.Button btnDeliver;
     }
 }

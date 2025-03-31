@@ -14,6 +14,12 @@ namespace STORE_FINAL.Role_StoreIncharge
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Username"] == null || Session["Role"] == null ||
+                Session["Role"].ToString() != "Store InCharge")
+            {
+                Response.Redirect("~/");
+            }
+
             if (!IsPostBack)
             {
                 LoadMaterials();
