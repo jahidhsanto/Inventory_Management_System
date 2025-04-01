@@ -7,7 +7,7 @@
 
     <div class="container mt-4">
         <h2 class="text-center mb-4">📦 Material Delivery</h2>
-
+        <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3"></asp:Label>
         <!-- Requisition Selection & Details -->
         <div class="row">
             <!-- Left Side: Requisition Details -->
@@ -60,7 +60,7 @@
                 <!-- 🔄 UpdatePanel for Requisition Image -->
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <label><strong>Serial Number:</strong></label>
+                        <label ID="lblSerialNumber" runat="server"><strong>Serial Number:</strong></label>
                         <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2"></asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
@@ -71,7 +71,7 @@
             <div class="col-md-3">
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <label><strong>Stock Location:</strong></label>
+                        <label ID="lblLocation" runat="server"><strong>Stock Location:</strong></label>
                         <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2"></asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
@@ -103,9 +103,7 @@
         <div class="table-responsive">
             <asp:GridView ID="gvDeliveryItems" runat="server" CssClass="table table-bordered text-center" AutoGenerateColumns="False">
                 <Columns>
-                    <asp:BoundField DataField="Temp_ID" HeaderText="Temp ID" />
                     <asp:BoundField DataField="Material_ID" HeaderText="Material ID" />
-                    <asp:BoundField DataField="Stock_ID" HeaderText="Stock ID" />
                     <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
                     <asp:BoundField DataField="Delivered_Quantity" HeaderText="Quantity" />
                     <asp:CommandField ShowDeleteButton="True" />

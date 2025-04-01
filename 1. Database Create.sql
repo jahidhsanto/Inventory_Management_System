@@ -271,7 +271,6 @@ CREATE TABLE Temp_Delivery (
     Temp_ID INT IDENTITY(1,1) PRIMARY KEY, 
     Stock_ID INT NOT NULL, 
     Material_ID INT NOT NULL, 
-    Serial_Number NVARCHAR(50) NULL,  
     Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0), 
     Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),

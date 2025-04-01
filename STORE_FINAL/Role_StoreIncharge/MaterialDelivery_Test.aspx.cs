@@ -30,6 +30,9 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                 LoadRequisitions();
                 LoadEmployees();
+
+                // Display the DeliverySessionID in the label
+                lblMessage.Text = "Session ID: " + Session["DeliverySessionID"].ToString();
             }
         }
         private DataTable GetData(string query, SqlParameter[] parameters = null)
@@ -56,7 +59,11 @@ namespace STORE_FINAL.Role_StoreIncharge
         // 1️⃣ Load Dropdowns
         private void LoadRequisitions()
         {
-            string query = "SELECT Requisition_ID, CONCAT('Req#', Requisition_ID, ' - ', Status) AS ReqDetails FROM Requisition WHERE Status = 'Approved'";
+            string query = @"SELECT R.Requisition_ID, CONCAT('Req#', R.Requisition_ID, ' - ', M.Materials_Name, ' - ', E.Name) AS ReqDetails 
+                            FROM Requisition R
+                            INNER JOIN Material M ON R.Material_ID = M.Material_ID
+                            JOIN Employee E ON R.Employee_ID = E.Employee_ID
+                            WHERE R.Status = 'Approved' AND R.Store_Status = 'Processing';";
             DataTable dt = GetData(query);
 
             ddlRequisition.DataSource = dt;
@@ -78,13 +85,6 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             ddlEmployee.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
         }
-        protected void ddlLocation_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ddlLocation.SelectedValue != "0")
-            {
-                ddlSerialNumber.SelectedValue = ddlLocation.SelectedValue;
-            }
-        }
 
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -93,6 +93,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             lblRequestedBy.Text = "-";
             lblRequestedDate.Text = "-";
             ddlSerialNumber.Items.Clear();
+            ddlLocation.Items.Clear();
             txtQuantity.Text = "";
 
             int requisitionID = Convert.ToInt32(ddlRequisition.SelectedValue);
@@ -155,12 +156,26 @@ namespace STORE_FINAL.Role_StoreIncharge
                     {
                         txtQuantity.Text = "1";
                         txtQuantity.Enabled = false;
+
+                        //lblSerialNumber.Visible = true;
+                        //ddlSerialNumber.Visible = true;
+                        ddlSerialNumber.Enabled = true;
+                        //lblLocation.Visible = false;
+                        //ddlLocation.Visible = false;
+                        ddlLocation.Enabled = false;
                     }
                     else  // Material does not require a serial number
                     {
                         txtQuantity.Text = "0";
                         txtQuantity.Enabled = true;
                         txtQuantity.Attributes["required"] = "true";
+
+                        //lblSerialNumber.Visible = false;
+                        //ddlSerialNumber.Visible = false;
+                        ddlSerialNumber.Enabled = false;
+                        //lblLocation.Visible = true;
+                        //ddlLocation.Visible = true;
+                        ddlLocation.Enabled = true;
                     }
                 }
                 else  // No material information found
@@ -168,38 +183,15 @@ namespace STORE_FINAL.Role_StoreIncharge
                     txtQuantity.Text = "0";
                     txtQuantity.Enabled = true;
                     txtQuantity.Attributes.Remove("required");
+
+                    //lblSerialNumber.Visible = false;
+                    //ddlSerialNumber.Visible = false;
+                    ddlSerialNumber.Enabled = false;
+                    //lblLocation.Visible = false;
+                    //ddlLocation.Visible = false;
+                    //lblLocation.Visible = false;
+                    ddlLocation.Enabled = false;
                 }
-
-
-
-
-                // 🔴 Update txtQuantity Based on Material Information
-                //if (dtStock.Rows.Count > 0)
-                //{
-                //    bool hasSerial = dtStock.AsEnumerable().Any(row => !string.IsNullOrEmpty(row["Serial_Number"].ToString()));
-
-                //    if (hasSerial)  // At least one stock item has a serial number
-                //    {
-                //        txtQuantity.Text = "1";
-                //        txtQuantity.Enabled = false;
-                //        txtQuantity.Attributes.Remove("required");
-                //        ddlSerialNumber.Enabled = true;
-                //    }
-                //    else  // All stock items have Serial_Number as NULL
-                //    {
-                //        txtQuantity.Text = "";
-                //        txtQuantity.Enabled = true;
-                //        txtQuantity.Attributes["required"] = "true";
-                //        ddlSerialNumber.Enabled = false;
-                //    }
-                //}
-                //else  // No stock items found
-                //{
-                //    txtQuantity.Text = "";
-                //    txtQuantity.Enabled = true;
-                //    txtQuantity.Attributes.Remove("required");
-                //    ddlSerialNumber.Enabled = false;
-                //}
             }
         }
 
@@ -214,9 +206,25 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
             
             string sessionID = Session["DeliverySessionID"].ToString();
-            int stockID = int.Parse(ddlSerialNumber.SelectedValue);
             int requisitionID = int.Parse(ddlRequisition.SelectedValue);
-            string serialNumber = ddlSerialNumber.SelectedValue;
+            //string serialNumber = ddlSerialNumber.SelectedValue;
+            int stockID = 0;
+
+            // Check and assign stock ID depends on selection option.
+            if (ddlSerialNumber.SelectedValue != "0")
+            {
+                stockID = int.Parse(ddlSerialNumber.SelectedValue);
+            }
+            else if (ddlLocation.SelectedValue != "0")
+            {
+                stockID = int.Parse(ddlLocation.SelectedValue);
+            }
+            else
+            {
+                // Show an error message if neither dropdown is selected
+                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select either a Serial Number or a Stock Location.');", true);
+                return; // Stop execution to prevent errors
+            }
 
             // 🔍 Check if Stock item is already in the table
             string checkQuery = "SELECT COUNT(*) FROM Temp_Delivery WHERE Stock_ID = @Stock_ID AND Session_ID = @Session_ID";
@@ -252,9 +260,9 @@ namespace STORE_FINAL.Role_StoreIncharge
             SqlParameter[] materialParams = { new SqlParameter("@Requisition_ID", requisitionID) };
             DataTable dtMaterial = GetData(materialQuery, materialParams);
 
+            // Handle case where no material is found for the requisition
             if (dtMaterial.Rows.Count == 0)
             {
-                // Handle case where no material is found for the requisition
                 ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select a Material.');", true);
                 return;
             }
@@ -263,14 +271,13 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Temp_Delivery (Stock_ID, Material_ID, Serial_Number, Delivered_Quantity, Session_ID) 
-                                VALUES (@Stock_ID, @Material_ID, @Serial_Number, @Delivered_Quantity, @Session_ID)";
+                string query = @"INSERT INTO Temp_Delivery (Stock_ID, Material_ID, Delivered_Quantity, Session_ID) 
+                                VALUES (@Stock_ID, @Material_ID, @Delivered_Quantity, @Session_ID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn)) 
                 { 
                     cmd.Parameters.AddWithValue("@Stock_ID", stockID);
                     cmd.Parameters.AddWithValue("@Material_ID", materialID);
-                    cmd.Parameters.AddWithValue("@Serial_Number", string.IsNullOrEmpty(serialNumber) ? (object)DBNull.Value : serialNumber);
                     cmd.Parameters.AddWithValue("@Delivered_Quantity", deliveredQuantity);
                     cmd.Parameters.AddWithValue("@Session_ID", sessionID);
 
@@ -289,7 +296,10 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = "SELECT * FROM Temp_Delivery WHERE Session_ID = @Session_ID";
+                string query = @"SELECT T_Di.Material_ID, S.Serial_Number, T_Di.Delivered_Quantity 
+                                FROM Temp_Delivery T_Di 
+                                JOIN Stock S ON T_Di.Stock_ID = S.Stock_ID 
+                                WHERE Session_ID = @Session_ID;";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 da.SelectCommand.Parameters.AddWithValue("@Session_ID", sessionID);
                 DataTable dt = new DataTable();
@@ -298,6 +308,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 gvDeliveryItems.DataBind();
             }
         }
+
 
 
     }

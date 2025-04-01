@@ -15,6 +15,15 @@ namespace STORE_FINAL.Role_StoreIncharge
     {
 
         /// <summary>
+        /// lblMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMessage;
+
+        /// <summary>
         /// ddlRequisition control.
         /// </summary>
         /// <remarks>
@@ -69,6 +78,15 @@ namespace STORE_FINAL.Role_StoreIncharge
         protected global::System.Web.UI.WebControls.Image imgRequisition;
 
         /// <summary>
+        /// lblSerialNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblSerialNumber;
+
+        /// <summary>
         /// ddlSerialNumber control.
         /// </summary>
         /// <remarks>
@@ -76,6 +94,15 @@ namespace STORE_FINAL.Role_StoreIncharge
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlSerialNumber;
+
+        /// <summary>
+        /// lblLocation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblLocation;
 
         /// <summary>
         /// ddlLocation control.
