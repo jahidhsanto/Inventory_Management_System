@@ -1,6 +1,10 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="MaterialDelivery_Test.aspx.cs" Inherits="STORE_FINAL.Role_StoreIncharge.MaterialDelivery_Test" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+
+    <!-- Required Script Manager for AJAX -->
+    <asp:ScriptManager runat="server" />
+
     <div class="container mt-4">
         <h2 class="text-center mb-4">📦 Material Delivery</h2>
 
@@ -8,26 +12,44 @@
         <div class="row">
             <!-- Left Side: Requisition Details -->
             <div class="col-md-6">
-                <label><strong>Requisition:</strong></label>
-                <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true"></asp:DropDownList>
-                <%--<asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged"></asp:DropDownList>--%>
-                
-                <label><strong>Received By:</strong></label>
-                <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control" AutoPostBack="true"></asp:DropDownList>
+                <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <label>Requisition:</label>
+                        <%--<asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" ></asp:DropDownList>--%>
+                        <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged"></asp:DropDownList>
 
-                <div class="card mt-3 p-3 bg-light">
-                    <h5>📋 Requisition Details</h5>
-                    <p><strong>Material Name:</strong> <asp:Label ID="lblMaterialName" runat="server" Text="-"></asp:Label></p>
-                    <p><strong>Requested By:</strong> <asp:Label ID="lblRequestedBy" runat="server" Text="-"></asp:Label></p>
-                    <p><strong>Requested Date:</strong> <asp:Label ID="lblRequestedDate" runat="server" Text="-"></asp:Label></p>
-                </div>
+                        <label><strong>Received Employee:</strong></label>
+                        <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
+
+                        <div class="card mt-3 p-3 bg-light">
+                            <h5>📋 Requisition Details</h5>
+                            <p><strong>Material Name:</strong>
+                                <asp:Label ID="lblMaterialName" runat="server" Text="-"></asp:Label></p>
+                            <p><strong>Requested By:</strong>
+                                <asp:Label ID="lblRequestedBy" runat="server" Text="-"></asp:Label></p>
+                            <p><strong>Requested Date:</strong>
+                                <asp:Label ID="lblRequestedDate" runat="server" Text="-"></asp:Label></p>
+                        </div>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
 
             <!-- Right Side: Requisition Image -->
             <div class="col-md-6 d-flex align-items-center justify-content-center">
                 <div class="card text-center p-3">
-                    <h5>📷 Requisition Image</h5>
-                    <asp:Image ID="imgRequisition" runat="server" CssClass="img-fluid rounded" Height="200px" Width="100%" ImageUrl="~/images/LoGo.jpg" />
+                    <!-- 🔄 UpdatePanel for Requisition Image -->
+                    <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <h5>📷 Requisition Image</h5>
+                            <asp:Image ID="imgRequisition" runat="server" CssClass="img-fluid rounded" Height="200px" Width="100%" ImageUrl="~/images/LoGo.jpg" />
+                        </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
+                        </Triggers>
+                    </asp:UpdatePanel>
                 </div>
             </div>
         </div>
@@ -35,28 +57,45 @@
         <!-- Select Stock Item -->
         <div class="row mt-4">
             <div class="col-md-3">
-                <label><strong>Stock Item:</strong></label>
-                <asp:DropDownList ID="ddlStock" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                <!-- 🔄 UpdatePanel for Requisition Image -->
+                <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <label><strong>Serial Number:</strong></label>
+                        <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
             <div class="col-md-3">
-                <label><strong>Material:</strong></label>
-                <asp:DropDownList ID="ddlMaterial" runat="server" CssClass="form-control" AutoPostBack="true"></asp:DropDownList>
-                <%--<asp:DropDownList ID="ddlMaterial" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlMaterial_SelectedIndexChanged"></asp:DropDownList>--%>
+                <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <label><strong>Stock Location:</strong></label>
+                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
             <div class="col-md-3">
-                <label><strong>Serial Number (Optional):</strong></label>
-                <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control"></asp:TextBox>
-            </div>
-            <div class="col-md-3">
-                <label><strong>Quantity:</strong></label>
-                <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <label><strong>Quantity:</strong></label>
+                        <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
         </div>
 
         <!-- Add to Delivery Button -->
         <div class="text-center mt-4">
-            <asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" />
-            <%--<asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" OnClick="btnAddToDelivery_Click" />--%>
+            <%--<asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" />--%>
+            <asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" OnClick="btnAddToDelivery_Click" />
         </div>
 
         <!-- Selected Items for Delivery -->
@@ -95,10 +134,17 @@
         }
     </script>
 
-    <!-- JavaScript: Clear Temp Data on Tab Close -->
+    <%--JavaScript: Clear Temp Data on Tab Close--%>
     <script>
         window.addEventListener("beforeunload", function () {
             fetch("ClearTempData.aspx?sessionID=" + sessionStorage.getItem("DeliverySessionID"), { method: "GET" });
         });
+    </script>
+
+    <%--JavaScript to handle missing values--%>
+    <script>
+        if (!sessionStorage.getItem("DeliverySessionID")) {
+            sessionStorage.setItem("DeliverySessionID", document.getElementById('<%= hfDeliverySessionID.ClientID %>').value);
+        }
     </script>
 </asp:Content>

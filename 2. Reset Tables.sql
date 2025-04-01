@@ -1,7 +1,16 @@
 USE STORE;
 
+DELETE FROM Challan_Items;
+DBCC CHECKIDENT ('Challan_Items', RESEED, 0);
+
+DELETE FROM Challan;
+DBCC CHECKIDENT ('Stock', RESEED, 0);
+
 DELETE from Requisition;
 DBCC CHECKIDENT ('Requisition', RESEED, 0);
+
+DELETE FROM Temp_Delivery;
+DBCC CHECKIDENT ('Temp_Delivery', RESEED, 0);
 
 DELETE FROM Stock;
 DBCC CHECKIDENT ('Stock', RESEED, 0);
@@ -34,10 +43,13 @@ DELETE from UoM;
 DBCC CHECKIDENT ('UoM', RESEED, 0);
 
 DELETE from Employee;
-DBCC CHECKIDENT ('Employee', RESEED, 0);
 
+UPDATE Employee
+SET Department_ID = NULL
 DELETE from Department;
 DBCC CHECKIDENT ('Department', RESEED, 0);
+
+
 
 
 

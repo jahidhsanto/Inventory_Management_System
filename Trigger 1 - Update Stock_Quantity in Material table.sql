@@ -48,3 +48,11 @@ BEGIN
     INNER JOIN inserted i ON m.Material_ID = i.Material_ID;
 END;
 GO
+
+
+UPDATE Material
+SET Stock_Quantity = (
+    SELECT SUM(Quantity)
+    FROM Stock
+    WHERE Material_ID = Material.Material_ID
+);

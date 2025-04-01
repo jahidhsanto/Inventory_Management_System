@@ -29,7 +29,7 @@ WITH (
     ROWTERMINATOR = '\n', 
     TABLOCK
 );
---============================
+
 BULK INSERT Category
 FROM 'D:\SQL\CEL STORE DATABASE\Category.csv'
 WITH (
@@ -111,16 +111,6 @@ WITH (
 );
 
 BULK INSERT Stock
-FROM 'D:\SQL\CEL STORE DATABASE\Stock.csv'
-WITH (
-    FORMAT = 'CSV', 
-    FIRSTROW = 2, -- If there's a header
-    FIELDTERMINATOR = ',', 
-    ROWTERMINATOR = '\n', 
-    TABLOCK
-);
-
-BULK INSERT Stock
 FROM 'D:\SQL\CEL STORE DATABASE\Stock.txt'
 WITH (
     FORMAT = 'CSV', 
@@ -130,3 +120,12 @@ WITH (
     TABLOCK
 );
 
+BULK INSERT Users
+FROM 'D:\SQL\CEL STORE DATABASE\Users.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);

@@ -46,16 +46,13 @@
                     <ItemTemplate>
                         <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn btn-success"
                             CommandName="Approve" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# (Eval("Store_Status") == null || Eval("Store_Status").ToString() == "Pending") && 
-                                Eval("Dept_Status").ToString() == "Pending" %>' />
+                            Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
                         <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-warning"
                             CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# (Eval("Store_Status") == null || Eval("Store_Status").ToString() == "Pending") && 
-                                        (Eval("Dept_Status").ToString() == "Approved" || Eval("Dept_Status").ToString() == "Rejected") %>' />
+                            Visible='<%# Eval("Dept_Status").ToString() == "Approved" || Eval("Dept_Status").ToString() == "Rejected" %>' />
                         <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn btn-danger"
                             CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# (Eval("Store_Status") == null || Eval("Store_Status").ToString() == "Pending") && 
-                                        Eval("Dept_Status").ToString() == "Pending" %>' />
+                            Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
