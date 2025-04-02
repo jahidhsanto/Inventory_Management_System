@@ -13,8 +13,12 @@
                 <div class="row">
                     <!-- Material Image -->
                     <div class="col-md-3 text-center">
-                        <%--<asp:Image ID="imgMaterial" runat="server" CssClass="img-fluid rounded shadow" Width="180px" Height="180px" />--%>
-                        <asp:Image ID="imgMaterial" ImageUrl="~/images/jahidhsanto.jpg" runat="server" CssClass="img-fluid rounded shadow" Width="180px" Height="180px" />
+                        <!-- Material Image (Thumbnail - Click to View) -->
+                        <asp:Image ID="imgMaterial" runat="server" CssClass="img-thumbnail shadow border p-1 bg-white"
+                            Width="180px" Height="180px" AlternateText="Material Image"
+                            onerror="this.onerror=null; this.src='/images/LoGo.png';"
+                            style="cursor: pointer; transition: transform 0.3s ease;"
+                            onclick="showLargeImage(this.src)" />
                     </div>
 
                     <!-- Material Details -->
@@ -25,31 +29,28 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <p><strong>Part ID:</strong><asp:Label ID="lblPartId" runat="server"></asp:Label></p>
-                                <p><strong>Category:</strong><asp:Label ID="lblCategory" runat="server"></asp:Label></p>
-                                <p><strong>Sub-Category:</strong><asp:Label ID="lblSubCategory" runat="server"></asp:Label></p>
-                                <p><strong>Model:</strong><asp:Label ID="lblModel" runat="server"></asp:Label></p>
-                                <p><strong>Control:</strong><asp:Label ID="lblControl" runat="server"></asp:Label></p>
+                                <p><strong>🔢 Part ID:</strong> <asp:Label ID="lblPartId" runat="server"></asp:Label></p>
+                                <p><strong>📁 Category:</strong> <asp:Label ID="lblCategory" runat="server"></asp:Label></p>
+                                <p><strong>📂 Sub-Category:</strong> <asp:Label ID="lblSubCategory" runat="server"></asp:Label></p>
+                                <p><strong>🏷️ Model:</strong> <asp:Label ID="lblModel" runat="server"></asp:Label></p>
+                                <p><strong>⚙️ Control:</strong> <asp:Label ID="lblControl" runat="server"></asp:Label></p>
                             </div>
 
                             <div class="col-md-6">
-                                <p><strong>Unit Price:</strong><asp:Label ID="lblUnitPrice" runat="server"></asp:Label></p>
-                                <p><strong>Commercial?:</strong><asp:Label ID="lblComNonCom" runat="server"></asp:Label></p>
-                                <p><strong>Asset Status:</strong><asp:Label ID="lblAssetStatus" runat="server"></asp:Label></p>
-                                <p><strong>Asset Type:</strong><asp:Label ID="lblAssetType" runat="server"></asp:Label></p>
-                                <p><strong>Stock Quantity:</strong><asp:Label ID="lblStockQuantity" runat="server"></asp:Label></p>
+                                <p><strong>💲 Unit Price:</strong> <asp:Label ID="lblUnitPrice" runat="server"></asp:Label></p>
+                                <p><strong>🏢 Commercial?:</strong> <asp:Label ID="lblComNonCom" runat="server"></asp:Label></p>
+                                <p><strong>🔖 Asset Status:</strong> <asp:Label ID="lblAssetStatus" runat="server"></asp:Label></p>
+                                <p><strong>🏭 Asset Type:</strong> <asp:Label ID="lblAssetType" runat="server"></asp:Label></p>
+                                <p><strong>📦 Stock Quantity:</strong> <asp:Label ID="lblStockQuantity" runat="server"></asp:Label></p>
 
                                 <!-- Stock Progress Bar -->
-                                <div class="progress">
+                                <div class="progress mt-2" style="height: 25px;">
                                     <div id="progressStock" runat="server" class="progress-bar" role="progressbar"
                                         style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                                     </div>
                                 </div>
-
-                                <p>
-                                    <strong>MSQ:</strong>
-                                    <asp:Label ID="lblMSQ" runat="server"></asp:Label>
-                                </p>
+                                
+                                <p><strong>📉 MSQ:</strong> <asp:Label ID="lblMSQ" runat="server"></asp:Label></p>
                             </div>
                         </div>
                     </div>
@@ -59,10 +60,29 @@
                 <div class="mt-4">
                     <asp:Button ID="btnEdit" runat="server" Text="✏️ Edit" CssClass="btn btn-warning" />
                     <asp:Button ID="btnPrint" runat="server" Text="🖨️ Print" CssClass="btn btn-secondary" OnClientClick="window.print(); return false;" />
-                    <asp:Button ID="btnDownloadPDF" runat="server" Text="📄 Download PDF" CssClass="btn btn-success" />
+
+                    <%--<asp:Button ID="btnDownloadPDF" runat="server" Text="📄 Download PDF" CssClass="btn btn-success" />--%>
+                    <asp:Button ID="btnDownloadPDF" runat="server" Text="📄 Download PDF" CssClass="btn btn-success" OnClick="btnDownloadPDF_Click" />
+
                     <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="MaterialList.aspx" CssClass="btn btn-outline-primary">
                         <i class="fas fa-arrow-left"></i> Back to List
                     </asp:HyperLink>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Modal for Viewing Image -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <img id="largeImage" src="" class="img-fluid shadow-lg"
+                        style="max-width: 90vw; max-height: 85vh; transition: transform 0.3s ease; cursor: zoom-in;"
+                        onclick="zoomImage(this)" />
                 </div>
             </div>
         </div>
