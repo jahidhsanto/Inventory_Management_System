@@ -113,8 +113,7 @@
 
         <!-- Deliver Button -->
         <div class="text-center mt-3">
-            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" />
-            <%--<asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_Click" />--%>
+            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_Click" />
         </div>
     </div>
 

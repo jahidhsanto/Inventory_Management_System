@@ -1,5 +1,6 @@
 ﻿using STORE_FINAL.Pages;
 using STORE_FINAL.Role_Admin;
+using STORE_FINAL.Role_Employee;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -85,7 +86,6 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             ddlEmployee.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
         }
-
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
             // ✅ Clear Fields when a new requisition is selected
@@ -271,11 +271,12 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Temp_Delivery (Stock_ID, Material_ID, Delivered_Quantity, Session_ID) 
-                                VALUES (@Stock_ID, @Material_ID, @Delivered_Quantity, @Session_ID)";
+                string query = @"INSERT INTO Temp_Delivery (Requisition_ID, Stock_ID, Material_ID, Delivered_Quantity, Session_ID) 
+                                VALUES (@Requisition_ID, @Stock_ID, @Material_ID, @Delivered_Quantity, @Session_ID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn)) 
                 { 
+                    cmd.Parameters.AddWithValue("@Requisition_ID", requisitionID);
                     cmd.Parameters.AddWithValue("@Stock_ID", stockID);
                     cmd.Parameters.AddWithValue("@Material_ID", materialID);
                     cmd.Parameters.AddWithValue("@Delivered_Quantity", deliveredQuantity);
@@ -296,10 +297,18 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT T_Di.Material_ID, S.Serial_Number, T_Di.Delivered_Quantity 
-                                FROM Temp_Delivery T_Di 
-                                JOIN Stock S ON T_Di.Stock_ID = S.Stock_ID 
-                                WHERE Session_ID = @Session_ID;";
+                string query = @"
+                                SELECT 
+                                    TD.Material_ID, 
+                                    CASE 
+                                        WHEN M.Requires_Serial_Number = 'Yes' THEN S.Serial_Number 
+                                        ELSE NULL 
+                                    END AS Serial_Number, 
+                                    TD.Delivered_Quantity 
+                                FROM Temp_Delivery TD
+                                JOIN Stock S ON TD.Stock_ID = S.Stock_ID 
+                                JOIN Material M ON TD.Material_ID = M.Material_ID 
+                                WHERE TD.Session_ID = @Session_ID;";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 da.SelectCommand.Parameters.AddWithValue("@Session_ID", sessionID);
                 DataTable dt = new DataTable();
@@ -309,7 +318,160 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // 4️⃣ Process Final Delivery
+        protected void btnDeliver_Click(object sender, EventArgs e)
+        {
+            // 1️⃣ Validate Session
+            if (Session["DeliverySessionID"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Session expired. Please refresh the page.');", true);
+                return;
+            }
+            string sessionID = Session["DeliverySessionID"].ToString();
+
+            // 2️⃣ Validate Required Selections
+            if (ddlEmployee.SelectedValue == "0")
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select an employee.');", true);
+                return;
+            }
+            int employeeID = int.Parse(ddlEmployee.SelectedValue);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
+                {
+                    int challanID = 0;
+
+                    // 3️⃣ Insert into Challan Table
+                    string insertChallanQuery = @"
+                                                INSERT INTO Challan (Received_Employee_ID, Status, Remarks) 
+                                                VALUES (@Employee_ID, 'Delivered', 'All items delivered'); 
+                                                SELECT SCOPE_IDENTITY();";
+
+                    SqlParameter[] challanParams =
+                    {
+                        new SqlParameter("@Employee_ID", employeeID)
+                    };
+
+                    DataTable dtChallan = GetData(insertChallanQuery, challanParams);
+
+                    if (dtChallan.Rows.Count > 0)
+                    {
+                        challanID = Convert.ToInt32(dtChallan.Rows[0][0]);
+                    }
+
+                    if (challanID == 0)
+                    {
+                        throw new Exception("Failed to create a new challan.");
+                    }
+
+                    // 4️⃣ Move Items from Temp_Delivery to Challan_Items
+                    string insertItemsQuery = @"
+                                                INSERT INTO Challan_Items (Requisition_ID, Challan_ID, Material_ID, Stock_ID, Serial_Number, Delivered_Quantity) 
+                                                SELECT 
+                                                    td.Requisition_ID, 
+                                                    @Challan_ID, 
+                                                    td.Material_ID, 
+                                                    td.Stock_ID, 
+                                                    CASE 
+                                                        WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
+                                                        ELSE NULL 
+                                                    END AS Serial_Number,
+                                                    td.Delivered_Quantity 
+                                                FROM Temp_Delivery td
+                                                JOIN Material m ON td.Material_ID = m.Material_ID
+                                                LEFT JOIN Stock_Serial s ON td.Stock_ID = s.Stock_ID -- Ensures serial is valid
+                                                WHERE td.Session_ID = @Session_ID;";
+
+                    //SqlCommand cmdInsertItems = new SqlCommand(insertItemsQuery, conn, transaction);
+                    //cmdInsertItems.Parameters.AddWithValue("@Challan_ID", challanID);
+                    //cmdInsertItems.Parameters.AddWithValue("@Session_ID", sessionID);
+                    //cmdInsertItems.ExecuteNonQuery();
 
 
+                    using (SqlCommand cmdInsertItems = new SqlCommand(insertItemsQuery, conn, transaction))
+                    {
+                        cmdInsertItems.Parameters.AddWithValue("@Challan_ID", challanID);
+                        cmdInsertItems.Parameters.AddWithValue("@Session_ID", sessionID);
+
+                        conn.Open();
+                        cmdInsertItems.ExecuteNonQuery();
+                    }
+
+
+
+
+
+
+
+
+
+
+                    // 5️⃣ Update Stock Based on Serial Number
+                    string updateStockWithSerial = @"
+                                                    UPDATE Stock 
+                                                    SET Status = 'Delivered', Quantity = Quantity - TD.Delivered_Quantity
+                                                    FROM Stock S
+                                                    JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
+                                                    WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
+
+                    SqlCommand cmdUpdateStockWithSerial = new SqlCommand(updateStockWithSerial, conn, transaction);
+                    cmdUpdateStockWithSerial.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdUpdateStockWithSerial.ExecuteNonQuery();
+
+                    string updateStockWithoutSerial = @"
+                                                        UPDATE Stock 
+                                                        SET Quantity = Quantity - TD.Delivered_Quantity
+                                                        FROM Stock S
+                                                        JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
+                                                        WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NULL;";
+
+                    SqlCommand cmdUpdateStockWithoutSerial = new SqlCommand(updateStockWithoutSerial, conn, transaction);
+                    cmdUpdateStockWithoutSerial.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdUpdateStockWithoutSerial.ExecuteNonQuery();
+
+                    string markStockAsDelivered = @"
+                                                    UPDATE Stock 
+                                                    SET Status = 'Delivered' 
+                                                    WHERE Quantity = 0;";
+
+                    SqlCommand cmdMarkStockAsDelivered = new SqlCommand(markStockAsDelivered, conn, transaction);
+                    cmdMarkStockAsDelivered.ExecuteNonQuery();
+
+                    // 6️⃣ Clear Temp_Delivery Table
+                    string deleteTempQuery = "DELETE FROM Temp_Delivery WHERE Session_ID = @Session_ID";
+                    SqlCommand cmdDeleteTemp = new SqlCommand(deleteTempQuery, conn, transaction);
+                    cmdDeleteTemp.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdDeleteTemp.ExecuteNonQuery();
+
+                    // 7️⃣ Commit Transaction
+                    transaction.Commit();
+
+                    // 8️⃣ Reset Session & Refresh UI
+                    Session["DeliverySessionID"] = Guid.NewGuid().ToString();
+                    hfDeliverySessionID.Value = Session["DeliverySessionID"].ToString();
+                    lblMessage.Text = "New Session ID: " + Session["DeliverySessionID"].ToString();
+
+                    // Reload UI Elements
+                    LoadRequisitions();
+                    LoadEmployees();
+                    gvDeliveryItems.DataSource = null;
+                    gvDeliveryItems.DataBind();
+
+                    // ✅ Success Message
+                    ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Delivery processed successfully!');", true);
+                }
+                catch (Exception ex)
+                {
+                    // Rollback transaction if anything fails
+                    transaction.Rollback();
+                    ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Error processing delivery: " + ex.Message + "');", true);
+                }
+            }
+        }
     }
 }
