@@ -116,7 +116,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                                SELECT Stock_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Received_Date
+                                SELECT Stock_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Received_Date, Quantity
                                 FROM Stock 
                                 WHERE Material_ID = @MaterialID";
 
