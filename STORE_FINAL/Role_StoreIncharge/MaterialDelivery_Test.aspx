@@ -15,7 +15,6 @@
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         <label>Requisition:</label>
-                        <%--<asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" ></asp:DropDownList>--%>
                         <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged"></asp:DropDownList>
 
                         <label><strong>Received Employee:</strong></label>
@@ -94,7 +93,6 @@
 
         <!-- Add to Delivery Button -->
         <div class="text-center mt-4">
-            <%--<asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" />--%>
             <asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" OnClick="btnAddToDelivery_Click" />
         </div>
 
@@ -119,29 +117,4 @@
 
     <asp:HiddenField ID="hfDeliverySessionID" runat="server" />
 
-    <!-- JavaScript: Store Session ID -->
-    <script>
-        if (!sessionStorage.getItem("DeliverySessionID")) {
-            sessionStorage.setItem("DeliverySessionID", generateSessionID());
-        }
-        document.getElementById('<%= hfDeliverySessionID.ClientID %>').value = sessionStorage.getItem("DeliverySessionID");
-
-        function generateSessionID() {
-            return 'S' + Math.random().toString(36).substr(2, 9);
-        }
-    </script>
-
-    <%--JavaScript: Clear Temp Data on Tab Close--%>
-    <script>
-        window.addEventListener("beforeunload", function () {
-            fetch("ClearTempData.aspx?sessionID=" + sessionStorage.getItem("DeliverySessionID"), { method: "GET" });
-        });
-    </script>
-
-    <%--JavaScript to handle missing values--%>
-    <script>
-        if (!sessionStorage.getItem("DeliverySessionID")) {
-            sessionStorage.setItem("DeliverySessionID", document.getElementById('<%= hfDeliverySessionID.ClientID %>').value);
-        }
-    </script>
 </asp:Content>
