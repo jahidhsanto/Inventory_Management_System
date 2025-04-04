@@ -67,7 +67,36 @@
                             <label for="ddlUoM">UoM:</label>
                             <asp:DropDownList ID="ddlUoM" runat="server" CssClass="form-control select2"></asp:DropDownList>
                         </div>
-
+                        <div class="col-md-3">
+                            <label for="rblRequiredSerial">Required Serial Number?:</label>
+                            <asp:RadioButtonList ID="rblRequiredSerial" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="Yes" Value="Yes"></asp:ListItem>
+                                <asp:ListItem Text="No" Value="No"></asp:ListItem>
+                            </asp:RadioButtonList>
+                        </div>
+                       
+                        <div class="col-md-6">
+                            <label for="fuImage">Upload Material Image:</label>
+                            <div class="card p-2 shadow-sm" style="border-radius: 10px; text-align: center; max-width: 250px;">
+                                <%-- Image Preview Area --%>
+                                <div id="previewArea" class="d-none">
+                                    <img id="imgPreview" src="~/images/placeholder.png" 
+                                        class="img-thumbnail mt-2" 
+                                        style="max-width: 100%; height: auto; display: block; cursor: pointer;"
+                                        onclick="showLargeImage(this.src);" />
+                                </div>
+        
+                                <%-- Hidden File Input --%>
+                                <asp:FileUpload ID="fuImage" runat="server" CssClass="form-control d-none" 
+                                    onchange="previewImage(this, 'imgPreview', 'previewArea');" />
+        
+                                <%-- Choose Image Button --%>
+                                <button type="button" class="btn btn-primary btn-sm mt-2" 
+                                    onclick="document.getElementById('<%= fuImage.ClientID %>').click();">
+                                    Choose Image
+                                </button>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -232,6 +261,5 @@
             </Columns>
         </asp:GridView>
     </asp:Panel>
-
 
 </asp:Content>

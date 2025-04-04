@@ -36,38 +36,55 @@
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 
-    <%--Materials Image view--%>
-    <script>
-        function showLargeImage(imageSrc) {
-            var largeImage = document.getElementById("largeImage");
-            largeImage.src = imageSrc;
-            largeImage.style.transform = "scale(1)"; // Reset zoom on new image load
 
-            var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
-            myModal.show();
-        }
 
-        function zoomImage(img) {
-            if (img.style.transform === "scale(2.5)") {
-                img.style.transform = "scale(1)";
-                img.style.cursor = "zoom-in";
-            } else {
-                img.style.transform = "scale(1.5)";
-                img.style.cursor = "zoom-out";
+
+<!-- Image Preview Modal -->
+<div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Image Preview</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" style="max-width: 100%; height: auto;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview Image while upload any images
+    function previewImage(input, previewId, previewAreaId) {
+        if (input.files && input.files[0]) {
+            let file = input.files[0];
+
+            // Validate file type (allow only images)
+            if (!file.type.startsWith('image/')) {
+                alert("Please upload a valid image file (JPG, PNG, GIF, BMP).");
+                return;
             }
-        }
 
-        // Close modal on ESC key press
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                var myModalEl = document.getElementById('imageModal');
-                var modal = bootstrap.Modal.getInstance(myModalEl);
-                if (modal) {
-                    modal.hide();
-                }
-            }
-        });
-    </script>
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById(previewId).src = e.target.result;
+                document.getElementById(previewAreaId).classList.remove("d-none"); // Show preview area
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function showLargeImage(imageSrc) {
+        document.getElementById('modalImage').src = imageSrc;
+        $('#imageModal').modal('show');  // Show Bootstrap Modal
+    }
+</script>
+
+
+
 
 </head>
 <body>

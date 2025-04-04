@@ -7,6 +7,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
+using iText.IO.Image;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -478,7 +482,6 @@ namespace STORE_FINAL.Role_StoreIncharge
                 return;
             }
 
-
             // Check if unitPrice is a valid decimal value
             if (!decimal.TryParse(unitPriceText, out unitPrice) || unitPrice <= 0)
             {
@@ -493,12 +496,78 @@ namespace STORE_FINAL.Role_StoreIncharge
                 return;
             }
 
+            // Ensure a Required Serial Number option is selected
+            if (rblRequiredSerial.SelectedIndex == -1)
+            {
+                ShowMessage("Please select Active Status (Yes/No).", false);
+                return;
+            }
+            string IsRequiredSerial = rblRequiredSerial.SelectedValue;
+
+            // Image Upload Validation
+            string uploadPath = Server.MapPath("~/images/Materials/");
+            string fileName = "";
+
+            if (fuImage.HasFile)
+            {
+                string extension = Path.GetExtension(fuImage.FileName).ToLower();
+                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ShowMessage("Only image files (JPG, PNG, GIF, BMP) are allowed.", false);
+                    return;
+                }
+
+                if (fuImage.PostedFile.ContentLength > 10 * 1024 * 1024) // 10MB limit
+                {
+                    ShowMessage("Image size must not exceed 10MB.", false);
+                    return;
+                }
+
+                // Generate unique filename
+                fileName = $"Material_{part_Id}_{Guid.NewGuid()}{extension}";
+                string savePath = Path.Combine(uploadPath, fileName);
+
+                try
+                {
+                    using (System.Drawing.Image img = System.Drawing.Image.FromStream(fuImage.PostedFile.InputStream))
+                    {
+                        int maxWidth = 500;
+                        int newHeight = (int)((double)img.Height / img.Width * maxWidth);
+
+                        using (Bitmap bitmap = new Bitmap(maxWidth, newHeight)) 
+                        {
+                            using (Graphics g = Graphics.FromImage(bitmap))
+                            {
+                                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                                g.DrawImage(img, 0, 0, maxWidth, newHeight);
+                            }
+
+                            EncoderParameters encoderParams = new EncoderParameters(1);
+                            encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 70L);
+                            ImageCodecInfo jpgEncoder = ImageCodecInfo.GetImageEncoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+
+                            bitmap.Save(savePath, jpgEncoder, encoderParams);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Image processing error: " + ex.Message, false);
+                    return;
+                }
+            }
+
+            string imagePath = "~/images/Materials/" + fileName;
+
+            // Insert into database
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Material (Part_Id, Materials_Name, Unit_Price, MSQ, Stock_Quantity, Com_Non_Com_ID, Asset_Status_ID, Asset_Type_Grouped_ID, Category_ID, Sub_Category_ID, Model_ID, Control_ID, UoM_ID) 
-                                 VALUES (@part_Id, @materialName, @unitPrice, @MSQ, @stockQuantity, @com_NonCom, @assetStatus, @assetType, @category, @subCategory, @model, @control, @uom)";
+                string query = @"INSERT INTO Material (Part_Id, Materials_Name, Unit_Price, MSQ, Stock_Quantity, Com_Non_Com_ID, Asset_Status_ID, Asset_Type_Grouped_ID, Category_ID, Sub_Category_ID, Model_ID, Control_ID, UoM_ID, Requires_Serial_Number, Material_Image_Path) 
+                                 VALUES (@part_Id, @materialName, @unitPrice, @MSQ, @stockQuantity, @com_NonCom, @assetStatus, @assetType, @category, @subCategory, @model, @control, @uom, @isRequiredSerial, @imagePath)";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@part_Id", part_Id);
@@ -514,6 +583,8 @@ namespace STORE_FINAL.Role_StoreIncharge
                 cmd.Parameters.AddWithValue("@model", model);
                 cmd.Parameters.AddWithValue("@control", control);
                 cmd.Parameters.AddWithValue("@uom", uom);
+                cmd.Parameters.AddWithValue("@isRequiredSerial ", IsRequiredSerial);
+                cmd.Parameters.AddWithValue("@imagePath", imagePath);
 
                 try
                 {
@@ -521,6 +592,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     cmd.ExecuteNonQuery();
                     ShowMessage("Material added successfully!", true);
                     ClearFields();
+                    LoadMaterials("", "", "", "", "", "", "", "", "", ""); 
                 }
                 catch (Exception ex)
                 {

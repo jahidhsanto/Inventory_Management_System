@@ -11,6 +11,8 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using iTextSharp.text.pdf;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 
 namespace STORE_FINAL.Role_StoreIncharge
@@ -197,130 +199,242 @@ namespace STORE_FINAL.Role_StoreIncharge
                 e.Row.Cells[3].ToolTip = "Current status of this item";
             }
         }
-
-        protected void btnDownloadPDF_Click(object sender, EventArgs e)
+        protected void btnEdit_Click(object sender, EventArgs e)
         {
-            GeneratePDF();
+            pnlEditImage.Visible = true; // Show the image upload panel
         }
 
-        private void GeneratePDF()
+        protected void btnUpdateImage_Click(object sender, EventArgs e)
         {
-            using (MemoryStream ms = new MemoryStream())
+            string materialId = Request.QueryString["Material_ID"];
+
+            if (string.IsNullOrEmpty(materialId))
             {
-                // Create Document
-                Document document = new Document(PageSize.A4, 50, 50, 60, 50);
-                PdfWriter writer = PdfWriter.GetInstance(document, ms);
+                ShowMessage("Material ID is missing.", false);
+                return;
+            }
 
-                document.Open();
+            // Image Upload Validation
+            string uploadPath = Server.MapPath("~/images/Materials/");
+            string fileName = "";
 
-                // --- ADD COMPANY LOGO ---
-                string imagePath = Server.MapPath("~/images/LoGo.png"); // Adjust the path to your logo
+            if (fuMaterialImage.HasFile)
+            {
+                // Validate file type
+                string extension = Path.GetExtension(fuMaterialImage.FileName).ToLower();
+                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
 
-                if (File.Exists(imagePath))
+                if (!allowedExtensions.Contains(extension))
                 {
-                    try
+                    ShowMessage("Only image files (JPG, PNG, GIF, BMP) are allowed.", false);
+                    return;
+                }
+
+                if (fuMaterialImage.PostedFile.ContentLength > 10 * 1024 * 1024) // 10MB limit
+                {
+                    ShowMessage("Image size must not exceed 10MB.", false);
+                    return;
+                }
+
+                // Generate unique filename
+                fileName = $"Material_{lblPartId.Text}_{Guid.NewGuid()}{extension}";
+                string savePath = Path.Combine(uploadPath, fileName);
+
+                try
+                {
+                    using (System.Drawing.Image img = System.Drawing.Image.FromStream(fuMaterialImage.PostedFile.InputStream))
                     {
-                        // Use iTextSharp's Image class
-                        iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(imagePath);
-                        logo.ScaleAbsoluteWidth(100);
-                        logo.ScaleAbsoluteHeight(100);
-                        logo.Alignment = Element.ALIGN_CENTER;
-                        document.Add(logo);
+                        int maxWidth = 500;
+                        int newHeight = (int)((double)img.Height / img.Width * maxWidth);
+
+                        using (Bitmap bitmap = new Bitmap(maxWidth, newHeight))
+                        {
+                            using (Graphics g = Graphics.FromImage(bitmap))
+                            {
+                                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                                g.DrawImage(img, 0, 0, maxWidth, newHeight);
+                            }
+
+                            EncoderParameters encoderParams = new EncoderParameters(1);
+                            encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 70L);
+                            ImageCodecInfo jpgEncoder = ImageCodecInfo.GetImageEncoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
+
+                            bitmap.Save(savePath, jpgEncoder, encoderParams);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        // Log the error if the image loading fails
-                        document.Add(new Paragraph("Error loading logo: " + ex.Message));
-                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Fallback message if image not found
-                    document.Add(new Paragraph("Company logo not found at: " + imagePath));
+                    ShowMessage("Image processing error: " + ex.Message, false);
+                    return;
                 }
+            }
+            else
+            {
+                Response.Write("<script>alert('Please select an image to upload.');</script>");
+            }
 
-                // --- ADD TITLE ---
-                Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLUE);
-                Paragraph title = new Paragraph("Material Details\n\n", titleFont)
+                string imagePath = "~/images/Materials/" + fileName;
+            
+            // Update database with new image path
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+            
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "UPDATE Material SET Material_Image_Path = @imagePath WHERE Material_ID = @material_ID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@imagePath", imagePath);
+                cmd.Parameters.AddWithValue("@material_ID", materialId);
+                
+                try
                 {
-                    Alignment = Element.ALIGN_CENTER
-                };
-                document.Add(title);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
 
-                // --- ADD TABLE WITH MATERIAL INFORMATION ---
-                PdfPTable table = new PdfPTable(2) { WidthPercentage = 100, SpacingBefore = 10 };
-                table.SetWidths(new float[] { 30, 70 }); // Column width
+                    // Refresh image
+                    imgMaterial.ImageUrl = imagePath;
+                    pnlEditImage.Visible = false; // Hide upload panel after success
 
-                Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
-                Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 11, BaseColor.BLACK);
-                BaseColor headerColor = new BaseColor(0, 102, 204);
-
-                // Helper function to add cells
-                void AddCell(string text, Font font, BaseColor bgColor, int align = Element.ALIGN_LEFT)
-                {
-                    PdfPCell cell = new PdfPCell(new Phrase(text, font))
-                    {
-                        BackgroundColor = bgColor,
-                        HorizontalAlignment = align,
-                        Padding = 5
-                    };
-                    table.AddCell(cell);
+                    Response.Write("<script>alert('Image updated successfully!');</script>");
                 }
-
-                // Add Header Cells
-                AddCell("Field", headerFont, headerColor, Element.ALIGN_CENTER);
-                AddCell("Details", headerFont, headerColor, Element.ALIGN_CENTER);
-
-                // Add Material Details
-                AddCell("Part ID", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblPartId.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Material Name", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblMaterialName.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Category", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblCategory.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Sub-Category", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblSubCategory.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Model", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblModel.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Control", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblControl.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Unit Price", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblUnitPrice.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Commercial", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblComNonCom.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Asset Status", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblAssetStatus.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Asset Type", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblAssetType.Text, textFont, BaseColor.WHITE);
-
-                AddCell("Stock Quantity", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblStockQuantity.Text, textFont, BaseColor.WHITE);
-
-                AddCell("MSQ", textFont, BaseColor.LIGHT_GRAY);
-                AddCell(lblMSQ.Text, textFont, BaseColor.WHITE);
-
-                document.Add(table); // Add Table to PDF
-
-                document.Close();
-
-                // Download PDF
-                byte[] fileBytes = ms.ToArray();
-                Response.Clear();
-                Response.ContentType = "application/pdf";
-                Response.AddHeader("content-disposition", "attachment;filename=MaterialDetails.pdf");
-                Response.Cache.SetCacheability(HttpCacheability.NoCache);
-                Response.BinaryWrite(fileBytes);
-                Response.End();
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
+                }
             }
         }
+            
+        protected void btnDownloadPDF_Click(object sender, EventArgs e)
+        {
+            //GeneratePDF();
+        }
+
+        //private void GeneratePDF()
+        //{
+        //    using (MemoryStream ms = new MemoryStream())
+        //    {
+        //        // Create Document
+        //        Document document = new Document(PageSize.A4, 50, 50, 60, 50);
+        //        PdfWriter writer = PdfWriter.GetInstance(document, ms);
+
+        //        document.Open();
+
+        //        // --- ADD COMPANY LOGO ---
+        //        string imagePath = Server.MapPath("~/images/LoGo.png"); 
+
+        //        if (File.Exists(imagePath))
+        //        {
+        //            try
+        //            {
+        //                // Use iTextSharp's Image class
+        //                iTextSharp.text.Image logo = iTextSharp.text.Image.GetInstance(imagePath);
+        //                logo.ScaleAbsoluteWidth(100);
+        //                logo.ScaleAbsoluteHeight(100);
+        //                logo.Alignment = Element.ALIGN_CENTER;
+        //                document.Add(logo);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                // Log the error if the image loading fails
+        //                document.Add(new Paragraph("Error loading logo: " + ex.Message));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Fallback message if image not found
+        //            document.Add(new Paragraph("Company logo not found at: " + imagePath));
+        //        }
+
+        //        // --- ADD TITLE ---
+        //        Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLUE);
+        //        Paragraph title = new Paragraph("Material Details\n\n", titleFont)
+        //        {
+        //            Alignment = Element.ALIGN_CENTER
+        //        };
+        //        document.Add(title);
+
+        //        // --- ADD TABLE WITH MATERIAL INFORMATION ---
+        //        PdfPTable table = new PdfPTable(2) { WidthPercentage = 100, SpacingBefore = 10 };
+        //        table.SetWidths(new float[] { 30, 70 }); // Column width
+
+        //        Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
+        //        Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 11, BaseColor.BLACK);
+        //        BaseColor headerColor = new BaseColor(0, 102, 204);
+
+        //        // Helper function to add cells
+        //        void AddCell(string text, Font font, BaseColor bgColor, int align = Element.ALIGN_LEFT)
+        //        {
+        //            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+        //            {
+        //                BackgroundColor = bgColor,
+        //                HorizontalAlignment = align,
+        //                Padding = 5
+        //            };
+        //            table.AddCell(cell);
+        //        }
+
+        //        // Add Header Cells
+        //        AddCell("Field", headerFont, headerColor, Element.ALIGN_CENTER);
+        //        AddCell("Details", headerFont, headerColor, Element.ALIGN_CENTER);
+
+        //        // Add Material Details
+        //        AddCell("Part ID", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblPartId.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Material Name", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblMaterialName.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Category", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblCategory.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Sub-Category", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblSubCategory.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Model", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblModel.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Control", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblControl.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Unit Price", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblUnitPrice.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Commercial", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblComNonCom.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Asset Status", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblAssetStatus.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Asset Type", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblAssetType.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("Stock Quantity", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblStockQuantity.Text, textFont, BaseColor.WHITE);
+
+        //        AddCell("MSQ", textFont, BaseColor.LIGHT_GRAY);
+        //        AddCell(lblMSQ.Text, textFont, BaseColor.WHITE);
+
+        //        document.Add(table); // Add Table to PDF
+
+        //        document.Close();
+
+        //        // Download PDF
+        //        byte[] fileBytes = ms.ToArray();
+        //        Response.Clear();
+        //        Response.ContentType = "application/pdf";
+        //        Response.AddHeader("content-disposition", "attachment;filename=MaterialDetails.pdf");
+        //        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        //        Response.BinaryWrite(fileBytes);
+        //        Response.End();
+        //    }
+        //}
+
+        private void ShowMessage(string message, bool isSuccess)
+        {
+            lblMessage.Text = message;
+            lblMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
+            lblMessage.Visible = true;
+        }
+
     }
 }

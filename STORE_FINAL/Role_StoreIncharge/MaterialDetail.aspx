@@ -6,6 +6,8 @@
         <h2 class="text-primary">
             <i class="fas fa-box"></i>Material Details
         </h2>
+        
+        <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3"></asp:Label>
 
         <!-- Material Information Card -->
         <div class="card shadow-sm">
@@ -19,6 +21,13 @@
                             onerror="this.onerror=null; this.src='/images/LoGo.png';"
                             style="cursor: pointer; transition: transform 0.3s ease;"
                             onclick="showLargeImage(this.src)" />
+                        
+                        <asp:Panel ID="pnlEditImage" runat="server" Visible="false" CssClass="mt-3">
+                            <asp:FileUpload ID="fuMaterialImage" runat="server" CssClass="form-control mb-2" />
+                            <asp:Button ID="btnUpdateImage" runat="server" Text="📤 Upload Image" CssClass="btn btn-success"
+                                OnClick="btnUpdateImage_Click" />
+                        </asp:Panel>
+
                     </div>
 
                     <!-- Material Details -->
@@ -58,31 +67,12 @@
 
                 <!-- Action Buttons -->
                 <div class="mt-4">
-                    <asp:Button ID="btnEdit" runat="server" Text="✏️ Edit" CssClass="btn btn-warning" />
+                    <asp:Button ID="btnEdit" runat="server" Text="✏️ Edit" CssClass="btn btn-warning" OnClick="btnEdit_Click"/>
                     <asp:Button ID="btnPrint" runat="server" Text="🖨️ Print" CssClass="btn btn-secondary" OnClientClick="window.print(); return false;" />
-
-                    <%--<asp:Button ID="btnDownloadPDF" runat="server" Text="📄 Download PDF" CssClass="btn btn-success" />--%>
                     <asp:Button ID="btnDownloadPDF" runat="server" Text="📄 Download PDF" CssClass="btn btn-success" OnClick="btnDownloadPDF_Click" />
-
                     <asp:HyperLink ID="lnkBack" runat="server" NavigateUrl="MaterialList.aspx" CssClass="btn btn-outline-primary">
                         <i class="fas fa-arrow-left"></i> Back to List
                     </asp:HyperLink>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fullscreen Modal for Viewing Image -->
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content bg-dark border-0">
-                <div class="modal-header border-0">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body d-flex justify-content-center align-items-center">
-                    <img id="largeImage" src="" class="img-fluid shadow-lg"
-                        style="max-width: 90vw; max-height: 85vh; transition: transform 0.3s ease; cursor: zoom-in;"
-                        onclick="zoomImage(this)" />
                 </div>
             </div>
         </div>

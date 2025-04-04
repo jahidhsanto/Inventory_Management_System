@@ -123,7 +123,7 @@ CREATE TABLE Material (
     Stock_Quantity DECIMAL(10,2),
     UoM INT NOT NULL,
 	MSQ DECIMAL(10, 2) NOT NULL,
-	Requires_Serial_Number NVARCHAR(3) NOT NULL DEFAULT 'No' CHECK (Requires_Serial_Number IN ('Yes', 'No')),
+	Requires_Serial_Number NVARCHAR(3) NOT NULL CHECK (Requires_Serial_Number IN ('Yes', 'No')),
 	Material_Image_Path VARCHAR(500),
 
     -- Add UNIQUE constraint on Part_Id to ensure it is unique
