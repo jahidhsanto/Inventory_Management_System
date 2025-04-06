@@ -181,19 +181,20 @@ namespace STORE_FINAL.Role_StoreIncharge
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            string searchPartID = txtSearchPartID.Text.Trim();
-            string searchMaterialName = txtSearchMaterialName.Text.Trim();
+            gvMaterials.PageIndex = 0; 
 
-            string filterCom_Non_Com = ddlCom_Non_Com.SelectedValue;
-            string filterAsset_Status = ddlAsset_Status.SelectedValue;
-            string filterAsset_Type_Grouped = ddlAsset_Type_Grouped.SelectedValue;
-            string filterCategory = ddlCategory.SelectedValue;
-            string filterSub_Category = ddlSub_Category.SelectedValue;
-            string filterModel = ddlModel.SelectedValue;
-            string filterControl = ddlControl.SelectedValue;
-            string filterStock = ddlStockFilter.SelectedValue;
-
-            LoadMaterials(searchPartID, searchMaterialName, filterCom_Non_Com, filterAsset_Status, filterAsset_Type_Grouped, filterCategory, filterSub_Category, filterControl, filterModel, filterStock);
+            LoadMaterials(
+                txtSearchPartID.Text.Trim(),
+                txtSearchMaterialName.Text.Trim(),
+                ddlCom_Non_Com.SelectedValue,
+                ddlAsset_Status.SelectedValue,
+                ddlAsset_Type_Grouped.SelectedValue,
+                ddl_Category.SelectedValue,
+                ddlSub_Category.SelectedValue,
+                ddl_Control.SelectedValue,
+                ddl_Model.SelectedValue,
+                ddlStockFilter.SelectedValue
+            );
         }
 
         protected void gvMaterials_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
@@ -599,6 +600,27 @@ namespace STORE_FINAL.Role_StoreIncharge
                     ShowMessage("Error: " + ex.Message, false);
                 }
             }
+        }
+
+        protected void gvMaterials_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            gvMaterials.PageIndex = e.NewPageIndex;
+            LoadMaterialsFromViewState(); // Ensure this method is also defined as shown earlier
+        }
+        private void LoadMaterialsFromViewState()
+        {
+            LoadMaterials(
+                ViewState["searchPartID"]?.ToString(),
+                ViewState["searchMaterialName"]?.ToString(),
+                ViewState["filterCom_Non_Com"]?.ToString(),
+                ViewState["filterAsset_Status"]?.ToString(),
+                ViewState["filterAsset_Type_Grouped"]?.ToString(),
+                ViewState["filterCategory"]?.ToString(),
+                ViewState["filterSub_Category"]?.ToString(),
+                ViewState["filterControl"]?.ToString(),
+                ViewState["filterModel"]?.ToString(),
+                ViewState["filterStock"]?.ToString()
+            );
         }
 
         private void ShowMessage(string message, bool isSuccess)

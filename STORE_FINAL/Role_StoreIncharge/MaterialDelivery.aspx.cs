@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
+using STORE_FINAL.Pages;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -61,8 +62,8 @@ namespace STORE_FINAL.Role_StoreIncharge
                             INNER JOIN Material M ON R.Material_ID = M.Material_ID
                             JOIN Employee E ON R.Employee_ID = E.Employee_ID
                             WHERE R.Status = 'Approved' AND R.Store_Status = 'Processing';";
-            DataTable dt = GetData(query);
 
+            DataTable dt = GetData(query);
             ddlRequisition.DataSource = dt;
             ddlRequisition.DataTextField = "ReqDetails";
             ddlRequisition.DataValueField = "Requisition_ID";
@@ -126,7 +127,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                     INNER JOIN Material M ON R.Material_ID = M.Material_ID
                                     LEFT JOIN Stock S ON R.Material_ID = S.Material_ID
                                     WHERE R.Requisition_ID = @Requisition_ID
-	                                    AND S.Status = 'Available'
+	                                    AND S.Status = 'AVAILABLE'
 	                                    AND S.Quantity > 0;";
                 SqlParameter[] requisitionParams2 = { new SqlParameter("@Requisition_ID", requisitionID) };
                 DataTable dtStock = GetData(queryStock, requisitionParams2);
@@ -295,7 +296,10 @@ namespace STORE_FINAL.Role_StoreIncharge
             {
                 string query = @"
                                 SELECT 
+                                    TD.Temp_ID,
                                     TD.Material_ID, 
+                                    M.Part_Id, 
+                                    M.Materials_Name, 
                                     CASE 
                                         WHEN M.Requires_Serial_Number = 'Yes' THEN S.Serial_Number 
                                         ELSE NULL 
@@ -314,7 +318,34 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
-        // 4️⃣ Process Final Delivery
+        // 4️⃣ Delete selected Temp_Delivery Items
+        protected void gvDeliveryItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Remove")
+            {
+                int temp_ID = Convert.ToInt32(e.CommandArgument);
+                string sessionID = Session["DeliverySessionID"].ToString();
+
+                string deleteQuery = "DELETE FROM Temp_Delivery WHERE Temp_ID = @Temp_ID AND Session_ID = @Session_ID;";
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))
+                {
+                    using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        deleteCmd.Parameters.AddWithValue("@Temp_ID", temp_ID);
+                        deleteCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+
+                        conn.Open();
+                        deleteCmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+
+                LoadDeliveryItems();
+            }
+        }
+
+        // 5️⃣ Process Final Delivery
         protected void btnDeliver_Click(object sender, EventArgs e)
         {
             // 1️⃣ Validate Session
@@ -344,8 +375,8 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     // 3️⃣ Insert into Challan Table
                     string insertChallanQuery = @"
-                                                INSERT INTO Challan (Received_Employee_ID, Status, Remarks) 
-                                                VALUES (@Employee_ID, 'Delivered', 'All items delivered'); 
+                                                INSERT INTO Challan (Employee_ID, Challan_Type, Remarks) 
+                                                VALUES (@Employee_ID, 'DELIVERY', 'All items delivered'); 
                                                 SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand cmdChallan = new SqlCommand(insertChallanQuery, conn, transaction))
@@ -369,7 +400,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     // 4️⃣ Move Items from Temp_Delivery to Challan_Items
                     string insertItemsQuery = @"
-                                                INSERT INTO Challan_Items (Requisition_ID, Challan_ID, Material_ID, Stock_ID, Serial_Number, Delivered_Quantity) 
+                                                INSERT INTO Challan_Items (Requisition_ID, Challan_ID, Material_ID, Stock_ID, Serial_Number, Quantity) 
                                                 SELECT 
                                                     td.Requisition_ID, 
                                                     @Challan_ID, 
@@ -395,14 +426,17 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 5️⃣ Update Stock Based on Serial Number
                     string updateStockWithSerial = @"
                                                     UPDATE Stock 
-                                                    SET Status = 'Delivered', Quantity = Quantity - TD.Delivered_Quantity
+                                                    SET Status = 'DELIVERED', Quantity = Quantity - TD.Delivered_Quantity
                                                     FROM Stock S
                                                     JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                     WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
 
-                    SqlCommand cmdUpdateStockWithSerial = new SqlCommand(updateStockWithSerial, conn, transaction);
-                    cmdUpdateStockWithSerial.Parameters.AddWithValue("@Session_ID", sessionID);
-                    cmdUpdateStockWithSerial.ExecuteNonQuery();
+                    using (SqlCommand cmdUpdateStockWithSerial = new SqlCommand(updateStockWithSerial, conn, transaction))
+                    {
+
+                        cmdUpdateStockWithSerial.Parameters.AddWithValue("@Session_ID", sessionID);
+                        cmdUpdateStockWithSerial.ExecuteNonQuery();
+                    }
 
                     string updateStockWithoutSerial = @"
                                                         UPDATE Stock 
@@ -417,9 +451,10 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdUpdateStockWithoutSerial.ExecuteNonQuery();
                     }
 
+                    // 6️⃣ Mark delivered if Quantity = 0
                     string markStockAsDelivered = @"
                                                     UPDATE Stock 
-                                                    SET Status = 'Delivered' 
+                                                    SET Status = 'DELIVERED' 
                                                     WHERE Quantity = 0;";
 
                     using (SqlCommand cmdMarkStockAsDelivered = new SqlCommand(markStockAsDelivered, conn, transaction))
@@ -427,7 +462,23 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdMarkStockAsDelivered.ExecuteNonQuery();
                     }
 
-                    // 6️⃣ Clear Temp_Delivery Table
+                    // 7️⃣ Update Requisition Status
+                    string updateRequisitionStatus = @"
+                                                        UPDATE Requisition 
+                                                        SET Store_Status = 'Delivered' 
+                                                        WHERE Requisition_ID IN (
+                                                            SELECT Requisition_ID 
+                                                            FROM Temp_Delivery 
+                                                            WHERE Session_ID = @Session_ID
+                                                        );";
+
+                    using (SqlCommand cmdUpdateReq = new SqlCommand(updateRequisitionStatus, conn, transaction))
+                    {
+                        cmdUpdateReq.Parameters.AddWithValue("@Session_ID", sessionID);
+                        cmdUpdateReq.ExecuteNonQuery();
+                    }
+
+                    // 8️⃣ Clear Temp_Delivery Table
                     string deleteTempQuery = "DELETE FROM Temp_Delivery WHERE Session_ID = @Session_ID";
                     using (SqlCommand cmdDeleteTemp = new SqlCommand(deleteTempQuery, conn, transaction))
                     {
@@ -435,10 +486,10 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdDeleteTemp.ExecuteNonQuery();
                     }
 
-                    // 7️⃣ Commit Transaction
+                    // 9️⃣ Commit Transaction
                     transaction.Commit();
 
-                    // 8️⃣ Reset Session & Refresh UI
+                    // 🔟 Reset Session & Refresh UI
                     Session["DeliverySessionID"] = Guid.NewGuid().ToString();
                     hfDeliverySessionID.Value = Session["DeliverySessionID"].ToString();
                     lblMessage.Text = "New Session ID: " + Session["DeliverySessionID"].ToString();
@@ -455,7 +506,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 catch (Exception ex)
                 {
                     // Rollback transaction if anything fails
-                    //transaction.Rollback();
+                    transaction.Rollback();
                     ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Error processing delivery: " + ex.Message + "');", true);
                 }
             }

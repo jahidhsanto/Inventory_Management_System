@@ -107,6 +107,23 @@ CREATE TABLE UoM (
 INSERT INTO UoM (UoM)
 VALUES ('set'), ('pcs'), ('pair'), ('ft'), ('m'), ('box'), ('ream'), ('pkt'), ('kg'), ('ltr'), ('coil'), ('pallet'), ('job'), ('can');
 
+-- Create Requisition Table
+CREATE TABLE Requisition (
+    Requisition_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Employee_ID INT,
+    Material_ID INT,
+    Quantity INT NOT NULL,
+    Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
+	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
+    Created_Date DATETIME DEFAULT GETDATE(),
+    Approved_By INT,
+	Store_Status_By INT,
+    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+    FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
+	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
+);
+
 -- Create Material Table
 CREATE TABLE Material (
     Material_ID INT IDENTITY(1,1) PRIMARY KEY,
@@ -140,23 +157,6 @@ CREATE TABLE Material (
 	FOREIGN KEY (UoM) REFERENCES UoM(UoM_ID)
 );
 
--- Create Requisition Table
-CREATE TABLE Requisition (
-    Requisition_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Employee_ID INT,
-    Material_ID INT,
-    Quantity INT NOT NULL,
-    Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
-	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
-    Created_Date DATETIME DEFAULT GETDATE(),
-    Approved_By INT,
-	Store_Status_By INT,
-    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
-    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-    FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
-	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
-);
-
 -- Create Stock Table
 CREATE TABLE Stock (
     Stock_ID INT IDENTITY(1,1) PRIMARY KEY,
@@ -164,7 +164,7 @@ CREATE TABLE Stock (
     Serial_Number NVARCHAR(255),
 	Rack_Number NVARCHAR(50) NOT NULL,
     Shelf_Number NVARCHAR(50) NOT NULL,
-	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('Available', 'Delivered')),
+	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('AVAILABLE', 'DELIVERED', 'DEFECTIVE', 'UNDER_WARRANTY', 'REPLACED')),
 	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00,
     Received_Date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
@@ -177,11 +177,13 @@ WHERE Serial_Number IS NOT NULL;
 -- Create Challan Table
 CREATE TABLE Challan (
     Challan_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Received_Employee_ID INT NOT NULL,
-    Delivery_Date DATETIME DEFAULT GETDATE(),
-    Status NVARCHAR(50) CHECK (Status IN ('Delivered')),
+    Employee_ID INT NOT NULL,
+    Challan_Date DATETIME DEFAULT GETDATE(),
+    Challan_Type NVARCHAR(50) CHECK (Challan_Type IN ('DELIVERY', 'RETURN')),
+	Reference_Challan_ID INT NULL,
     Remarks NVARCHAR(1000),
-    FOREIGN KEY (Received_Employee_ID) REFERENCES Employee(Employee_ID)
+    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
+	FOREIGN KEY (Reference_Challan_ID) REFERENCES Challan(Challan_ID)
 );
 
 -- Create Challan_Items Table
@@ -192,7 +194,8 @@ CREATE TABLE Challan_Items (
     Material_ID INT NOT NULL,
     Requisition_ID INT NOT NULL,
 	Serial_Number NVARCHAR(50) NULL,
-    Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0),
+    Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0),
+	Status NVARCHAR(50) CHECK (Status IN ('ACTIVE', 'DEFECTIVE')),
     FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID),
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
@@ -243,17 +246,17 @@ CREATE TABLE Material_Receipt (
 );
 
 -- Create Return Table
-CREATE TABLE Return_Table (
+CREATE TABLE Return_Tracking (
     Return_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Employee_ID INT,
-    Material_ID INT,
-    Serial_Number NVARCHAR(255),
-    Reason NVARCHAR(1000),
-    Status NVARCHAR(50) CHECK (Status IN ('Received', 'Not Accepted')),
+    Return_Challan_ID INT, 
+    Original_Challan_Item_ID INT, 
     Return_Date DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
-    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-    FOREIGN KEY (Serial_Number) REFERENCES Stock(Serial_Number)
+    Return_Status NVARCHAR(50) CHECK (Return_Status IN ('RECEIVED', 'REJECTED')),
+    Is_Warranty BIT,
+    Replacement_Challan_ID INT NULL,
+    FOREIGN KEY (Return_Challan_ID) REFERENCES Challan(Challan_ID),
+    FOREIGN KEY (Original_Challan_Item_ID) REFERENCES Challan_Items(Challan_Item_ID),
+    FOREIGN KEY (Replacement_Challan_ID) REFERENCES Challan(Challan_ID)
 );
 
 -- Create Warranty Table

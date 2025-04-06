@@ -203,7 +203,6 @@
     <Content Include="Dashboard.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
-    <Content Include="Forms\Challan.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\LoGo.png" />
     <Content Include="images\jahidhsanto.jpg" />
@@ -214,7 +213,6 @@
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
     <Content Include="Pages\Purchase_Request.aspx" />
-    <Content Include="Pages\Return_Table.aspx" />
     <Content Include="Pages\Stock.aspx" />
     <Content Include="Pages\StockReview.aspx" />
     <Content Include="Pages\Vendor.aspx" />
@@ -225,10 +223,10 @@
     <Content Include="Role_Employee\Requisition.aspx" />
     <Content Include="Role_Employee\StockAvailability.aspx" />
     <Content Include="Role_StoreIncharge\MaterialDelivery.aspx" />
-    <Content Include="Role_StoreIncharge\MaterialDelivery_Test.aspx" />
     <Content Include="Role_StoreIncharge\MaterialDetail.aspx" />
     <Content Include="Role_StoreIncharge\MaterialList.aspx" />
     <Content Include="Role_StoreIncharge\MaterialReceive.aspx" />
+    <Content Include="Role_StoreIncharge\PrintChallan.aspx" />
     <Content Include="Role_StoreIncharge\RequisitionList.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -288,6 +286,7 @@
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
     <Content Include="Role_Admin\UserManagement.aspx" />
+    <Content Include="Test\Return.aspx" />
     <Content Include="UserDashboard\HtmlPage1.html" />
     <Content Include="UserDashboard\Logout.aspx" />
     <Content Include="UserDashboard\StyleSheet.css" />
@@ -328,13 +327,6 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Challan.aspx.cs">
-      <DependentUpon>Challan.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Forms\Challan.aspx.designer.cs">
-      <DependentUpon>Challan.aspx</DependentUpon>
     </Compile>
     <Compile Include="GetMaterials.ashx.cs">
       <DependentUpon>GetMaterials.ashx</DependentUpon>
@@ -390,13 +382,6 @@
     </Compile>
     <Compile Include="Pages\Purchase_Request.aspx.designer.cs">
       <DependentUpon>Purchase_Request.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Return_Table.aspx.cs">
-      <DependentUpon>Return_Table.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Return_Table.aspx.designer.cs">
-      <DependentUpon>Return_Table.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Stock.aspx.cs">
       <DependentUpon>Stock.aspx</DependentUpon>
@@ -469,13 +454,6 @@
     <Compile Include="Role_StoreIncharge\MaterialDelivery.aspx.designer.cs">
       <DependentUpon>MaterialDelivery.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Role_StoreIncharge\MaterialDelivery_Test.aspx.cs">
-      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Role_StoreIncharge\MaterialDelivery_Test.aspx.designer.cs">
-      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Role_StoreIncharge\MaterialDetail.aspx.cs">
       <DependentUpon>MaterialDetail.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -496,6 +474,13 @@
     </Compile>
     <Compile Include="Role_StoreIncharge\MaterialReceive.aspx.designer.cs">
       <DependentUpon>MaterialReceive.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\PrintChallan.aspx.cs">
+      <DependentUpon>PrintChallan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\PrintChallan.aspx.designer.cs">
+      <DependentUpon>PrintChallan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Role_StoreIncharge\RequisitionList.aspx.cs">
       <DependentUpon>RequisitionList.aspx</DependentUpon>
@@ -524,6 +509,13 @@
     </Compile>
     <Compile Include="Role_Admin\UserManagement.aspx.designer.cs">
       <DependentUpon>UserManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test\Return.aspx.cs">
+      <DependentUpon>Return.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Test\Return.aspx.designer.cs">
+      <DependentUpon>Return.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserDashboard\Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>

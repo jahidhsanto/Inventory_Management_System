@@ -37,6 +37,11 @@
                 DataKeyNames="Requisition_ID"
                 OnRowCommand="ApproveRequisitionGridView_RowCommand">
                 <columns>
+                    <asp:TemplateField HeaderText="S.No">
+                        <ItemTemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="Requisition_ID" HeaderText="Req ID" />
                     <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                     <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
@@ -64,9 +69,9 @@
                                 Visible='<%# Eval("Store_Status").ToString() == "Pending" %>' />
 
                             <!-- Show 'Delivered' button when Store_Status is 'Processing' -->
-                            <asp:Button ID="btnDelivered" runat="server" Text="Delivered" CssClass="btn btn-success"
+                           <%-- <asp:Button ID="btnDelivered" runat="server" Text="Delivered" CssClass="btn btn-success"
                                 CommandName="Delivered" CommandArgument='<%# Eval("Requisition_ID") %>'
-                                Visible='<%# Eval("Store_Status").ToString() == "Processing" %>' />
+                                Visible='<%# Eval("Store_Status").ToString() == "Processing" %>' />--%>
 
                             <!-- Show 'Ordered' button when Store_Status is 'Out of Stock' -->
                             <asp:Button ID="Button1" runat="server" Text="Ordered" CssClass="btn btn-warning"
@@ -76,7 +81,8 @@
                             <!-- Show 'Pending' button when Store_Status is 'Ordered' -->
                             <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-primary"
                                 CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
-                                Visible='<%# Eval("Store_Status").ToString() == "Ordered" %>' />
+                                Visible='<%# Eval("Store_Status").ToString() == "Ordered" || 
+                                             Eval("Store_Status").ToString() == "Processing" %>' />
                         </itemtemplate>
                     </asp:TemplateField>
 

@@ -74,24 +74,24 @@
                                 <asp:ListItem Text="No" Value="No"></asp:ListItem>
                             </asp:RadioButtonList>
                         </div>
-                       
+
                         <div class="col-md-6">
                             <label for="fuImage">Upload Material Image:</label>
                             <div class="card p-2 shadow-sm" style="border-radius: 10px; text-align: center; max-width: 250px;">
                                 <%-- Image Preview Area --%>
                                 <div id="previewArea" class="d-none">
-                                    <img id="imgPreview" src="~/images/placeholder.png" 
-                                        class="img-thumbnail mt-2" 
+                                    <img id="imgPreview" src="~/images/placeholder.png"
+                                        class="img-thumbnail mt-2"
                                         style="max-width: 100%; height: auto; display: block; cursor: pointer;"
                                         onclick="showLargeImage(this.src);" />
                                 </div>
-        
+
                                 <%-- Hidden File Input --%>
-                                <asp:FileUpload ID="fuImage" runat="server" CssClass="form-control d-none" 
+                                <asp:FileUpload ID="fuImage" runat="server" CssClass="form-control d-none"
                                     onchange="previewImage(this, 'imgPreview', 'previewArea');" />
-        
+
                                 <%-- Choose Image Button --%>
-                                <button type="button" class="btn btn-primary btn-sm mt-2" 
+                                <button type="button" class="btn btn-primary btn-sm mt-2"
                                     onclick="document.getElementById('<%= fuImage.ClientID %>').click();">
                                     Choose Image
                                 </button>
@@ -115,7 +115,7 @@
                     ✏️ Search Materials
                 </button>
             </h2>
-            <div id="collapseUpdate" class="accordion-collapse collapse" style="background-color: #e5e5e5" aria-labelledby="headingUpdate" data-bs-parent="#userManagementAccordion">
+            <div id="collapseUpdate" class="accordion-collapse collapse" style="background-color: #e5e5e5" aria-labelledby="headingUpdate" data-bs-parent="#requisitionManagementAccordion">
                 <div class="accordion-body">
                     <div class="row mb-3">
                         <div class="col-md-3">
@@ -171,7 +171,8 @@
             OnRowCommand="gvMaterials_RowCommand"
             GridLines="None"
             CellPadding="8"
-            Style="overflow-x: auto;" AllowPaging="True">
+            Style="overflow-x: auto;" 
+            AllowPaging="True" OnPageIndexChanging="gvMaterials_PageIndexChanging">
 
             <%--Table Header Styling--%>
             <HeaderStyle CssClass="table-dark text-white" />
@@ -186,6 +187,12 @@
                             CssClass="btn btn-info btn-sm" />
                     </ItemTemplate>
                     <ItemStyle Width="90px" HorizontalAlign="Center" />
+                </asp:TemplateField>
+                
+                <asp:TemplateField HeaderText="S.No">
+                    <ItemTemplate>
+                        <%# Container.DataItemIndex + 1 %>
+                    </ItemTemplate>
                 </asp:TemplateField>
 
                 <asp:BoundField DataField="Material_ID" HeaderText="ID">
@@ -210,7 +217,8 @@
                             (Convert.ToInt32(Eval("Stock_Quantity")) > 0 && Convert.ToInt32(Eval("Stock_Quantity")) <= Convert.ToInt32(Eval("MSQ"))) ? 
                                 "badge rounded-pill bg-warning text-dark text-center" : 
                                 "badge rounded-pill bg-danger text-center"
-                        %>' style="display: inline-block; width: 100%; text-align: center;">
+                        %>'
+                            style="display: inline-block; width: 100%; text-align: center;">
                             <%# Eval("Stock_Quantity") == DBNull.Value || Eval("Stock_Quantity") == null ? "0" : Eval("Stock_Quantity") %>
                         </span>
                     </ItemTemplate>

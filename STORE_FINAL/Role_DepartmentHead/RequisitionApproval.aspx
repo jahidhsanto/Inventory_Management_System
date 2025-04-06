@@ -49,7 +49,10 @@
                             Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
                         <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-warning"
                             CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# Eval("Dept_Status").ToString() == "Approved" || Eval("Dept_Status").ToString() == "Rejected" %>' />
+                            Visible='<%# (Eval("Dept_Status").ToString() == "Approved" || 
+                                          Eval("Dept_Status").ToString() == "Rejected") &&
+                                         (Eval("Store_Status").ToString() == "Pending" ||
+                                          Eval("Store_Status") == DBNull.Value) %>' />
                         <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn btn-danger"
                             CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>'
                             Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />

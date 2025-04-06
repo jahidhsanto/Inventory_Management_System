@@ -95,16 +95,30 @@
         <div class="text-center mt-4">
             <asp:Button ID="btnAddToDelivery" runat="server" Text="➕ Add to Delivery" CssClass="btn btn-primary btn-lg" OnClick="btnAddToDelivery_Click" />
         </div>
-
         <!-- Selected Items for Delivery -->
         <h3 class="mt-4 text-center">📦 Selected Items for Delivery</h3>
         <div class="table-responsive">
-            <asp:GridView ID="gvDeliveryItems" runat="server" CssClass="table table-bordered text-center" AutoGenerateColumns="False">
+            <asp:GridView ID="gvDeliveryItems" runat="server" CssClass="table table-bordered table-striped text-center" AutoGenerateColumns="False" DataKeyNames="Temp_ID" OnRowCommand="gvDeliveryItems_RowCommand">
                 <Columns>
+                    <asp:TemplateField HeaderText="S.No">
+                        <ItemTemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="Material_ID" HeaderText="Material ID" />
+                    <asp:BoundField DataField="Part_Id" HeaderText="Part ID" />
+                    <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                     <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
                     <asp:BoundField DataField="Delivered_Quantity" HeaderText="Quantity" />
-                    <asp:CommandField ShowDeleteButton="True" />
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" 
+                                CommandArgument='<%# Eval("Temp_ID") %>' CssClass="btn delete-icon">
+                                <i class="fa fa-remove" style="color:red"></i>
+                            </asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                 </Columns>
             </asp:GridView>
         </div>
