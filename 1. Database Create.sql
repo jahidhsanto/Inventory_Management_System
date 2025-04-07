@@ -282,3 +282,10 @@ CREATE TABLE Temp_Delivery (
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
 	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
 );
+
+
+CREATE TABLE Project (
+    Project_Code NVARCHAR(50) PRIMARY KEY, 
+    Project_Name NVARCHAR(255),
+);
+
