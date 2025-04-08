@@ -289,3 +289,19 @@ CREATE TABLE Project (
     Project_Name NVARCHAR(255),
 );
 
+INSERT INTO Warranty (Material_ID, Serial_Number, Start_Date, End_Date, Status)
+SELECT 
+    ci.Material_ID,
+    ci.Serial_Number,
+    c.Challan_Date,
+    DATEADD(YEAR, 1, c.Challan_Date),  -- assuming 1-year warranty
+    'Under Warranty'
+FROM Challan_Items ci
+JOIN Challan c ON ci.Challan_ID = c.Challan_ID
+JOIN Material m ON m.Material_ID = ci.Material_ID
+WHERE m.Requires_Serial_Number = 'Yes' 
+  AND ci.Serial_Number IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM Warranty w 
+      WHERE w.Serial_Number = ci.Serial_Number
+  );
