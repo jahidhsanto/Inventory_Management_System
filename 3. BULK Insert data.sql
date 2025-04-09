@@ -1,5 +1,45 @@
 use STORE;
 
+BULK INSERT Owner
+FROM 'D:\SQL\CEL STORE DATABASE\Owner.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);
+
+BULK INSERT Project
+FROM 'D:\SQL\CEL STORE DATABASE\Project.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);
+
+BULK INSERT Zone
+FROM 'D:\SQL\CEL STORE DATABASE\Zone.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);
+
+BULK INSERT Equipment
+FROM 'D:\SQL\CEL STORE DATABASE\Equipment.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);
+
 BULK INSERT Com_Non_Com
 FROM 'D:\SQL\CEL STORE DATABASE\Com_Non_Com.csv'
 WITH (

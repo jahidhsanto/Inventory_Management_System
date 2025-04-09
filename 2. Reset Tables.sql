@@ -1,5 +1,12 @@
 USE STORE;
 
+DELETE from Owner;
+DBCC CHECKIDENT ('Owner', RESEED, 0);
+
+DELETE from Project;
+
+DELETE from Equipment;
+
 DELETE FROM Challan_Items;
 DBCC CHECKIDENT ('Challan_Items', RESEED, 0);
 

@@ -113,13 +113,18 @@ CREATE TABLE Requisition (
     Employee_ID INT,
     Material_ID INT,
     Quantity INT NOT NULL,
+	Project_Code NVARCHAR(20),
+	Zone_ID INT,
     Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
 	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
     Created_Date DATETIME DEFAULT GETDATE(),
     Approved_By INT,
 	Store_Status_By INT,
+
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+	FOREIGN KEY (Project_Code) REFERENCES Project(Project_Code),
+	FOREIGN KEY (Zone_ID) REFERENCES Zone(Zone_ID),
     FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
 	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
 );
@@ -142,6 +147,7 @@ CREATE TABLE Material (
 	MSQ DECIMAL(10, 2) NOT NULL,
 	Requires_Serial_Number NVARCHAR(3) NOT NULL CHECK (Requires_Serial_Number IN ('Yes', 'No')),
 	Material_Image_Path VARCHAR(500),
+	Warranty_Period_Months INT DEFAULT 0,
 
     -- Add UNIQUE constraint on Part_Id to ensure it is unique
     CONSTRAINT UQ_Part_Id UNIQUE (Part_Id),
@@ -262,11 +268,11 @@ CREATE TABLE Return_Tracking (
 -- Create Warranty Table
 CREATE TABLE Warranty (
     Warranty_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Material_ID INT,
-    Serial_Number NVARCHAR(255),
-    Start_Date DATE,
-    End_Date DATE,
-    Status NVARCHAR(50) CHECK (Status IN ('Under Warranty', 'Expired')),
+    Material_ID INT NOT NULL,
+    Serial_Number NVARCHAR(255) NOT NULL,
+    Start_Date DATE NOT NULL,
+    End_Date DATE NOT NULL,
+    Status NVARCHAR(50) CHECK (Status IN ('Under Warranty', 'Expired', 'Replaced')),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
     FOREIGN KEY (Serial_Number) REFERENCES Stock(Serial_Number)
 );
@@ -283,25 +289,28 @@ CREATE TABLE Temp_Delivery (
 	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
 );
 
-
-CREATE TABLE Project (
-    Project_Code NVARCHAR(50) PRIMARY KEY, 
-    Project_Name NVARCHAR(255),
+CREATE TABLE Owner (
+    Owner_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Owner_Name NVARCHAR(255) NOT NULL,
 );
 
-INSERT INTO Warranty (Material_ID, Serial_Number, Start_Date, End_Date, Status)
-SELECT 
-    ci.Material_ID,
-    ci.Serial_Number,
-    c.Challan_Date,
-    DATEADD(YEAR, 1, c.Challan_Date),  -- assuming 1-year warranty
-    'Under Warranty'
-FROM Challan_Items ci
-JOIN Challan c ON ci.Challan_ID = c.Challan_ID
-JOIN Material m ON m.Material_ID = ci.Material_ID
-WHERE m.Requires_Serial_Number = 'Yes' 
-  AND ci.Serial_Number IS NOT NULL
-  AND NOT EXISTS (
-      SELECT 1 FROM Warranty w 
-      WHERE w.Serial_Number = ci.Serial_Number
-  );
+CREATE TABLE Project (
+    Project_Code NVARCHAR(20) PRIMARY KEY, 
+    Project_Name NVARCHAR(255) NOT NULL,
+    Owner_ID INT NULL,
+    Department NVARCHAR(50),
+    FOREIGN KEY (Owner_ID) REFERENCES Owner(Owner_ID),
+);
+
+CREATE TABLE Zone (
+    Zone_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Zone_Name NVARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE Equipment (
+    Equipment_Number NVARCHAR(20) PRIMARY KEY,
+    Project_Code NVARCHAR(20),
+    Zone_ID INT, 
+    FOREIGN KEY (Project_Code) REFERENCES Project(Project_Code),
+    FOREIGN KEY (Zone_ID) REFERENCES Zone(Zone_ID)
+);
