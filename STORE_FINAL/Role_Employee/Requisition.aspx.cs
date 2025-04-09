@@ -15,6 +15,7 @@ namespace STORE_FINAL.Role_Employee
 {
     public partial class Requisition : System.Web.UI.Page
     {
+        string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["Username"] == null || Session["Role"] == null ||
@@ -26,6 +27,7 @@ namespace STORE_FINAL.Role_Employee
             if (!IsPostBack)
             {
                 RESET();
+                LoadProjects();
                 LoadMaterials();
                 LoadRequisition();
             }
@@ -35,12 +37,11 @@ namespace STORE_FINAL.Role_Employee
         {
             int employeeID = Convert.ToInt32(Session["EmployeeID"]); // Logged-in Department Head
 
-            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
                         SELECT 
-                            r.Requisition_ID, m.Materials_Name, r.Quantity, r.Created_Date, r.Status AS Dept_Status, 
+                            r.Requisition_ID, m.Materials_Name, r.Quantity, CONCAT(p.Department, ' - ', p.Project_Name) Project_Name, r.Created_Date, r.Status AS Dept_Status, 
                             r.Store_Status, eh.Name AS Dept_Head
                         FROM requisition r
                         JOIN Material m 
@@ -51,7 +52,9 @@ namespace STORE_FINAL.Role_Employee
                             ON emp.Department_ID = d.Department_ID
                         LEFT JOIN Employee eh 
                             ON d.Department_Head_ID = eh.Employee_ID
-                        WHERE r.Employee_ID = @EmployeeID";
+						LEFT JOIN Project p
+							ON r.Project_Code = p.Project_Code
+                        WHERE r.Employee_ID = '3981';";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -83,26 +86,26 @@ namespace STORE_FINAL.Role_Employee
             }
 
             string employeeID = Session["EmployeeID"]?.ToString();
+            string projectID = ddlProject.SelectedValue;
             string materialID = ddlMaterials.SelectedValue;
             string quantity = txtQuantity.Text.Trim();
 
             // Backend Validations
-            if (!ValidateInput(employeeID, materialID, quantity))
+            if (!ValidateInput(employeeID, projectID, materialID, quantity))
             {
                 return;
             }
 
-            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
-
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                            INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status, Store_Status, Approved_By) 
-                            VALUES (@EmployeeID, @MaterialID, @Quantity, @Status, @StoreStatus, @ApprovedBy)";
+                            INSERT INTO Requisition (Employee_ID, Project_Code, Material_ID, Quantity, Status, Store_Status, Approved_By) 
+                            VALUES (@EmployeeID, @ProjectID, @MaterialID, @Quantity, @Status, @StoreStatus, @ApprovedBy)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                    cmd.Parameters.AddWithValue("@ProjectID", projectID);
                     cmd.Parameters.AddWithValue("@MaterialID", materialID);
                     cmd.Parameters.AddWithValue("@Quantity", quantity);
                     cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
@@ -125,8 +128,15 @@ namespace STORE_FINAL.Role_Employee
             }
         }
 
-        private bool ValidateInput(string employeeID, string materialID, string quantityText)
+        private bool ValidateInput(string employeeID, string projectID, string materialID, string quantityText)
         {
+            // Check if a project is selected
+            if (ddlProject.SelectedIndex == 0)
+            {
+                ShowMessage("Please select a project.", false);
+                return false;
+            }
+
             // Check if a material is selected
             if (ddlMaterials.SelectedIndex == 0)
             {
@@ -145,10 +155,37 @@ namespace STORE_FINAL.Role_Employee
             return true; // If all validations pass
         }
 
+        private void LoadProjects()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Project_Code, CONCAT(Department, ' - ', Project_Name) AS Project_Name 
+                                FROM Project;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlProject.DataSource = reader;
+                    ddlProject.DataTextField = "Project_Name";
+                    ddlProject.DataValueField = "Project_Code";
+                    ddlProject.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading projects: " + ex.Message, false);
+                }
+            }
+
+            ddlProject.Items.Insert(0, new ListItem("-- Select Project --", "0"));
+            ddlProject.SelectedValue = "0";
+        }
+
         private void LoadMaterials()
         {
-            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
-
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"

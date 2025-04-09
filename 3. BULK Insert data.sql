@@ -1,5 +1,15 @@
 use STORE;
 
+BULK INSERT Zone
+FROM 'D:\SQL\CEL STORE DATABASE\Zone.csv'
+WITH (
+    FORMAT = 'CSV', 
+    FIRSTROW = 2, -- If there's a header
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n', 
+    TABLOCK
+);
+
 BULK INSERT Owner
 FROM 'D:\SQL\CEL STORE DATABASE\Owner.csv'
 WITH (
@@ -12,16 +22,6 @@ WITH (
 
 BULK INSERT Project
 FROM 'D:\SQL\CEL STORE DATABASE\Project.csv'
-WITH (
-    FORMAT = 'CSV', 
-    FIRSTROW = 2, -- If there's a header
-    FIELDTERMINATOR = ',', 
-    ROWTERMINATOR = '\n', 
-    TABLOCK
-);
-
-BULK INSERT Zone
-FROM 'D:\SQL\CEL STORE DATABASE\Zone.csv'
 WITH (
     FORMAT = 'CSV', 
     FIRSTROW = 2, -- If there's a header

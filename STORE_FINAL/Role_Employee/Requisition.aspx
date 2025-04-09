@@ -18,6 +18,10 @@
                     <div class="accordion-body">
                         <div class="row">
                             <div class="col-md-6">
+                                <label>Select Project:</label>
+                                <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
+                            </div>
+                            <div class="col-md-6">
                                 <label>Select Material:</label>
                                 <asp:DropDownList ID="ddlMaterials" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
                             </div>
@@ -41,13 +45,13 @@
             <input type="text" id="searchRequisition" class="form-control" placeholder="Type to search requisition..." onkeyup="filterRequisition()">
         </div>
 
-        <!-- Employee List Table -->
         <h3 class="mt-3 text-center">📋 My All Requisition</h3>
         <asp:GridView ID="RequisitionGridView" runat="server" AutoGenerateColumns="false" CssClass="table table-striped table-bordered mt-3">
             <Columns>
                 <asp:BoundField DataField="Requisition_ID" HeaderText="Requisition ID" />
                 <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                 <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+                <asp:BoundField DataField="Project_Name" HeaderText="Project Name" />
                 <asp:BoundField DataField="Created_Date" HeaderText="Created Date" DataFormatString="{0:yyyy-MM-dd}" />
                 <asp:BoundField DataField="Dept_Status" HeaderText="Department Status" />
                 <asp:BoundField DataField="Dept_Head" HeaderText="Department Head" />

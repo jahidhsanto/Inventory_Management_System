@@ -6,12 +6,26 @@
 
     <asp:Panel ID="PanelFilters" runat="server" CssClass="mb-3">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>🔍 Search Requisition:</label>
                 <input type="text" id="searchRequisitionApproval" class="form-control" placeholder="Type to search requisition..." onkeyup="filterhRequisitionApproval()">
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-3">
+                <label for="ddlProject">Filter by Project:</label>
+                <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control select2">
+                    <%--AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged">--%>
+                </asp:DropDownList>
+            </div>
+
+            <div class="col-md-3">
+                <label for="ddlEmployee">Filter by Employee:</label>
+                <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control select2">
+                    <%--AutoPostBack="true" OnSelectedIndexChanged="ddlEmployee_SelectedIndexChanged">--%>
+                </asp:DropDownList>
+            </div>
+
+            <div class="col-md-3">
                 <label for="ddlStoreStatus">Filter by Store Status:</label>
                 <asp:DropDownList ID="ddlStoreStatus" runat="server" CssClass="form-control" AutoPostBack="false">
                     <asp:ListItem Text="All" Value="All"></asp:ListItem>
@@ -38,9 +52,9 @@
                 OnRowCommand="ApproveRequisitionGridView_RowCommand">
                 <columns>
                     <asp:TemplateField HeaderText="S.No">
-                        <ItemTemplate>
+                        <itemtemplate>
                             <%# Container.DataItemIndex + 1 %>
-                        </ItemTemplate>
+                        </itemtemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="Requisition_ID" HeaderText="Req ID" />
                     <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
@@ -69,7 +83,7 @@
                                 Visible='<%# Eval("Store_Status").ToString() == "Pending" %>' />
 
                             <!-- Show 'Delivered' button when Store_Status is 'Processing' -->
-                           <%-- <asp:Button ID="btnDelivered" runat="server" Text="Delivered" CssClass="btn btn-success"
+                            <%-- <asp:Button ID="btnDelivered" runat="server" Text="Delivered" CssClass="btn btn-success"
                                 CommandName="Delivered" CommandArgument='<%# Eval("Requisition_ID") %>'
                                 Visible='<%# Eval("Store_Status").ToString() == "Processing" %>' />--%>
 
@@ -85,14 +99,12 @@
                                              Eval("Store_Status").ToString() == "Processing" %>' />
                         </itemtemplate>
                     </asp:TemplateField>
-
                 </columns>
             </asp:GridView>
         </contenttemplate>
         <triggers>
             <asp:AsyncPostBackTrigger ControlID="btnFilter" EventName="Click" />
         </triggers>
-
     </asp:Panel>
 
     <!-- JavaScript for Live Search -->

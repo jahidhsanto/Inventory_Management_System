@@ -24,6 +24,24 @@ namespace STORE_FINAL.Role_DepartmentHead
         protected global::System.Web.UI.WebControls.Panel PanelFilters;
 
         /// <summary>
+        /// ddlProject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlProject;
+
+        /// <summary>
+        /// ddlEmployee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEmployee;
+
+        /// <summary>
         /// ddlStatus control.
         /// </summary>
         /// <remarks>

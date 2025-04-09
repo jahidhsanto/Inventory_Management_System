@@ -6,12 +6,26 @@
 
     <asp:Panel ID="PanelFilters" runat="server" CssClass="mb-3">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>🔍 Search Requisition:</label>
                 <input type="text" id="searchRequisitionApproval" class="form-control" placeholder="Type to search requisition..." onkeyup="filterRequisition()">
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-3">
+                <label for="ddlProject">Filter by Project:</label>
+                <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control select2">
+                    <%--AutoPostBack="true" OnSelectedIndexChanged="ddlProject_SelectedIndexChanged">--%>
+                </asp:DropDownList>
+            </div>
+
+            <div class="col-md-3">
+                <label for="ddlEmployee">Filter by Employee:</label>
+                <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control select2">
+                    <%--AutoPostBack="true" OnSelectedIndexChanged="ddlEmployee_SelectedIndexChanged">--%>
+                </asp:DropDownList>
+            </div>
+
+            <div class="col-md-3">
                 <label for="ddlStatus">Filter by Status:</label>
                 <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control" AutoPostBack="false">
                     <asp:ListItem Text="All" Value="All"></asp:ListItem>
@@ -24,45 +38,52 @@
         </div>
     </asp:Panel>
 
-    <asp:Panel ID="Panel1" runat="server" CssClass="table-responsive" Style="overflow-x: auto; white-space: nowrap;">
-        <asp:GridView
-            ID="RequisitionApprovalGridView"
-            runat="server"
-            AutoGenerateColumns="False"
-            CssClass="table table-bordered table-striped"
-            HorizontalAlign="Left"
-            DataKeyNames="Requisition_ID"
-            OnRowCommand="ApproveRequisitionGridView_RowCommand">
-            <Columns>
-                <asp:BoundField DataField="Requisition_ID" HeaderText="Requisition ID" ReadOnly="True" />
-                <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
-                <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-                <asp:BoundField DataField="Requested_By" HeaderText="Requested By" />
-                <asp:BoundField DataField="Created_Date" HeaderText="Requested Date" DataFormatString="{0:yyyy-MM-dd}" />
-                <asp:BoundField DataField="Dept_Status" HeaderText="Dept Status" />
-                <asp:BoundField DataField="Store_Status" HeaderText="Store Status" />
+    <asp:Panel ID="Panel1" runat="server" CssClass="table-responsive" Style="overflow-x: auto; white-space: normal;">
+        <contenttemplate>
+            <asp:GridView
+                ID="RequisitionApprovalGridView"
+                runat="server"
+                AutoGenerateColumns="False"
+                CssClass="table table-bordered table-striped"
+                HorizontalAlign="Left"
+                DataKeyNames="Requisition_ID"
+                OnRowCommand="ApproveRequisitionGridView_RowCommand">
+                <Columns>
+                    <asp:TemplateField HeaderText="S.No">
+                        <itemtemplate>
+                            <%# Container.DataItemIndex + 1 %>
+                        </itemtemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField DataField="Requisition_ID" HeaderText="Requisition ID" ReadOnly="True" />
+                    <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="Project_Name" HeaderText="Project Name" />
+                    <asp:BoundField DataField="Requested_By" HeaderText="Requested By" />
+                    <asp:BoundField DataField="Created_Date" HeaderText="Requested Date" DataFormatString="{0:yyyy-MM-dd}" />
+                    <asp:BoundField DataField="Dept_Status" HeaderText="Dept Status" />
+                    <asp:BoundField DataField="Store_Status" HeaderText="Store Status" />
 
-                <asp:TemplateField HeaderText="Actions">
-                    <ItemTemplate>
-                        <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn btn-success"
-                            CommandName="Approve" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
-                        <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-warning"
-                            CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# (Eval("Dept_Status").ToString() == "Approved" || 
-                                          Eval("Dept_Status").ToString() == "Rejected") &&
-                                         (Eval("Store_Status").ToString() == "Pending" ||
-                                          Eval("Store_Status") == DBNull.Value) %>' />
-                        <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn btn-danger"
-                            CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>'
-                            Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
-                    </ItemTemplate>
-                </asp:TemplateField>
-            </Columns>
-        </asp:GridView>
-    </asp:Panel>
-
-        <!-- JavaScript for Live Search -->
+                    <asp:TemplateField HeaderText="Actions">
+                        <ItemTemplate>
+                            <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn btn-success"
+                                CommandName="Approve" CommandArgument='<%# Eval("Requisition_ID") %>'
+                                Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
+                            <asp:Button ID="btnPending" runat="server" Text="Pending" CssClass="btn btn-warning"
+                                CommandName="Pending" CommandArgument='<%# Eval("Requisition_ID") %>'
+                                Visible='<%# (Eval("Dept_Status").ToString() == "Approved" || 
+                                              Eval("Dept_Status").ToString() == "Rejected") &&
+                                             (Eval("Store_Status").ToString() == "Pending" ||
+                                              Eval("Store_Status") == DBNull.Value) %>' />
+                            <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn btn-danger"
+                                CommandName="Reject" CommandArgument='<%# Eval("Requisition_ID") %>'
+                                Visible='<%# Eval("Dept_Status").ToString() == "Pending" %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            </asp:Panel>
+    
+    <!-- JavaScript for Live Search -->
     <script>
         function filterRequisition() {
             var input, filter, table, tr, td, i, j, txtValue, found;

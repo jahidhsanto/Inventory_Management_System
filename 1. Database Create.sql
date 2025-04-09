@@ -113,9 +113,8 @@ CREATE TABLE Requisition (
     Employee_ID INT,
     Material_ID INT,
     Quantity INT NOT NULL,
-	Project_Code NVARCHAR(20),
-	Zone_ID INT,
-    Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
+	Project_Code NVARCHAR(20) NOT NULL,
+	Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
 	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
     Created_Date DATETIME DEFAULT GETDATE(),
     Approved_By INT,
@@ -124,7 +123,6 @@ CREATE TABLE Requisition (
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
 	FOREIGN KEY (Project_Code) REFERENCES Project(Project_Code),
-	FOREIGN KEY (Zone_ID) REFERENCES Zone(Zone_ID),
     FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
 	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
 );
@@ -294,23 +292,17 @@ CREATE TABLE Owner (
     Owner_Name NVARCHAR(255) NOT NULL,
 );
 
-CREATE TABLE Project (
-    Project_Code NVARCHAR(20) PRIMARY KEY, 
-    Project_Name NVARCHAR(255) NOT NULL,
-    Owner_ID INT NULL,
-    Department NVARCHAR(50),
-    FOREIGN KEY (Owner_ID) REFERENCES Owner(Owner_ID),
-);
-
 CREATE TABLE Zone (
     Zone_ID INT IDENTITY(1,1) PRIMARY KEY,
     Zone_Name NVARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE Equipment (
-    Equipment_Number NVARCHAR(20) PRIMARY KEY,
-    Project_Code NVARCHAR(20),
+CREATE TABLE Project (
+    Project_Code NVARCHAR(20) PRIMARY KEY, 
+    Project_Name NVARCHAR(255) NOT NULL,
+    Owner_ID INT NULL,
     Zone_ID INT, 
-    FOREIGN KEY (Project_Code) REFERENCES Project(Project_Code),
-    FOREIGN KEY (Zone_ID) REFERENCES Zone(Zone_ID)
+	Department NVARCHAR(50),
+    FOREIGN KEY (Owner_ID) REFERENCES Owner(Owner_ID),
+	FOREIGN KEY (Zone_ID) REFERENCES Zone(Zone_ID)
 );
