@@ -1,5 +1,27 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="Requisition.aspx.cs" Inherits="STORE_FINAL.Role_Employee.Requisition" %>
 
+<asp:Content ID="Content1" ContentPlaceHolderID="Head" runat="server">
+    <style>
+        #rblRequisitionFor label {
+            margin-right: 10px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+        }
+        #rblRequisitionFor input[type="radio"] {
+            display: none;
+        }
+        #rblRequisitionFor input[type="radio"]:checked + label {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+    </style>
+</asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <h2 class="mt-3 text-center">Requisition Management</h2>
@@ -17,16 +39,46 @@
                 <div id="collapseCreate" class="accordion-collapse collapse" aria-labelledby="headingCreate" data-bs-parent="#requisitionManagementAccordion">
                     <div class="accordion-body">
                         <div class="row">
-                            <div class="col-md-6">
-                                <label>Select Project:</label>
-                                <asp:DropDownList ID="ddlProject" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
+                            <div class="col-md-12 mt-4">
+                                <asp:RadioButtonList ID="rblRequisitionFor" runat="server" RepeatDirection="Horizontal" CssClass="btn-group w-100" ClientIDMode="Static">
+                                    <asp:ListItem Text="Project" Value="Project" Selected="True" />
+                                    <asp:ListItem Text="Employee" Value="Employee" />
+                                    <asp:ListItem Text="Department" Value="Department" />
+                                    <asp:ListItem Text="Zone" Value="Zone" />
+                                </asp:RadioButtonList>
                             </div>
-                            <div class="col-md-6">
-                                <label>Select Material:</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 dropdown-container" id="dropdownProjectFor">
+                                <label class="form-label">Select Project:</label>
+                                <asp:DropDownList ID="ddlProjectFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                                <asp:DropDownList ID="ddlTypeOfService" runat="server" CssClass="form-control select2">
+                                    <asp:ListItem Text="Warranty Replacement" Value="Warranty Replacement" />
+                                    <asp:ListItem Text="Free of cost" Value="Free of cost" />
+                                    <asp:ListItem Text="Spare Sale" Value="Spare Sale" />
+                                    <asp:ListItem Text="Test Purpose" Value="Test Purpose" />
+                                    <asp:ListItem Text="" Value="" />
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-6 dropdown-container d-none" id="dropdownEmployeeFor">
+                                <label class="form-label">Select Employee:</label>
+                                <asp:DropDownList ID="ddlEmployeeFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                            </div>
+                            <div class="col-md-6 dropdown-container d-none" id="dropdownDepartmentFor">
+                                <label class="form-label">Select Department:</label>
+                                <asp:DropDownList ID="ddlDepartmentFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                            </div>
+                            <div class="col-md-6 dropdown-container d-none" id="dropdownZoneFor">
+                                <label class="form-label">Select Zone:</label>
+                                <asp:DropDownList ID="ddlZoneFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                            </div>                            
+                            
+                            <div class="col-md-6 dropdown-container">
+                                <label class="form-label">Select Material:</label>
                                 <asp:DropDownList ID="ddlMaterials" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
                             </div>
                             <div class="col-md-6">
-                                <label>Quantity:</label>
+                                <label class="form-label">Quantity:</label>
                                 <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                         </div>
@@ -87,5 +139,46 @@
             }
         }
     </script>
+
+    <script>
+        function showDropdown() {
+            var selected = document.querySelector('#rblRequisitionFor input[type="radio"]:checked');
+            if (!selected) return;
+
+            var selectedValue = selected.value;
+
+            // List of all dropdown IDs
+            const dropdowns = {
+                Project: document.getElementById('dropdownProjectFor'),
+                Employee: document.getElementById('dropdownEmployeeFor'),
+                Department: document.getElementById('dropdownDepartmentFor'),
+                Zone: document.getElementById('dropdownZoneFor')
+            };
+
+            // Loop through each dropdown
+            for (const type in dropdowns) {
+                const container = dropdowns[type];
+                const ddl = container.querySelector('select');
+
+                if (type === selectedValue) {
+                    container.classList.remove('d-none'); // Show
+                } else {
+                    container.classList.add('d-none');    // Hide
+                    if (ddl) ddl.selectedIndex = 0;       // Clear selection
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            showDropdown();
+
+            // Attach change event to all radio buttons
+            document.querySelectorAll('#rblRequisitionFor input[type="radio"]').forEach(function (rb) {
+                rb.addEventListener("change", showDropdown);
+            });
+        });
+    </script>
+
+
 </asp:Content>
 

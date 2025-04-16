@@ -38,8 +38,8 @@ namespace STORE_FINAL.Role_DepartmentHead
                             r.Requisition_ID, 
 	                        m.Materials_Name, 
                             r.Quantity, 
-                            CONCAT(p.Department, ' - ', p.Project_Name) Project_Name,
-	                        r.Created_Date, 
+	                        r.Requisition_For,
+                            r.Created_Date, 
                             emp.Name AS Requested_By,
                             r.Status AS Dept_Status, 
                             r.Store_Status, 
@@ -47,8 +47,6 @@ namespace STORE_FINAL.Role_DepartmentHead
                         FROM requisition r
                         JOIN Material m 
                             ON r.Material_ID = m.Material_ID
-						LEFT JOIN Project p
-							ON r.Project_Code = p.Project_Code
                         LEFT JOIN Employee emp 
                             ON r.Employee_ID = emp.Employee_ID
                         LEFT JOIN Department d 
@@ -60,7 +58,7 @@ namespace STORE_FINAL.Role_DepartmentHead
 
             if (projectCode != "All")
             {
-                query += " AND r.Project_Code = @ProjectCode";
+                query += " AND r.Project_Code_For = @ProjectCode";
             }
 
             if (requestedBy_EmployeeID != "All")
@@ -106,7 +104,7 @@ namespace STORE_FINAL.Role_DepartmentHead
             string query = @"
                             SELECT DISTINCT p.Project_Code, p.Project_Name
                             FROM Requisition r
-                            JOIN Project p ON r.Project_Code = p.Project_Code";
+                            JOIN Project p ON r.Project_Code_For = p.Project_Code";
 
             if (employeeID != "All")
             {
@@ -142,7 +140,7 @@ namespace STORE_FINAL.Role_DepartmentHead
 
             if (projectCode != "All")
             {
-                query += " WHERE r.Project_Code = @ProjectCode";
+                query += " WHERE r.Project_Code_For = @ProjectCode";
             }
 
             using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))

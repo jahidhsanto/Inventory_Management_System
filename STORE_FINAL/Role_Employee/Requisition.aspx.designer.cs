@@ -24,13 +24,58 @@ namespace STORE_FINAL.Role_Employee
         protected global::System.Web.UI.WebControls.Label lblMessage;
 
         /// <summary>
-        /// ddlProject control.
+        /// rblRequisitionFor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlProject;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblRequisitionFor;
+
+        /// <summary>
+        /// ddlProjectFor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlProjectFor;
+
+        /// <summary>
+        /// ddlTypeOfService control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTypeOfService;
+
+        /// <summary>
+        /// ddlEmployeeFor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEmployeeFor;
+
+        /// <summary>
+        /// ddlDepartmentFor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlDepartmentFor;
+
+        /// <summary>
+        /// ddlZoneFor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlZoneFor;
 
         /// <summary>
         /// ddlMaterials control.

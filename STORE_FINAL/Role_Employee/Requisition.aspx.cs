@@ -28,11 +28,246 @@ namespace STORE_FINAL.Role_Employee
             {
                 RESET();
                 LoadProjects();
+                LoadEmployees();
+                LoadDepartments();
+                LoadZones();
                 LoadMaterials();
                 LoadRequisition();
             }
         }
 
+        // Load all DropDowns
+        private void LoadProjects()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Project_Code, CONCAT(Department, ' - ', Project_Name) AS Project_Name 
+                                FROM Project;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlProjectFor.DataSource = reader;
+                    ddlProjectFor.DataTextField = "Project_Name";
+                    ddlProjectFor.DataValueField = "Project_Code";
+                    ddlProjectFor.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading projects: " + ex.Message, false);
+                }
+            }
+
+            ddlProjectFor.Items.Insert(0, new ListItem("-- Select Project --", "0"));
+            ddlProjectFor.SelectedValue = "0";
+        }
+        private void LoadEmployees()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Employee_ID, CONCAT(Employee_ID, ' - ', Name) AS Employee 
+                                FROM Employee
+                                ORDER BY Employee_ID ASC;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlEmployeeFor.DataSource = reader;
+                    ddlEmployeeFor.DataTextField = "Employee";
+                    ddlEmployeeFor.DataValueField = "Employee_ID";
+                    ddlEmployeeFor.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading projects: " + ex.Message, false);
+                }
+            }
+
+            ddlEmployeeFor.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
+            ddlEmployeeFor.SelectedValue = "0";
+        }
+        private void LoadDepartments()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT d.Department_ID, d.DepartmentName 
+                                FROM Department d
+                                INNER JOIN Employee e
+                                    ON d.Department_Head_ID = e.Employee_ID;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlDepartmentFor.DataSource = reader;
+                    ddlDepartmentFor.DataTextField = "DepartmentName";
+                    ddlDepartmentFor.DataValueField = "Department_ID";
+                    ddlDepartmentFor.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading projects: " + ex.Message, false);
+                }
+            }
+
+            ddlDepartmentFor.Items.Insert(0, new ListItem("-- Select Department --", "0"));
+            ddlDepartmentFor.SelectedValue = "0";
+        }
+        private void LoadZones()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Zone_ID, Zone_Name 
+                                FROM Zone;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlZoneFor.DataSource = reader;
+                    ddlZoneFor.DataTextField = "Zone_Name";
+                    ddlZoneFor.DataValueField = "Zone_ID";
+                    ddlZoneFor.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading projects: " + ex.Message, false);
+                }
+            }
+
+            ddlZoneFor.Items.Insert(0, new ListItem("-- Select Zone --", "0"));
+            ddlZoneFor.SelectedValue = "0";
+        }
+        private void LoadMaterials()
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                                SELECT Material_ID, Materials_Name 
+                                FROM Material;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                try
+                {
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    ddlMaterials.DataSource = reader;
+                    ddlMaterials.DataTextField = "Materials_Name";
+                    ddlMaterials.DataValueField = "Material_ID";
+                    ddlMaterials.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage("Error loading materials: " + ex.Message, false);
+                }
+            }
+
+            ddlMaterials.Items.Insert(0, new ListItem("-- Select Material --", "0"));
+            ddlMaterials.SelectedValue = "0";
+        }
+        
+        protected void btnSubmitRequisition_Click(object sender, EventArgs e)
+        {
+            if (Session["EmployeeID"] == null)
+            {
+                ShowMessage("Session expired. Please log in again.", false);
+                Response.Redirect("~/");
+                return;
+            }
+
+            string employeeID = Session["EmployeeID"]?.ToString();
+            string materialID = ddlMaterials.SelectedValue;
+            string quantity = txtQuantity.Text.Trim();
+            string selectedRequisitionFor = rblRequisitionFor.SelectedValue; 
+            string projectID = ddlProjectFor.SelectedValue;
+            string employeeSelected = ddlEmployeeFor.SelectedValue;
+            string departmentID = ddlDepartmentFor.SelectedValue;
+            string zoneID = ddlZoneFor.SelectedValue;
+
+            // Backend Validations
+            if (!ValidateInput(selectedRequisitionFor, employeeID, projectID, materialID, quantity))
+            {
+                return;
+            }
+
+            // Determine the value for the INSERT query based on the selected radio button
+            string insertColumn = "";
+            string insertValue = "";
+
+            // Depending on the radio button selected, set the respective column and value
+            if (selectedRequisitionFor == "Project")
+            {
+                insertColumn = "Project_Code_For";
+                insertValue = projectID;
+            }
+            else if (selectedRequisitionFor == "Employee")
+            {
+                insertColumn = "Employee_ID_For";
+                insertValue = employeeSelected;
+            }
+            else if (selectedRequisitionFor == "Department")
+            {
+                insertColumn = "Department_ID_For";
+                insertValue = departmentID;
+            }
+            else if (selectedRequisitionFor == "Zone")
+            {
+                insertColumn = "Zone_ID_For";
+                insertValue = zoneID;
+            }
+            else
+            {
+                ShowMessage("Invalid selection. Please choose a valid option.", false);
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                            INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status, Requisition_For, " + insertColumn + @") 
+                            VALUES (@EmployeeID, @MaterialID, @Quantity, @Status, @Requisition_For, @" + insertColumn + ")";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+                    cmd.Parameters.AddWithValue("@Status", "Pending");
+                    cmd.Parameters.AddWithValue("@Requisition_For", selectedRequisitionFor);
+                    cmd.Parameters.AddWithValue("@" + insertColumn, insertValue);
+
+                    try
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        ShowMessage("Requisition submitted successfully!", true);
+                        RESET();
+                        Response.Redirect("Requisition");
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowMessage("Database error: " + ex.Message, false);
+                    }
+                }
+            }
+        }
+
+        // Load Requisition table
         private void LoadRequisition()
         {
             int employeeID = Convert.ToInt32(Session["EmployeeID"]); // Logged-in Department Head
@@ -74,67 +309,9 @@ namespace STORE_FINAL.Role_Employee
             }
         }
 
-        protected void btnSubmitRequisition_Click(object sender, EventArgs e)
+       
+        private bool ValidateInput(string selectedRequisitionFor, string employeeID, string projectID, string materialID, string quantityText)
         {
-            if (Session["EmployeeID"] == null)
-            {
-                ShowMessage("Session expired. Please log in again.", false);
-                Response.Redirect("~/");
-                return;
-            }
-
-            string employeeID = Session["EmployeeID"]?.ToString();
-            string projectID = ddlProject.SelectedValue;
-            string materialID = ddlMaterials.SelectedValue;
-            string quantity = txtQuantity.Text.Trim();
-
-            // Backend Validations
-            if (!ValidateInput(employeeID, projectID, materialID, quantity))
-            {
-                return;
-            }
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = @"
-                            INSERT INTO Requisition (Employee_ID, Project_Code, Material_ID, Quantity, Status, Store_Status, Approved_By) 
-                            VALUES (@EmployeeID, @ProjectID, @MaterialID, @Quantity, @Status, @StoreStatus, @ApprovedBy)";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
-                    cmd.Parameters.AddWithValue("@ProjectID", projectID);
-                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
-                    cmd.Parameters.AddWithValue("@Quantity", quantity);
-                    cmd.Parameters.AddWithValue("@Status", "Pending");  // Set the Status to "Pending"
-                    cmd.Parameters.AddWithValue("@StoreStatus", DBNull.Value);
-                    cmd.Parameters.AddWithValue("@ApprovedBy", DBNull.Value);
-
-                    try
-                    {
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        ShowMessage("Requisition submitted successfully!", true);
-                        RESET();
-                        Response.Redirect("Requisition");
-                    }
-                    catch (Exception ex)
-                    {
-                        ShowMessage("Database error: " + ex.Message, false);
-                    }
-                }
-            }
-        }
-
-        private bool ValidateInput(string employeeID, string projectID, string materialID, string quantityText)
-        {
-            // Check if a project is selected
-            if (ddlProject.SelectedIndex == 0)
-            {
-                ShowMessage("Please select a project.", false);
-                return false;
-            }
-
             // Check if a material is selected
             if (ddlMaterials.SelectedIndex == 0)
             {
@@ -150,65 +327,41 @@ namespace STORE_FINAL.Role_Employee
                 return false;
             }
 
+            // Validate Based on Selected RadioButton
+            if (selectedRequisitionFor == "Project")
+            {
+                if (ddlProjectFor.SelectedIndex == 0)
+                {
+                    ShowMessage("Please select a project.", false);
+                    return false;
+                }
+            }
+            else if (selectedRequisitionFor == "Employee")
+            {
+                if (ddlEmployeeFor.SelectedIndex == 0)
+                {
+                    ShowMessage("Please select an employee.", false);
+                    return false;
+                }
+            }
+            else if (selectedRequisitionFor == "Department")
+            {
+                if (ddlDepartmentFor.SelectedIndex == 0)
+                {
+                    ShowMessage("Please select a department.", false);
+                    return false;
+                }
+            }
+            else if (selectedRequisitionFor == "Zone")
+            {
+                if (ddlZoneFor.SelectedIndex == 0)
+                {
+                    ShowMessage("Please select a zone.", false);
+                    return false;
+                }
+            }
+
             return true; // If all validations pass
-        }
-
-        private void LoadProjects()
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = @"
-                                SELECT Project_Code, CONCAT(Department, ' - ', Project_Name) AS Project_Name 
-                                FROM Project;";
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                try
-                {
-                    conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    ddlProject.DataSource = reader;
-                    ddlProject.DataTextField = "Project_Name";
-                    ddlProject.DataValueField = "Project_Code";
-                    ddlProject.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    ShowMessage("Error loading projects: " + ex.Message, false);
-                }
-            }
-
-            ddlProject.Items.Insert(0, new ListItem("-- Select Project --", "0"));
-            ddlProject.SelectedValue = "0";
-        }
-
-        private void LoadMaterials()
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = @"
-                                SELECT Material_ID, Materials_Name 
-                                FROM Material;";
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                try
-                {
-                    conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    ddlMaterials.DataSource = reader;
-                    ddlMaterials.DataTextField = "Materials_Name";
-                    ddlMaterials.DataValueField = "Material_ID";
-                    ddlMaterials.DataBind();
-                }
-                catch (Exception ex)
-                {
-                    ShowMessage("Error loading materials: " + ex.Message, false);
-                }
-            }
-
-            ddlMaterials.Items.Insert(0, new ListItem("-- Select Material --", "0"));
-            ddlMaterials.SelectedValue = "0";
         }
 
         private void ShowMessage(string message, bool isSuccess)
