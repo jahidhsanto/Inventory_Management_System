@@ -51,7 +51,6 @@
                 <asp:BoundField DataField="Requisition_ID" HeaderText="Requisition ID" />
                 <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                 <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-                <asp:BoundField DataField="Project_Name" HeaderText="Project Name" />
                 <asp:BoundField DataField="Created_Date" HeaderText="Created Date" DataFormatString="{0:yyyy-MM-dd}" />
                 <asp:BoundField DataField="Dept_Status" HeaderText="Department Status" />
                 <asp:BoundField DataField="Dept_Head" HeaderText="Department Head" />

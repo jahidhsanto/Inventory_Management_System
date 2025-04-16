@@ -41,7 +41,7 @@ namespace STORE_FINAL.Role_Employee
             {
                 string query = @"
                         SELECT 
-                            r.Requisition_ID, m.Materials_Name, r.Quantity, CONCAT(p.Department, ' - ', p.Project_Name) Project_Name, r.Created_Date, r.Status AS Dept_Status, 
+                            r.Requisition_ID, m.Materials_Name, r.Quantity, r.Created_Date, r.Status AS Dept_Status, 
                             r.Store_Status, eh.Name AS Dept_Head
                         FROM requisition r
                         JOIN Material m 
@@ -52,8 +52,6 @@ namespace STORE_FINAL.Role_Employee
                             ON emp.Department_ID = d.Department_ID
                         LEFT JOIN Employee eh 
                             ON d.Department_Head_ID = eh.Employee_ID
-						LEFT JOIN Project p
-							ON r.Project_Code = p.Project_Code
                         WHERE r.Employee_ID = '3981';";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

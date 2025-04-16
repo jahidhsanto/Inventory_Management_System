@@ -113,18 +113,35 @@ CREATE TABLE Requisition (
     Employee_ID INT,
     Material_ID INT,
     Quantity INT NOT NULL,
-	Project_Code NVARCHAR(20) NOT NULL,
+
 	Status NVARCHAR(50) CHECK (Status IN ('Rejected', 'Pending', 'Approved')),
 	Store_Status NVARCHAR(50) CHECK (Store_Status IN ('Pending', 'Out of Stock', 'Ordered', 'Delivered')),
-    Created_Date DATETIME DEFAULT GETDATE(),
+    
+	Created_Date DATETIME DEFAULT GETDATE(),
     Approved_By INT,
 	Store_Status_By INT,
 
+    Requisition_For NVARCHAR(100) CHECK (Requisition_For IN ('Employee', 'Department', 'Zone', 'Project')),
+    Employee_ID_For INT,
+    Department_ID_For INT,
+    Zone_ID_For INT,
+    Project_Code_For NVARCHAR(20),
+
     FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-	FOREIGN KEY (Project_Code) REFERENCES Project(Project_Code),
-    FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
-	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID)
+	FOREIGN KEY (Approved_By) REFERENCES Employee(Employee_ID),
+	FOREIGN KEY (Store_Status_By) REFERENCES Employee(Employee_ID),
+    FOREIGN KEY (Employee_ID_For) REFERENCES Employee(Employee_ID),
+    FOREIGN KEY (Department_ID_For) REFERENCES Department(Department_ID),
+    FOREIGN KEY (Zone_ID_For) REFERENCES Zone(Zone_ID),
+    FOREIGN KEY (Project_Code_For) REFERENCES Project(Project_Code),
+
+    CONSTRAINT CHK_Requisition_For_Matching CHECK (
+        (Requisition_For = 'Employee' AND Employee_ID_For IS NOT NULL AND Department_ID_For IS NULL AND Zone_ID_For IS NULL AND Project_Code_For IS NULL) OR
+        (Requisition_For = 'Department' AND Department_ID_For IS NOT NULL AND Employee_ID_For IS NULL AND Zone_ID_For IS NULL AND Project_Code_For IS NULL) OR
+        (Requisition_For = 'Zone' AND Zone_ID_For IS NOT NULL AND Employee_ID_For IS NULL AND Department_ID_For IS NULL AND Project_Code_For IS NULL) OR
+        (Requisition_For = 'Project' AND Project_Code_For IS NOT NULL AND Employee_ID_For IS NULL AND Department_ID_For IS NULL AND Zone_ID_For IS NULL)
+    )
 );
 
 -- Create Material Table
