@@ -11,7 +11,11 @@ namespace STORE_FINAL.UserDashboard
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            string role = Session["Role"] != null ? Session["Role"].ToString() : "Guest";
 
+            storePersonDashboard.Visible = (role == "Store InCharge");
+            employeeDashboard.Visible = (role == "Employee" || role == "Department Head");
+            departmentHeadDashboard.Visible = (role == "Department Head");
         }
     }
 }
