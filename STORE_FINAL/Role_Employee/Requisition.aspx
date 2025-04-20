@@ -52,7 +52,7 @@
                             <div class="col-md-6 dropdown-container" id="dropdownProjectFor">
                                 <label class="form-label">Select Project:</label>
                                 <asp:DropDownList ID="ddlProjectFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
-                                <asp:DropDownList ID="ddlTypeOfService" runat="server" CssClass="form-control select2">
+                                <asp:DropDownList ID="ddlRequisitionType" runat="server" CssClass="form-control select2">
                                     <asp:ListItem Text="Warranty Replacement" Value="Warranty Replacement" />
                                     <asp:ListItem Text="Free of cost" Value="Free of cost" />
                                     <asp:ListItem Text="Spare Sale" Value="Spare Sale" />

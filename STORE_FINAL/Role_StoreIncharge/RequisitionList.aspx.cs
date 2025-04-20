@@ -51,7 +51,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             if (projectCode != "All")
             {
-                query += " AND r.Project_Code = @ProjectCode";
+                query += " AND r.Project_Code_For = @ProjectCode";
             }
 
             if (requestedBy_EmployeeID != "All")
@@ -66,7 +66,8 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             query += " GROUP BY r.Requisition_ID, m.Materials_Name, r.Quantity, " +
                 "r.Created_Date, emp.Name, r.Status, " +
-                "r.Store_Status, eh.Name, r.Store_Status_By;";
+                "r.Store_Status, eh.Name, r.Store_Status_By" +
+                " ORDER BY r.Requisition_ID DESC;";
 
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -98,9 +99,9 @@ namespace STORE_FINAL.Role_StoreIncharge
         private void LoadProjects(String employeeID)
         {
             string query = @"
-                            SELECT DISTINCT p.Project_Code, p.Project_Name
+                            SELECT DISTINCT r.Project_Code_For, p.Project_Name
                             FROM Requisition r
-                            JOIN Project p ON r.Project_Code = p.Project_Code";
+                            JOIN Project p ON r.Project_Code_For = p.Project_Code";
 
             if (employeeID != "All")
             {
@@ -119,7 +120,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     conn.Open();
                     ddlProject.DataSource = cmd.ExecuteReader();
                     ddlProject.DataTextField = "Project_Name";
-                    ddlProject.DataValueField = "Project_Code";
+                    ddlProject.DataValueField = "Project_Code_For";
                     ddlProject.DataBind();
                 }
 

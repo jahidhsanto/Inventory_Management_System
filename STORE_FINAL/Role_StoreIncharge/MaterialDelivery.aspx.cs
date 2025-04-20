@@ -18,6 +18,12 @@ namespace STORE_FINAL.Role_StoreIncharge
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["Username"] == null || Session["Role"] == null ||
+                Session["Role"].ToString() != "Store InCharge")
+            {
+                Response.Redirect("~/");
+            }
+
             if (!IsPostBack)
             {
                 if (Session["DeliverySessionID"] == null)
@@ -27,6 +33,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 hfDeliverySessionID.Value = Session["DeliverySessionID"].ToString();
 
                 LoadRequisitions();
+                LoadRequisitionBy();
                 LoadEmployees();
 
                 // Display the DeliverySessionID in the label
@@ -71,9 +78,26 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             ddlRequisition.Items.Insert(0, new ListItem("-- Select Requisition --", "0"));
         }
+        private void LoadRequisitionBy()
+        {
+            string query = @"
+                            SELECT DISTINCT R.Employee_ID, CONCAT(R.Employee_ID, ' - ', E.Name) AS RequisitionBy
+                            FROM Requisition R
+                            JOIN Employee E ON R.Employee_ID = E.Employee_ID
+                            WHERE R.Status = 'Approved' AND R.Store_Status = 'Processing'
+                            ORDER BY R.Employee_ID ASC;";
+
+            DataTable dt = GetData(query);
+            ddlRequisitionBy.DataSource = dt;
+            ddlRequisitionBy.DataTextField = "RequisitionBy";
+            ddlRequisitionBy.DataValueField = "Employee_ID";
+            ddlRequisitionBy.DataBind();
+
+            ddlRequisitionBy.Items.Insert(0, new ListItem("-- Select Request Person --", "0"));
+        }
         private void LoadEmployees()
         {
-            string query = "select Employee_ID, CONCAT(Employee_ID, ' - ', Name) AS Name from Employee";
+            string query = "SELECT Employee_ID, CONCAT(Employee_ID, ' - ', Name) AS Name FROM Employee";
             DataTable dt = GetData(query);
 
             ddlEmployee.DataSource = dt;
@@ -82,6 +106,41 @@ namespace STORE_FINAL.Role_StoreIncharge
             ddlEmployee.DataBind();
 
             ddlEmployee.Items.Insert(0, new ListItem("-- Select Employee --", "0"));
+        }
+        protected void ddlRequisitionBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // ✅ Clear Fields when a new requisition is selected
+            lblMaterialName.Text = "-";
+            lblRequestedBy.Text = "-";
+            lblRequestedDate.Text = "-";
+            ddlSerialNumber.Items.Clear();
+            ddlLocation.Items.Clear();
+            txtQuantity.Text = "";
+
+            int requisitionByID = Convert.ToInt32(ddlRequisitionBy.SelectedValue);
+            if (requisitionByID > 0)
+            {
+                string query = @"SELECT R.Requisition_ID, CONCAT('Req#', R.Requisition_ID, ' - ', M.Materials_Name, ' - ', E.Name) AS ReqDetails 
+                            FROM Requisition R
+                            INNER JOIN Material M ON R.Material_ID = M.Material_ID
+                            JOIN Employee E ON R.Employee_ID = E.Employee_ID
+                            WHERE R.Status = 'Approved' 
+                                AND R.Store_Status = 'Processing' 
+                                AND R.Employee_ID = @requisitionByID;";
+
+                SqlParameter[] parameters = {
+                    new SqlParameter("@requisitionByID", requisitionByID)
+                };
+
+                DataTable dt = GetData(query, parameters);
+                ddlRequisition.DataSource = dt;
+                ddlRequisition.DataTextField = "ReqDetails";
+                ddlRequisition.DataValueField = "Requisition_ID";
+                ddlRequisition.DataBind();
+
+                ddlRequisition.Items.Insert(0, new ListItem("-- Select Requisition --", "0"));
+
+            }
         }
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -191,7 +250,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
-
+        
         // 2️⃣ Insert Selected Item into Temp_Delivery
         protected void btnAddToDelivery_Click(object sender, EventArgs e)
         {

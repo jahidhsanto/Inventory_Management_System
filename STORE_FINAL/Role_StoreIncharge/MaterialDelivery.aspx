@@ -11,14 +11,19 @@
         <!-- Requisition Selection & Details -->
         <div class="row">
             <!-- Left Side: Requisition Details -->
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <label>Requisition:</label>
-                        <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged"></asp:DropDownList>
-
-                        <label><strong>Received Employee:</strong></label>
-                        <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <label>Requisition By:</label>
+                                <asp:DropDownList ID="ddlRequisitionBy" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisitionBy_SelectedIndexChanged"></asp:DropDownList>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Select Requisition:</label>
+                                <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged"></asp:DropDownList>
+                            </div>
+                        </div>
 
                         <div class="card mt-3 p-3 bg-light">
                             <h5>📋 Requisition Details</h5>
@@ -37,7 +42,7 @@
             </div>
 
             <!-- Right Side: Requisition Image -->
-            <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
                 <div class="card text-center p-3">
                     <!-- 🔄 UpdatePanel for Requisition Image -->
                     <asp:UpdatePanel runat="server" UpdateMode="Conditional">
@@ -60,7 +65,7 @@
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         <label ID="lblSerialNumber" runat="server"><strong>Serial Number:</strong></label>
-                        <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2" Enabled="false"></asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
@@ -71,7 +76,7 @@
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         <label ID="lblLocation" runat="server"><strong>Stock Location:</strong></label>
-                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2" Enabled="false"></asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
@@ -123,8 +128,11 @@
             </asp:GridView>
         </div>
 
-        <!-- Deliver Button -->
         <div class="text-center mt-3">
+            <label><strong>Received Employee:</strong></label>
+            <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
+            
+            <!-- Deliver Button -->
             <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_Click" />
         </div>
     </div>

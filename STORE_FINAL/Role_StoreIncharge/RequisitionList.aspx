@@ -51,20 +51,12 @@
                 DataKeyNames="Requisition_ID"
                 OnRowCommand="ApproveRequisitionGridView_RowCommand">
                 <columns>
-                    <asp:TemplateField HeaderText="S.No">
+<%--                    <asp:TemplateField HeaderText="S.No">
                         <itemtemplate>
                             <%# Container.DataItemIndex + 1 %>
                         </itemtemplate>
-                    </asp:TemplateField>
-                    <asp:BoundField DataField="Requisition_ID" HeaderText="Req ID" />
-                    <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
-                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-                    <asp:BoundField DataField="Stock_Quantity" HeaderText="Stock" />
-                    <asp:BoundField DataField="Requested_By" HeaderText="Requested By" />
-                    <asp:BoundField DataField="Created_Date" HeaderText="Req Date" DataFormatString="{0:yyyy-MM-dd}" />
-                    <asp:BoundField DataField="Dept_Head" HeaderText="Reviewed By" />
-                    <asp:BoundField DataField="Store_Status" HeaderText="Store Status" />
-
+                    </asp:TemplateField>--%>
+                    
                     <asp:TemplateField HeaderText="Actions">
                         <itemtemplate>
                             <!-- Show 'Processing' button when Store_Status is 'Pending' -->
@@ -99,6 +91,16 @@
                                              Eval("Store_Status").ToString() == "Processing" %>' />
                         </itemtemplate>
                     </asp:TemplateField>
+
+
+                    <asp:BoundField DataField="Requisition_ID" HeaderText="Req ID" />
+                    <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="Stock_Quantity" HeaderText="Stock" />
+                    <asp:BoundField DataField="Requested_By" HeaderText="Requested By" />
+                    <asp:BoundField DataField="Created_Date" HeaderText="Req Date" DataFormatString="{0:yyyy-MM-dd}" />
+                    <asp:BoundField DataField="Dept_Head" HeaderText="Reviewed By" />
+                    <asp:BoundField DataField="Store_Status" HeaderText="Store Status" />
                 </columns>
             </asp:GridView>
         </contenttemplate>

@@ -157,8 +157,19 @@ namespace STORE_FINAL.Role_Employee
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                                SELECT Material_ID, Materials_Name 
-                                FROM Material;";
+                                SELECT 
+                                    m.Material_ID, 
+                                    m.Materials_Name
+                                FROM 
+                                    Material m
+                                JOIN 
+                                    Stock s ON m.Material_ID = s.Material_ID
+                                WHERE 
+                                    s.Status = 'AVAILABLE' 
+                                    AND s.Quantity > 0
+                                GROUP BY 
+                                    m.Material_ID, 
+                                    m.Materials_Name;";
                 SqlCommand cmd = new SqlCommand(query, conn);
 
                 try
@@ -194,10 +205,11 @@ namespace STORE_FINAL.Role_Employee
             string materialID = ddlMaterials.SelectedValue;
             string quantity = txtQuantity.Text.Trim();
             string selectedRequisitionFor = rblRequisitionFor.SelectedValue; 
-            string projectID = ddlProjectFor.SelectedValue;
             string employeeSelected = ddlEmployeeFor.SelectedValue;
             string departmentID = ddlDepartmentFor.SelectedValue;
             string zoneID = ddlZoneFor.SelectedValue;
+            string projectID = ddlProjectFor.SelectedValue;
+            string requisitionType = ddlRequisitionType.SelectedValue;
 
             // Backend Validations
             if (!ValidateInput(selectedRequisitionFor, employeeID, projectID, materialID, quantity))
@@ -208,12 +220,16 @@ namespace STORE_FINAL.Role_Employee
             // Determine the value for the INSERT query based on the selected radio button
             string insertColumn = "";
             string insertValue = "";
+            string additionalColumn = "";
+            string additionalValue = "";
 
             // Depending on the radio button selected, set the respective column and value
             if (selectedRequisitionFor == "Project")
             {
                 insertColumn = "Project_Code_For";
                 insertValue = projectID;
+                additionalColumn = ", Requisition_Type";
+                additionalValue = ", @Requisition_Type";
             }
             else if (selectedRequisitionFor == "Employee")
             {
@@ -239,8 +255,8 @@ namespace STORE_FINAL.Role_Employee
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                            INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status, Requisition_For, " + insertColumn + @") 
-                            VALUES (@EmployeeID, @MaterialID, @Quantity, @Status, @Requisition_For, @" + insertColumn + ")";
+                                INSERT INTO Requisition (Employee_ID, Material_ID, Quantity, Status, Requisition_For, " + insertColumn + additionalColumn + @") 
+                                VALUES (@EmployeeID, @MaterialID, @Quantity, @Status, @Requisition_For, @" + insertColumn + additionalValue + ")";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -250,6 +266,11 @@ namespace STORE_FINAL.Role_Employee
                     cmd.Parameters.AddWithValue("@Status", "Pending");
                     cmd.Parameters.AddWithValue("@Requisition_For", selectedRequisitionFor);
                     cmd.Parameters.AddWithValue("@" + insertColumn, insertValue);
+
+                    if (selectedRequisitionFor == "Project")
+                    {
+                        cmd.Parameters.AddWithValue("@Requisition_Type", requisitionType);
+                    }
 
                     try
                     {
@@ -287,7 +308,8 @@ namespace STORE_FINAL.Role_Employee
                             ON emp.Department_ID = d.Department_ID
                         LEFT JOIN Employee eh 
                             ON d.Department_Head_ID = eh.Employee_ID
-                        WHERE r.Employee_ID = '3981';";
+                        WHERE r.Employee_ID = @EmployeeID
+                        ORDER BY r.Requisition_ID DESC;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -309,7 +331,6 @@ namespace STORE_FINAL.Role_Employee
             }
         }
 
-       
         private bool ValidateInput(string selectedRequisitionFor, string employeeID, string projectID, string materialID, string quantityText)
         {
             // Check if a material is selected

@@ -70,6 +70,7 @@ namespace STORE_FINAL.Role_DepartmentHead
             {
                 query += " AND r.Status = @Status";
             }
+            query += " ORDER BY r.Requisition_ID DESC";
 
             string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))

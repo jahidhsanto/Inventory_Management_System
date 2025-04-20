@@ -42,13 +42,13 @@ namespace STORE_FINAL.Role_Employee
         protected global::System.Web.UI.WebControls.DropDownList ddlProjectFor;
 
         /// <summary>
-        /// ddlTypeOfService control.
+        /// ddlRequisitionType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlTypeOfService;
+        protected global::System.Web.UI.WebControls.DropDownList ddlRequisitionType;
 
         /// <summary>
         /// ddlEmployeeFor control.
