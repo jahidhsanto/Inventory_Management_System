@@ -227,6 +227,7 @@
     <Content Include="Role_StoreIncharge\MaterialList.aspx" />
     <Content Include="Role_StoreIncharge\MaterialReceive.aspx" />
     <Content Include="Role_StoreIncharge\PrintChallan.aspx" />
+    <Content Include="Role_StoreIncharge\Report\Report_01.aspx" />
     <Content Include="Role_StoreIncharge\RequisitionList.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -481,6 +482,13 @@
     </Compile>
     <Compile Include="Role_StoreIncharge\PrintChallan.aspx.designer.cs">
       <DependentUpon>PrintChallan.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\Report\Report_01.aspx.cs">
+      <DependentUpon>Report_01.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\Report\Report_01.aspx.designer.cs">
+      <DependentUpon>Report_01.aspx</DependentUpon>
     </Compile>
     <Compile Include="Role_StoreIncharge\RequisitionList.aspx.cs">
       <DependentUpon>RequisitionList.aspx</DependentUpon>
