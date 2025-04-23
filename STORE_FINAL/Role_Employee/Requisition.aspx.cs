@@ -165,7 +165,7 @@ namespace STORE_FINAL.Role_Employee
                                 JOIN 
                                     Stock s ON m.Material_ID = s.Material_ID
                                 WHERE 
-                                    s.Status = 'AVAILABLE' 
+                                    s.Availability = 'AVAILABLE' 
                                     AND s.Quantity > 0
                                 GROUP BY 
                                     m.Material_ID, 

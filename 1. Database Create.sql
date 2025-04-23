@@ -156,17 +156,18 @@ CREATE TABLE Material (
 	FOREIGN KEY (UoM) REFERENCES UoM(UoM_ID)
 );
 
--- Create Stock Table
+-- Create Stock Table 
 CREATE TABLE Stock (
     Stock_ID INT IDENTITY(1,1) PRIMARY KEY,
     Material_ID INT NOT NULL,
     Serial_Number NVARCHAR(255),
 	Rack_Number NVARCHAR(50) NOT NULL,
     Shelf_Number NVARCHAR(50) NOT NULL,
-	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('AVAILABLE', 'DELIVERED', 'DEFECTIVE', 'UNDER_WARRANTY', 'REPLACED')),
+	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('ACTIVE', 'DEFECTIVE')),
+	Availability NVARCHAR(50) NOT NULL CHECK (Availability IN('AVAILABLE', 'DELIVERED')),
 	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00,
     Received_Date DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );
 -- Create a filtered unique index for Serial_Number to allow multiple NULLs
 CREATE UNIQUE INDEX UQ_Serial_Number 

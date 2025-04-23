@@ -12,6 +12,8 @@ namespace STORE_FINAL.Role_StoreIncharge
 {
     public partial class MaterialReceive : System.Web.UI.Page
     {
+        string connString = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["Username"] == null || Session["Role"] == null ||
@@ -22,13 +24,13 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             if (!IsPostBack)
             {
-                LoadMaterials();
+                LoadMaterialsNameID();
             }
         }
 
-        private void LoadMaterials()
+        // Load DropDowns
+        private void LoadMaterialsNameID()
         {
-            string connString = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = "SELECT Material_ID, Materials_Name, Part_Id FROM Material";
@@ -59,14 +61,65 @@ namespace STORE_FINAL.Role_StoreIncharge
             if (ddlMaterial.SelectedValue != "0")
             {
                 ddlPartID.SelectedValue = ddlMaterial.SelectedValue;
+                ShowHide_SerialQuantity();
             }
         }
-
         protected void ddlPartID_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ddlPartID.SelectedValue != "0")
             {
                 ddlMaterial.SelectedValue = ddlPartID.SelectedValue;
+                ShowHide_SerialQuantity();
+            }
+        }
+
+        private void ShowHide_SerialQuantity()
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                int materialID = Convert.ToInt32(ddlMaterial.SelectedValue);
+                if (materialID > 0)
+                {
+                    string query = "SELECT Requires_Serial_Number FROM Material WHERE Material_ID = @MaterialID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dtMaterial = new DataTable();
+                    da.Fill(dtMaterial);
+
+                    if (dtMaterial.Rows.Count > 0)
+                    {
+                        bool requiresSerial = dtMaterial.Rows[0]["Requires_Serial_Number"].ToString().Equals("Yes", StringComparison.OrdinalIgnoreCase);
+
+                        if (requiresSerial)  // Material requires a serial number
+                        {
+                            txtQuantity.Text = "1";
+                            txtQuantity.Enabled = false;
+
+                            txtSerialNumber.Enabled = true;
+                            txtSerialNumber.Text = "";
+                        }
+                        else  // Material does not require a serial number
+                        {
+                            txtQuantity.Text = "0";
+                            txtQuantity.Enabled = true;
+                            txtQuantity.Attributes["required"] = "true";
+
+                            txtSerialNumber.Enabled = false;
+                            txtSerialNumber.Text = "";
+                        }
+                    }
+                    else  // No material information found
+                    {
+                        txtQuantity.Text = "0";
+                        txtQuantity.Enabled = true;
+                        txtQuantity.Attributes.Remove("required");
+
+                        txtSerialNumber.Enabled = false;
+                        txtSerialNumber.Text = "";
+                    }
+                }
             }
         }
 
@@ -74,7 +127,6 @@ namespace STORE_FINAL.Role_StoreIncharge
         {
             try
             {
-                // Validation
                 string materialID = ddlMaterial.SelectedValue;
                 string serialNumber = txtSerialNumber.Text.Trim();
                 string rackNumber = txtRackNumber.Text.Trim();
@@ -88,9 +140,10 @@ namespace STORE_FINAL.Role_StoreIncharge
                     ShowMessage("Please select a valid Material.", false);
                     return;
                 }
-                if (string.IsNullOrEmpty(serialNumber))
+                // Validate Serial Number only if the field is enabled (i.e., required)
+                if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
                 {
-                    ShowMessage("Serial Number is required.", false);
+                    ShowMessage("Serial Number is required for this material.", false);
                     return;
                 }
                 if (string.IsNullOrEmpty(rackNumber))
@@ -108,22 +161,21 @@ namespace STORE_FINAL.Role_StoreIncharge
                     ShowMessage("Please select a valid Status.", false);
                     return;
                 }
-                if (string.IsNullOrEmpty(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
+                if (string.IsNullOrWhiteSpace(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
                 {
-                    ShowMessage("Please enter a valid quantity.", false);
+                    ShowMessage("Please enter a valid Quantity greater than zero.", false);
                     return;
                 }
 
-                string connString = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
                     string query = @"
-                                    INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity, Received_Date) 
-                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, @Quantity, GETDATE())";
+                                    INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity) 
+                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, @Quantity)";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@MaterialID", materialID);
-                    cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                    cmd.Parameters.AddWithValue("@SerialNumber", txtSerialNumber.Enabled ? (object)serialNumber : DBNull.Value);
                     cmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                     cmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
                     cmd.Parameters.AddWithValue("@Status", status);

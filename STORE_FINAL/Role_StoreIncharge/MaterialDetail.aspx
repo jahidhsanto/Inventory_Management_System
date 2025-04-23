@@ -89,6 +89,7 @@
             <asp:BoundField DataField="Status" HeaderText="Status" />
             <asp:BoundField DataField="Received_Date" HeaderText="Received Date" DataFormatString="{0:dd-MMM-yyyy}" />
             <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+            <asp:BoundField DataField="Availability" HeaderText="Availability" />
         </Columns>
     </asp:GridView>
 

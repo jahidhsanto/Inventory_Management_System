@@ -213,8 +213,6 @@
     <Content Include="Pages\Material_Receipt.aspx" />
     <Content Include="Pages\Procurement.aspx" />
     <Content Include="Pages\Purchase_Request.aspx" />
-    <Content Include="Pages\Stock.aspx" />
-    <Content Include="Pages\StockReview.aspx" />
     <Content Include="Pages\Vendor.aspx" />
     <Content Include="Pages\Warranty.aspx" />
     <Content Include="Role_Admin\Employee.aspx" />
@@ -382,20 +380,6 @@
     </Compile>
     <Compile Include="Pages\Purchase_Request.aspx.designer.cs">
       <DependentUpon>Purchase_Request.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Stock.aspx.cs">
-      <DependentUpon>Stock.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Stock.aspx.designer.cs">
-      <DependentUpon>Stock.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StockReview.aspx.cs">
-      <DependentUpon>StockReview.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StockReview.aspx.designer.cs">
-      <DependentUpon>StockReview.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Vendor.aspx.cs">
       <DependentUpon>Vendor.aspx</DependentUpon>

@@ -186,7 +186,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                     INNER JOIN Material M ON R.Material_ID = M.Material_ID
                                     LEFT JOIN Stock S ON R.Material_ID = S.Material_ID
                                     WHERE R.Requisition_ID = @Requisition_ID
-	                                    AND S.Status = 'AVAILABLE'
+	                                    AND S.Availability = 'AVAILABLE'
 	                                    AND S.Quantity > 0;";
                 SqlParameter[] requisitionParams2 = { new SqlParameter("@Requisition_ID", requisitionID) };
                 DataTable dtStock = GetData(queryStock, requisitionParams2);
@@ -485,7 +485,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 5️⃣ Update Stock Based on Serial Number
                     string updateStockWithSerial = @"
                                                     UPDATE Stock 
-                                                    SET Status = 'DELIVERED', Quantity = Quantity - TD.Delivered_Quantity
+                                                    SET Availability = 'DELIVERED', Quantity = Quantity - TD.Delivered_Quantity
                                                     FROM Stock S
                                                     JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                     WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
@@ -513,7 +513,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 6️⃣ Mark delivered if Quantity = 0
                     string markStockAsDelivered = @"
                                                     UPDATE Stock 
-                                                    SET Status = 'DELIVERED' 
+                                                    SET Availability = 'DELIVERED' 
                                                     WHERE Quantity = 0;";
 
                     using (SqlCommand cmdMarkStockAsDelivered = new SqlCommand(markStockAsDelivered, conn, transaction))

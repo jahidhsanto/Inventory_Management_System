@@ -20,13 +20,13 @@
 
                 <div class="form-group">
                     <label><i class="fas fa-hashtag"></i>Serial Number:</label>
-                    <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control" placeholder="Enter Serial Number"></asp:TextBox>
+                    <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control" placeholder="Enter Serial Number" Enabled="false"></asp:TextBox>
                     <small class="text-danger d-none" id="serialError">Serial Number is required!</small>
                 </div>
                 
                 <div class="form-group">
                     <label><i class="fas fa-cogs"></i>Quantity:</label>
-                    <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" />
+                    <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" Enabled="false"/>
                     <small class="text-danger d-none" id="quantityError">Quantity is required!</small>
                 </div>
 
@@ -48,8 +48,8 @@
                 <div class="form-group">
                     <label><i class="fas fa-info-circle"></i>Status:</label>
                     <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Active" Value="Active"></asp:ListItem>
-                        <asp:ListItem Text="Defective" Value="Defective"></asp:ListItem>
+                        <asp:ListItem Text="Active" Value="ACTIVE"></asp:ListItem>
+                        <asp:ListItem Text="Defective" Value="DEFECTIVE"></asp:ListItem>
                     </asp:DropDownList>
                 </div>
 
