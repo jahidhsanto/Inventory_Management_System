@@ -44,6 +44,9 @@
             position: fixed;
             transition: width 0.3s;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* ensures consistent spacing between items */
         }
 
         .sidebar:hover {
@@ -52,12 +55,11 @@
 
         .sidebar .logo {
             text-align: center;
-            margin-bottom: 20px;
         }
 
         .sidebar .logo img {
             width: 60px;
-            border-radius: 50%;
+            /*border-radius: 50%;*/
         }
 
         .sidebar .logo h4 {
@@ -72,16 +74,17 @@
         .sidebar a {
             color: white;
             text-decoration: none;
-            padding: 10px;
+            padding: 12px 10px;
             display: flex;
             align-items: center;
             gap: 10px;
             justify-content: center;
-            transition: background 0.3s;
+            transition: background 0.3s, justify-content 0.3s;
         }
 
         .sidebar a span {
             display: none;
+            transition: display 0.3s;
         }
 
         .sidebar:hover a {
@@ -131,9 +134,9 @@
     <div class="sidebar" id="sidebar">
         <div class="logo">
             <img src="/images/LoGo.jpg" alt="Logo">
-            <h4>Inventory Management</h4>
+            <%--<h4>Inventory Management</h4>--%>
         </div>
-        <hr />
+        <%--<hr />--%>
         <a href="/UserDashboard/UserDashboard"><i class="fas fa-home"></i><span>Home</span></a>
 
 
@@ -206,11 +209,19 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <span class="navbar-brand">
-                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">                    
                     Inventory Management System
                 </span>
-                <span class="user-info">Welcome, <asp:Label ID="lblUserName" runat="server" />
-                </span>
+                <div class="d-flex align-items-center">
+                    <div class="text-end me-3 text-white">
+                        <div>
+                            <asp:Label ID="lblUserName" runat="server" />
+                        </div>
+                        <div style="font-size: 0.85rem; color: #ccc;">
+                            <asp:Label ID="lblDesignation" runat="server" />
+                        </div>
+                    </div>
+                    <img src="/images/LoGo.jpg" alt="Profile" width="50" height="50" class="rounded-circle" />
+                </div>
             </div>
         </nav>
 

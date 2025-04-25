@@ -22,6 +22,8 @@ namespace STORE_FINAL.UserDashboard
                 departmentHeadMenu.Visible = (role == "Department Head");
                 StoreInChargeMenu.Visible = (role == "Store InCharge");
             }
+
+            lblUserName.Text = Session["EmployeeName"]?.ToString();
         }
 
         protected void LogoutButton_Click(object sender, EventArgs e)

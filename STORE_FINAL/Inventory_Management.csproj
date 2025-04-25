@@ -287,7 +287,6 @@
     <Content Include="Test\Return.aspx" />
     <Content Include="UserDashboard\HtmlPage1.html" />
     <Content Include="UserDashboard\Logout.aspx" />
-    <Content Include="UserDashboard\StyleSheet.css" />
     <Content Include="UserDashboard\StyleSheet_Image.css" />
     <Content Include="UserDashboard\UserDashboard.aspx" />
     <Content Include="ViewSwitcher.ascx" />
