@@ -8,84 +8,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%: Page.Title %> - Inventory Management</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="StyleSheet.css">
-    <link rel="stylesheet" href="StyleSheet_Image.css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- Bootstrap 5 JavaScript and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <%--select2--%>
-
-    <!-- Select2 CSS for styling -->
+    <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
-    <!-- jQuery (must be loaded before Select2) -->
+    <!-- jQuery (must be before Select2 JS) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <%--select2--%>
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <asp:ContentPlaceHolder ID="head" runat="server">
-    </asp:ContentPlaceHolder>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-
-
-
-<!-- Image Preview Modal -->
-<div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Image Preview</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" class="img-fluid" style="max-width: 100%; height: auto;" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Preview Image while upload any images
-    function previewImage(input, previewId, previewAreaId) {
-        if (input.files && input.files[0]) {
-            let file = input.files[0];
-
-            // Validate file type (allow only images)
-            if (!file.type.startsWith('image/')) {
-                alert("Please upload a valid image file (JPG, PNG, GIF, BMP).");
-                return;
-            }
-
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById(previewId).src = e.target.result;
-                document.getElementById(previewAreaId).classList.remove("d-none"); // Show preview area
-            };
-            reader.readAsDataURL(file);
+    <link rel="stylesheet" href="StyleSheet_Image.css" />
+    
+    <style>
+        body {
+            display: flex;
+            margin: 0;
         }
-    }
 
-    function showLargeImage(imageSrc) {
-        document.getElementById('modalImage').src = imageSrc;
-        $('#imageModal').modal('show');  // Show Bootstrap Modal
-    }
-</script>
+        /* Sidebar collapsed by default */
+        .sidebar {
+            width: 80px;
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            transition: width 0.3s;
+            overflow: hidden;
+        }
 
+        .sidebar:hover {
+            width: 250px;
+        }
 
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
+        .sidebar .logo img {
+            width: 60px;
+            border-radius: 50%;
+        }
 
+        .sidebar .logo h4 {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .sidebar:hover .logo h4 {
+            display: block;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .sidebar a span {
+            display: none;
+        }
+
+        .sidebar:hover a {
+            justify-content: flex-start;
+        }
+
+        .sidebar:hover a span {
+            display: inline;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #007bff;
+        }
+
+        /* Content area adjusts */
+        .content {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+            padding: 20px;
+            transition: margin-left 0.3s, width 0.3s;
+        }
+
+        .sidebar:hover ~ .content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .wrap-text {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+    </style>
+
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+    
 </head>
 <body>
     <!-- Sidebar -->
@@ -99,22 +138,26 @@
 
 
         <%--===================================================================================--%>
+        <!-- Admin Panel -->
         <asp:Panel ID="adminMenu" runat="server" Visible="true">
             <a href="/Role_Admin/UserManagement"><i class="fas fa-users"></i><span>User Management</span></a>
             <a href="/Role_Admin/Employee"><i class="fas fa-user-tie"></i><span>Employee Management</span></a>
             <a href="/Role_Admin/Departments"><i class="fa-solid fa-building-user"></i><span>Departments</span></a>
         </asp:Panel>
 
+        <!-- Employee Panel -->
         <asp:Panel ID="employeeMenu" runat="server" Visible="true">
             <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
             <a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>
         </asp:Panel>
 
+        <!-- Department Head -->
         <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
             <a href="/Role_DepartmentHead/RequisitionApproval.aspx">✅<span>Approval Requisition</span></a>
             <%--<a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>--%>
         </asp:Panel>
 
+        <!-- Store In-Charge -->
         <asp:Panel ID="StoreInChargeMenu" runat="server" Visible="true">
             <a href="/Role_StoreIncharge/MaterialList.aspx">📊<span>Material List</span></a>
             <%--<a href="/Role_StoreIncharge/MaterialList.aspx">🏢<span>View Stock</span></a>--%>
@@ -126,12 +169,12 @@
         <hr />
 
         <asp:Panel ID="Panel3" runat="server" Visible="true">
-            <a href="#" id="logoutLink" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+            <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
         </asp:Panel>
 
 
         <%--===================================================================================--%>
-        <hr />
+<%--        <hr />
 
         <asp:Panel ID="storePersonMenu" runat="server" Visible="true">
             <a href="StockManagement.aspx">📊<span>Manage Stock</span></a>
@@ -154,18 +197,19 @@
 
         <a href="#"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
         <a href="#"><i class="fas fa-cog"></i><span>Settings</span></a>
-        <a href="#"><i class="fas fa-cog"></i><span>Logout</span></a>
+        <a href="#"><i class="fas fa-cog"></i><span>Logout</span></a>--%>
     </div>
 
+    <!-- Content -->
     <div class="content" id="content">
-        <!-- Top Navbar -->
+        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <button class="btn btn-outline-light" id="toggleSidebar">☰</button>
-                <span class="navbar-brand">Inventory Management System
+                <span class="navbar-brand">
+                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">                    
+                    Inventory Management System
                 </span>
-                <span class="navbar-brand ms-3">
-                    <asp:Label ID="lblUserName" runat="server" />
+                <span class="user-info">Welcome, <asp:Label ID="lblUserName" runat="server" />
                 </span>
             </div>
         </nav>
@@ -173,24 +217,10 @@
         <!-- Page Content -->
         <div class="container mt-3">
             <form id="form1" runat="server">
-                <asp:ContentPlaceHolder ID="MainContent" runat="server">
-                </asp:ContentPlaceHolder>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
             </form>
         </div>
     </div>
-
-
-
-    <!-- Top Navbar -->
-    <%--        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <span class="navbar-brand">
-                    <img src="/images/LoGo.jpg" alt="Logo" width="50" height="50">
-                    Inventory Management System
-                </span>
-                <span class="user-info">Welcome, <asp:Label ID="lblUserName" runat="server" /></span>
-            </div>
-        </nav>--%>
 
     <%--
     🏠 Dashboard
@@ -209,85 +239,62 @@
     --%>
 
 
+    <!-- Image Preview Modal -->
+    <div id="imageModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
-            sidebar.classList.toggle('collapsed-sidebar');
-            content.classList.toggle('expanded-content');
-        }
-
-        document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
-
-        // Handle Active Sidebar Link Highlight
-        document.querySelectorAll('.sidebar a').forEach(link => {
-            link.addEventListener('click', function () {
-                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Responsive Sidebar Adjustment
-        window.addEventListener('resize', function () {
-            if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.add('collapsed-sidebar');
-                document.getElementById('content').classList.add('expanded-content');
-            } else {
-                document.getElementById('sidebar').classList.remove('collapsed-sidebar');
-                document.getElementById('content').classList.remove('expanded-content');
-            }
-        });
-
-        // Auto-collapse on smaller screens
-        if (window.innerWidth < 768) {
-            document.getElementById('sidebar').classList.add('collapsed-sidebar');
-            document.getElementById('content').classList.add('expanded-content');
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebarLinks = document.querySelectorAll('.sidebar a');
-
-            // Loop through all the sidebar links and check if the link corresponds to the current page
-            sidebarLinks.forEach(link => {
-                // Check if the link's href matches the current page URL
-                if (link.href === window.location.href) {
-                    link.classList.add('active');  // Add 'active' class to the matching link
-                }
-
-                // Handle click event for sidebar links to set 'active' class on click
-                link.addEventListener('click', function () {
-                    sidebarLinks.forEach(a => a.classList.remove('active')); // Remove 'active' class from all links
-                    this.classList.add('active'); // Add 'active' class to the clicked link
-                });
-            });
-        });
-
         function logout() {
             event.preventDefault();
 
             var form = document.createElement("form");
-            form.method = "POST"; // POST method
-            form.action = "/UserDashboard/Logout.aspx"; // Redirect to a logout page (we'll create this page)
-
-            // Append the form to the document and submit it
+            form.method = "POST"; 
+            form.action = "/UserDashboard/Logout.aspx"; // Redirect to a logout page
             document.body.appendChild(form);
             form.submit();
         }
 
+        // Preview Image while upload any images
+        function previewImage(input, previewId, previewAreaId) {
+            if (input.files && input.files[0]) {
+                let file = input.files[0];
 
-    </script>
+                // Validate file type (allow only images)
+                if (!file.type.startsWith('image/')) {
+                    alert("Please upload a valid image file (JPG, PNG, GIF, BMP).");
+                    return;
+                }
 
-    <!-- Select2 JS -->
-    <script>
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(previewAreaId).classList.remove("d-none"); // Show preview area
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showLargeImage(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            var modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            modal.show();
+        }
+
+        // Select2 Initialization
         $(document).ready(function () {
-            $(".select2").select2({
-                width: '100%'
-            });
+            $(".select2").select2({ width: '100%' });
         });
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <%--select2--%>
 </body>
 </html>
