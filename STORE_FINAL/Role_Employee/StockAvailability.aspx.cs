@@ -75,5 +75,15 @@ namespace STORE_FINAL.Role_Employee
                 }
             }
         }
+
+        protected void gvMaterials_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "PlaceRequisition")
+            {
+                string materialId = e.CommandArgument.ToString();
+                Response.Redirect("Requisition.aspx?Material_ID=" + materialId);
+            }
+        }
+
     }
 }

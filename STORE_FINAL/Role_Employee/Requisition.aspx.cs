@@ -27,11 +27,48 @@ namespace STORE_FINAL.Role_Employee
             if (!IsPostBack)
             {
                 RESET();
+
+                string materialId = Request.QueryString["Material_ID"];
+                int materialIdInt;
+                if (int.TryParse(materialId, out materialIdInt) && materialIdInt > 0)
+                {
+                    using (SqlConnection conn = new SqlConnection(connStr))
+                    {
+                        string query = @"
+                                SELECT 
+                                    m.Material_ID, 
+                                    m.Materials_Name
+                                FROM 
+                                    Material m
+                                JOIN 
+                                    Stock s ON m.Material_ID = s.Material_ID
+                                WHERE 
+                                    m.Material_ID = @materialID
+                                    AND s.Quantity > 0
+                                GROUP BY 
+                                    m.Material_ID, 
+                                    m.Materials_Name;";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@materialID", materialId);
+
+                        conn.Open();
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        ddlMaterials.DataSource = reader;
+                        ddlMaterials.DataTextField = "Materials_Name";
+                        ddlMaterials.DataValueField = "Material_ID";
+                        ddlMaterials.DataBind();
+                    }
+                }
+                else
+                {
+                    LoadMaterials();
+                }
+
                 LoadProjects();
                 LoadEmployees();
                 LoadDepartments();
                 LoadZones();
-                LoadMaterials();
                 LoadRequisition();
             }
         }
@@ -191,7 +228,7 @@ namespace STORE_FINAL.Role_Employee
             ddlMaterials.Items.Insert(0, new ListItem("-- Select Material --", "0"));
             ddlMaterials.SelectedValue = "0";
         }
-        
+
         protected void btnSubmitRequisition_Click(object sender, EventArgs e)
         {
             if (Session["EmployeeID"] == null)
@@ -204,7 +241,7 @@ namespace STORE_FINAL.Role_Employee
             string employeeID = Session["EmployeeID"]?.ToString();
             string materialID = ddlMaterials.SelectedValue;
             string quantity = txtQuantity.Text.Trim();
-            string selectedRequisitionFor = rblRequisitionFor.SelectedValue; 
+            string selectedRequisitionFor = rblRequisitionFor.SelectedValue;
             string employeeSelected = ddlEmployeeFor.SelectedValue;
             string departmentID = ddlDepartmentFor.SelectedValue;
             string zoneID = ddlZoneFor.SelectedValue;

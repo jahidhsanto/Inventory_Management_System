@@ -10,7 +10,12 @@
             <input type="text" id="StockAvailability" class="form-control" placeholder="Type to search stock..." onkeyup="filterStockAvailability()">
         </div>
 
-        <asp:GridView ID="StockAvailabilityGridView" runat="server" AutoGenerateColumns="false" CssClass="table table-striped table-bordered mt-3" Style="table-layout: fixed; width: 100%;">
+        <asp:GridView ID="StockAvailabilityGridView" runat="server" AutoGenerateColumns="false" 
+            CssClass="table table-striped table-bordered mt-3" 
+            DataKeyNames="Material_ID"
+            OnRowCommand="gvMaterials_RowCommand"
+
+            Style="table-layout: fixed; width: 100%;">
             <Columns>
                 <asp:BoundField DataField="Material_ID" HeaderText="Material ID"
                     ItemStyle-Width="100px" HeaderStyle-Width="100px" />
@@ -39,6 +44,15 @@
                             <%# Eval("Stock_Status") %>
                         </span>
                     </ItemTemplate>
+                </asp:TemplateField>
+
+                <asp:TemplateField HeaderText="Action">
+                    <ItemTemplate>
+                        <asp:Button ID="btnView" runat="server" CommandName="PlaceRequisition"
+                            CommandArgument='<%# Eval("Material_ID") %>' Text="📝 Order"
+                            CssClass="btn btn-info btn-sm" />
+                    </ItemTemplate>
+                    <ItemStyle Width="90px" HorizontalAlign="Center" />
                 </asp:TemplateField>
 
             </Columns>

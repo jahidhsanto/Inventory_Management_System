@@ -156,14 +156,14 @@
 
         <!-- Department Head -->
         <asp:Panel ID="departmentHeadMenu" runat="server" Visible="true">
+            <a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>
+            <a href="/Role_Employee/Requisition.aspx">📋<span>Requisition</span></a>
             <a href="/Role_DepartmentHead/RequisitionApproval.aspx">✅<span>Approval Requisition</span></a>
-            <%--<a href="/Role_Employee/StockAvailability.aspx"><i class="fas fa-warehouse"></i><span>Stock</span></a>--%>
         </asp:Panel>
 
         <!-- Store In-Charge -->
         <asp:Panel ID="StoreInChargeMenu" runat="server" Visible="true">
-            <a href="/Role_StoreIncharge/MaterialList.aspx">📊<span>Material List</span></a>
-            <%--<a href="/Role_StoreIncharge/MaterialList.aspx">🏢<span>View Stock</span></a>--%>
+            <a href="/Role_StoreIncharge/MaterialList.aspx">📊<span>Manage Stock</span></a>
             <a href="/Role_StoreIncharge/RequisitionList.aspx">📑<span>Pending Requisitions</span></a>
             <a href="/Role_StoreIncharge/MaterialReceive.aspx"><i class="fas fa-box"></i><span>Receive Materials</span></a>
             <a href="/Role_StoreIncharge/MaterialDelivery.aspx">🚚<span>Deliver Materials</span></a>
