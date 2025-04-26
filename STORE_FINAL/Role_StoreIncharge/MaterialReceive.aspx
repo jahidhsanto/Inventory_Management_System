@@ -1,10 +1,44 @@
 ﻿<%@ Page Title="Receive New Stock" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="MaterialReceive.aspx.cs" Inherits="STORE_FINAL.Role_StoreIncharge.MaterialReceive" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="Head" runat="server">
+    <style>
+        #rblRequisitionFor label {
+            margin-right: 10px;
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #rblRequisitionFor input[type="radio"] {
+            display: none;
+        }
+
+            #rblRequisitionFor input[type="radio"]:checked + label {
+                background-color: #0d6efd;
+                color: white;
+                border-color: #0d6efd;
+            }
+    </style>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <h2 class="mb-4"><i class="fas fa-box"></i>Receive New Stock</h2>
 
     <div class="card shadow p-4">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" CssClass="btn-group w-100" ClientIDMode="Static">
+                    <asp:ListItem Text="Active Receive" Value="Active Receive" Selected="True" />
+                    <asp:ListItem Text="Defective Receive" Value="Defective Receive" />
+                    <asp:ListItem Text="Return Receive" Value="Return Receive" />
+                    <asp:ListItem Text="Warrenty Receive" Value="Warrenty Receive" />
+                </asp:RadioButtonList>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6">
 
@@ -23,10 +57,10 @@
                     <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control" placeholder="Enter Serial Number" Enabled="false"></asp:TextBox>
                     <small class="text-danger d-none" id="serialError">Serial Number is required!</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label><i class="fas fa-cogs"></i>Quantity:</label>
-                    <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" Enabled="false"/>
+                    <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" Enabled="false" />
                     <small class="text-danger d-none" id="quantityError">Quantity is required!</small>
                 </div>
 
@@ -64,6 +98,5 @@
 
         <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3 d-none"></asp:Label>
         <%--<asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>--%>
-
     </div>
 </asp:Content>
