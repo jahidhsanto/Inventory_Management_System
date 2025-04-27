@@ -37,9 +37,8 @@ namespace STORE_FINAL.Test
                 con.Open();
 
                 SqlCommand cmdHeader = new SqlCommand(@"
-                    SELECT TOP 1 Challan_ID, Challan_Date, E.Name AS CreatedBy
+                    SELECT TOP 1 Challan_ID, Challan_Date
                     FROM Challan C
-                    INNER JOIN Employee E ON C.Employee_ID = E.Employee_ID
                     WHERE Challan_ID = @Challan_ID", con);
                 cmdHeader.Parameters.AddWithValue("@Challan_ID", challanID);
 
@@ -48,7 +47,6 @@ namespace STORE_FINAL.Test
                 {
                     lblChallanNumber.Text = reader["Challan_ID"].ToString();
                     lblDate.Text = Convert.ToDateTime(reader["Challan_Date"]).ToString("dd-MM-yyyy");
-                    lblDeliveredTo.Text = reader["CreatedBy"].ToString();
                     reader.Close();
 
                     SqlCommand cmdDetails = new SqlCommand(@"

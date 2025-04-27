@@ -18,74 +18,61 @@ namespace STORE_FINAL.Role_StoreIncharge
         {
             if (!IsPostBack)
             {
-                // Fetch and display the challan details
-                string sessionID = Request.QueryString["SessionID"];
-                if (string.IsNullOrEmpty(sessionID))
-                {
-                    //Response.Redirect("~/Role_StoreIncharge/MaterialDelivery.aspx");
-                }
-                LoadChallanDetails("a1eb3577-9ad3-42ca-a9f0-97ee9e1c75a4");
-            }
-
-        }
-        private void LoadChallanDetails(string sessionID)
-        {
-            // Fetch the delivery items for this session
-            string query = @"SELECT T.Temp_ID, M.Materials_Name, S.Serial_Number, T.Delivered_Quantity 
-                             FROM Temp_Delivery T
-                             INNER JOIN Material M ON T.Material_ID = M.Material_ID
-                             INNER JOIN Stock S ON T.Stock_ID = S.Stock_ID
-                             WHERE T.Session_ID = @Session_ID";
-
-            SqlParameter[] parameters = { new SqlParameter("@Session_ID", sessionID) };
-            DataTable dtDeliveryItems = GetData(query, parameters);
-
-            // Display challan number and date
-            string challanNumber = "CH" + DateTime.Now.ToString("yyyyMMddHHmmss");
-            string deliveryDate = DateTime.Now.ToString("dd-MMM-yyyy");
-
-            //challanNumberLabel.Text = challanNumber;
-            //deliveryDateLabel.Text = deliveryDate;
-
-            // Bind the delivery items to the table
-            if (dtDeliveryItems.Rows.Count > 0)
-            {
-                int index = 1;
-                foreach (DataRow row in dtDeliveryItems.Rows)
-                {
-                    string materialName = row["Materials_Name"].ToString();
-                    string serialNumber = row["Serial_Number"].ToString();
-                    string quantity = row["Delivered_Quantity"].ToString();
-
-                    // Add rows to the table dynamically
-                    TableRow tableRow = new TableRow();
-
-                    tableRow.Cells.Add(new TableCell() { Text = index.ToString() });
-                    tableRow.Cells.Add(new TableCell() { Text = materialName });
-                    tableRow.Cells.Add(new TableCell() { Text = serialNumber });
-                    tableRow.Cells.Add(new TableCell() { Text = quantity });
-
-                    //challanItems.Controls.Add(tableRow);
-                    index++;
-                }
-            }
-            else
-            {
-                Response.Write("No items found for this delivery session.");
+                pnlChallan.Visible = false;
+                lblMessage.Text = "";
             }
         }
-
-        private DataTable GetData(string query, SqlParameter[] parameters)
+        protected void btnFetchChallan_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
+            string challanID = txtChallanNumber.Text.Trim();
+            if (string.IsNullOrEmpty(challanID))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                lblMessage.Text = "⚠️ Please enter a Challan Number.";
+                return;
+            }
+
+            string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                con.Open();
+
+                SqlCommand cmdHeader = new SqlCommand(@"
+                    SELECT TOP 1 Challan_ID, Challan_Date
+                    FROM Challan C
+                    WHERE Challan_ID = @Challan_ID", con);
+                cmdHeader.Parameters.AddWithValue("@Challan_ID", challanID);
+
+                SqlDataReader reader = cmdHeader.ExecuteReader();
+                if (reader.Read())
                 {
-                    cmd.Parameters.AddRange(parameters);
-                    SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                    lblChallanNumber.Text = reader["Challan_ID"].ToString();
+                    lblDate.Text = Convert.ToDateTime(reader["Challan_Date"]).ToString("dd-MM-yyyy");
+                    reader.Close();
+
+                    SqlCommand cmdDetails = new SqlCommand(@"
+                        SELECT M.Materials_Name, ISNULL(S.Serial_Number, '-') AS Serial_Number, C_I.Quantity
+                        FROM Challan_Items C_I
+                        INNER JOIN Material M ON C_I.Material_ID = M.Material_ID
+                        LEFT JOIN Stock S ON C_I.Stock_ID = S.Stock_ID
+                        WHERE C_I.Challan_ID = @Challan_ID", con);
+                    cmdDetails.Parameters.AddWithValue("@Challan_ID", challanID);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmdDetails);
                     DataTable dt = new DataTable();
-                    sda.Fill(dt);
-                    return dt;
+                    da.Fill(dt);
+
+                    rptChallanDetails.DataSource = dt;
+                    rptChallanDetails.DataBind();
+
+                    pnlChallan.Visible = true;
+                    lblMessage.Text = "";
+                }
+                else
+                {
+                    lblMessage.Text = "❌ Challan not found.";
+                    pnlChallan.Visible = false;
+                    reader.Close();
                 }
             }
         }
