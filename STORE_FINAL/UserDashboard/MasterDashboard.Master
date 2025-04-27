@@ -167,6 +167,7 @@
             <a href="/Role_StoreIncharge/RequisitionList.aspx">📑<span>Pending Requisitions</span></a>
             <a href="/Role_StoreIncharge/MaterialReceive.aspx"><i class="fas fa-box"></i><span>Receive Materials</span></a>
             <a href="/Role_StoreIncharge/MaterialDelivery.aspx">🚚<span>Deliver Materials</span></a>
+            <a href="/Role_StoreIncharge/PrintChallan.aspx"><i class="fa-solid fa-receipt"></i><span>Print Challan</span></a>
         </asp:Panel>
 
         <hr />

@@ -25,6 +25,8 @@
                     ItemStyle-CssClass="wrap-text" HeaderStyle-CssClass="wrap-text" />
                 <asp:BoundField DataField="Stock_Quantity" HeaderText="Stock QTY"
                     ItemStyle-CssClass="wrap-text" HeaderStyle-CssClass="wrap-text" />
+                <asp:BoundField DataField="UoM" HeaderText="UoM"
+                    ItemStyle-Width="50px" HeaderStyle-Width="50px" />
                 <asp:BoundField DataField="Category" HeaderText="Category"
                     ItemStyle-CssClass="wrap-text" HeaderStyle-CssClass="wrap-text" />
                 <asp:BoundField DataField="Unit_Price" HeaderText="Unit Price"

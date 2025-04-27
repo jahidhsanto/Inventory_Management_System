@@ -51,6 +51,15 @@ namespace STORE_FINAL.Role_StoreIncharge
         protected global::System.Web.UI.WebControls.Label lblMaterialName;
 
         /// <summary>
+        /// lblRequestedQuantity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRequestedQuantity;
+
+        /// <summary>
         /// lblRequestedBy control.
         /// </summary>
         /// <remarks>
@@ -141,13 +150,13 @@ namespace STORE_FINAL.Role_StoreIncharge
         protected global::System.Web.UI.WebControls.GridView gvDeliveryItems;
 
         /// <summary>
-        /// ddlEmployee control.
+        /// ddlReceivedByEmployee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlEmployee;
+        protected global::System.Web.UI.WebControls.DropDownList ddlReceivedByEmployee;
 
         /// <summary>
         /// btnDeliver control.

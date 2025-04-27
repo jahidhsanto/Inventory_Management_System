@@ -2,7 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Head" runat="server">
     <style>
-        #rblRequisitionFor label {
+        #rblReceiveType label {
             margin-right: 10px;
             padding: 8px 16px;
             border: 1px solid #ccc;
@@ -12,11 +12,11 @@
             transition: all 0.2s ease-in-out;
         }
 
-        #rblRequisitionFor input[type="radio"] {
+        #rblReceiveType input[type="radio"] {
             display: none;
         }
 
-            #rblRequisitionFor input[type="radio"]:checked + label {
+            #rblReceiveType input[type="radio"]:checked + label {
                 background-color: #0d6efd;
                 color: white;
                 border-color: #0d6efd;
@@ -32,9 +32,9 @@
         <div class="row">
             <div class="col-md-12 mt-4">
                 <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" CssClass="btn-group w-100" ClientIDMode="Static">
-                    <asp:ListItem Text="Active Receive" Value="Active Receive" Selected="True" />
-                    <asp:ListItem Text="Defective Receive" Value="Defective Receive" />
-                    <asp:ListItem Text="Return Receive" Value="Return Receive" />
+                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />  <%-- All materials are new and active --%>
+                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" /> <%-- Which materials are already dispatched and active --%>
+                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" /> <%-- Which materials are already dispatched and defective --%>
                     <asp:ListItem Text="Warrenty Receive" Value="Warrenty Receive" />
                 </asp:RadioButtonList>
             </div>
@@ -99,4 +99,45 @@
         <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3 d-none"></asp:Label>
         <%--<asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>--%>
     </div>
+
+    <%-- JavaScript for requisition type selection --%>
+    <script>
+        function showDropdown() {
+            var selected = document.querySelector('#rblReceiveType input[type="radio"]:checked');
+            if (!selected) return;
+
+            var selectedValue = selected.value;
+
+            // List of all dropdown IDs
+            const dropdowns = {
+                Project: document.getElementById('dropdownProjectFor'),
+                Employee: document.getElementById('dropdownEmployeeFor'),
+                Department: document.getElementById('dropdownDepartmentFor'),
+                Zone: document.getElementById('dropdownZoneFor')
+            };
+
+            // Loop through each dropdown
+            for (const type in dropdowns) {
+                const container = dropdowns[type];
+                const ddl = container.querySelector('select');
+
+                if (type === selectedValue) {
+                    container.classList.remove('d-none'); // Show
+                } else {
+                    container.classList.add('d-none');    // Hide
+                    if (ddl) ddl.selectedIndex = 0;       // Clear selection
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            showDropdown();
+
+            // Attach change event to all radio buttons
+            document.querySelectorAll('#rblReceiveType input[type="radio"]').forEach(function (rb) {
+                rb.addEventListener("change", showDropdown);
+            });
+        });
+    </script>
+
 </asp:Content>

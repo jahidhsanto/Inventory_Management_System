@@ -29,6 +29,8 @@
                             <h5>📋 Requisition Details</h5>
                             <p><strong>Material Name:</strong>
                                 <asp:Label ID="lblMaterialName" runat="server" Text="-"></asp:Label></p>
+                            <p><strong>Requested Quantity:</strong>
+                                <asp:Label ID="lblRequestedQuantity" runat="server" Text="-"></asp:Label></p>
                             <p><strong>Requested By:</strong>
                                 <asp:Label ID="lblRequestedBy" runat="server" Text="-"></asp:Label></p>
                             <p><strong>Requested Date:</strong>
@@ -130,10 +132,10 @@
 
         <div class="text-center mt-3">
             <label><strong>Received Employee:</strong></label>
-            <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
+            <asp:DropDownList ID="ddlReceivedByEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
             
             <!-- Deliver Button -->
-            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_Click" />
+            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_TransactionLog" />
         </div>
     </div>
 

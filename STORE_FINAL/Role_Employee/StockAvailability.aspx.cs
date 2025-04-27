@@ -35,7 +35,7 @@ namespace STORE_FINAL.Role_Employee
                 string query = @"
                         select 
 	                        m.Material_ID, 	m.Materials_Name, 
-	                        M.Part_Id, 	m.Stock_Quantity, 
+	                        M.Part_Id, 	m.Stock_Quantity, UoM.UoM, 
 	                        c.Category,	m.Unit_Price, 
 	                        Model.model, sub_c.Sub_Category,
 	                        Control.Control,
@@ -55,7 +55,9 @@ namespace STORE_FINAL.Role_Employee
 	                        Model ON m.Model_ID = Model.Model_ID
                         JOIN
 	                        Control ON m.Control_ID = Control.Control_ID
-                        WHERE a_s.Asset_Status = 'READY STOCK'
+                        JOIN
+	                        UoM ON m.UoM_ID = UoM.UoM_ID
+                        -- WHERE a_s.Asset_Status = 'READY STOCK'
                         ORDER BY M.Material_ID DESC;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

@@ -177,12 +177,10 @@ WHERE Serial_Number IS NOT NULL;
 -- Create Challan Table
 CREATE TABLE Challan (
     Challan_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Employee_ID INT NOT NULL,
     Challan_Date DATETIME DEFAULT GETDATE(),
     Challan_Type NVARCHAR(50) CHECK (Challan_Type IN ('DELIVERY', 'RETURN')),
 	Reference_Challan_ID INT NULL,
     Remarks NVARCHAR(1000),
-    FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
 	FOREIGN KEY (Reference_Challan_ID) REFERENCES Challan(Challan_ID)
 );
 
@@ -190,16 +188,40 @@ CREATE TABLE Challan (
 CREATE TABLE Challan_Items (
     Challan_Item_ID INT IDENTITY(1,1) PRIMARY KEY,
     Challan_ID INT NOT NULL,
-    Stock_ID INT NOT NULL,
-    Material_ID INT NOT NULL,
     Requisition_ID INT NOT NULL,
+    Material_ID INT NOT NULL,
+    Stock_ID INT NOT NULL,
 	Serial_Number NVARCHAR(50) NULL,
     Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0),
-	Status NVARCHAR(50) CHECK (Status IN ('ACTIVE', 'DEFECTIVE')),
     FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID),
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
 	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
+);
+
+-- Create Transaction Log Table
+CREATE TABLE Material_Transaction_Log (
+    Transaction_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Material_ID INT NOT NULL,
+    Stock_ID INT NULL, -- If tracked by stock item
+    Serial_Number NVARCHAR(255) NULL,
+    
+    Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('DELIVERY', 'RETURN', 'RECEIVE')),
+    Transaction_Date DATETIME DEFAULT GETDATE(),
+
+    Quantity DECIMAL(10,2) NOT NULL,
+    Challan_ID INT NULL, -- Can be linked to Challan
+    Requisition_ID INT NOT NULL, -- Optional
+    ReceivedBy_Employee_ID INT NULL, -- Who received/delivered/returned
+    Remarks NVARCHAR(500) NULL,
+    CreatedBy_Employee_ID INT NOT NULL,
+
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
+    FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID),
+    FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID),
+    FOREIGN KEY (ReceivedBy_Employee_ID) REFERENCES Employee(Employee_ID),
+    FOREIGN KEY (CreatedBy_Employee_ID) REFERENCES Employee(Employee_ID)
 );
 
 -- Create Purchase_Request Table

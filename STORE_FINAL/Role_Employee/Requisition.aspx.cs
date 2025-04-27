@@ -313,8 +313,8 @@ namespace STORE_FINAL.Role_Employee
                     {
                         conn.Open();
                         cmd.ExecuteNonQuery();
-                        ShowMessage("Requisition submitted successfully!", true);
                         RESET();
+                        ShowMessage("Requisition submitted successfully!", true);
                         Response.Redirect("Requisition");
                     }
                     catch (Exception ex)
@@ -371,7 +371,7 @@ namespace STORE_FINAL.Role_Employee
         private bool ValidateInput(string selectedRequisitionFor, string employeeID, string projectID, string materialID, string quantityText)
         {
             // Check if a material is selected
-            if (ddlMaterials.SelectedIndex == 0)
+            if (ddlMaterials.SelectedValue == "0")
             {
                 ShowMessage("Please select a material.", false);
                 return false;
@@ -388,7 +388,7 @@ namespace STORE_FINAL.Role_Employee
             // Validate Based on Selected RadioButton
             if (selectedRequisitionFor == "Project")
             {
-                if (ddlProjectFor.SelectedIndex == 0)
+                if (ddlProjectFor.SelectedValue == "0")
                 {
                     ShowMessage("Please select a project.", false);
                     return false;

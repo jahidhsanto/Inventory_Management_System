@@ -140,6 +140,7 @@
         }
     </script>
 
+    <%-- JavaScript for requisition type selection --%>
     <script>
         function showDropdown() {
             var selected = document.querySelector('#rblRequisitionFor input[type="radio"]:checked');
