@@ -490,7 +490,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     string insertTransactionLogQuery = @"
                                                         INSERT INTO Material_Transaction_Log (
                                                             Material_ID, Stock_ID, Serial_Number, Transaction_Type, Transaction_Date,
-                                                            Quantity, Challan_ID, Requisition_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
+                                                            Out_Quantity, Challan_ID, Requisition_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
                                                         )
                                                         SELECT 
                                                             td.Material_ID,

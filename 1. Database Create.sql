@@ -209,7 +209,8 @@ CREATE TABLE Material_Transaction_Log (
     Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('DELIVERY', 'RETURN', 'RECEIVE')),
     Transaction_Date DATETIME DEFAULT GETDATE(),
 
-    Quantity DECIMAL(10,2) NOT NULL,
+    In_Quantity DECIMAL(10,2) NOT NULL,
+    Out_Quantity DECIMAL(10,2) NOT NULL,
     Challan_ID INT NULL, -- Can be linked to Challan
     Requisition_ID INT NOT NULL, -- Optional
     ReceivedBy_Employee_ID INT NULL, -- Who received/delivered/returned
