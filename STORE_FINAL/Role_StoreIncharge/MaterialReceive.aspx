@@ -35,7 +35,6 @@
                     <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />  <%-- All materials are new and active --%>
                     <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" /> <%-- Which materials are already dispatched and active --%>
                     <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" /> <%-- Which materials are already dispatched and defective --%>
-                    <asp:ListItem Text="Warrenty Receive" Value="Warrenty Receive" />
                 </asp:RadioButtonList>
             </div>
         </div>

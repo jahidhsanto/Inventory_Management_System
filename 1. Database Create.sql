@@ -225,6 +225,29 @@ CREATE TABLE Material_Transaction_Log (
     FOREIGN KEY (CreatedBy_Employee_ID) REFERENCES Employee(Employee_ID)
 );
 
+-- Create Material Ledger Table
+CREATE TABLE Material_Ledger (
+    Ledger_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Material_ID INT NOT NULL,
+    Stock_ID INT NULL,
+    Serial_Number NVARCHAR(255) NULL,
+    Transaction_ID INT NULL, -- NULL for opening balance
+    Transaction_Date DATETIME NOT NULL,
+    Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('OPENING', 'RECEIVE', 'DELIVERY', 'RETURN')),
+    
+    In_Quantity DECIMAL(18, 2) DEFAULT 0,
+    Out_Quantity DECIMAL(18, 2) DEFAULT 0,
+    Unit_Price DECIMAL(18, 2) NOT NULL,
+    Total_Valuation AS ((In_Quantity - Out_Quantity) * Unit_Price) PERSISTED,
+
+    Balance_After_Transaction DECIMAL(18, 2) NOT NULL,
+    Valuation_After_Transaction DECIMAL(18, 2) NOT NULL,
+
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID)
+    -- Transaction_ID is optional FK
+);
+
 -- Create Purchase_Request Table
 CREATE TABLE Purchase_Request (
     Purchase_Request_ID INT IDENTITY(1,1) PRIMARY KEY,
