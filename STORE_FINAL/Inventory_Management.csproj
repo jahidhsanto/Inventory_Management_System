@@ -225,6 +225,7 @@
     <Content Include="Role_StoreIncharge\MaterialList.aspx" />
     <Content Include="Role_StoreIncharge\MaterialReceive.aspx" />
     <Content Include="Role_StoreIncharge\PrintChallan.aspx" />
+    <Content Include="Role_StoreIncharge\Report\MaterialLedger.aspx" />
     <Content Include="Role_StoreIncharge\RequisitionList.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -465,6 +466,13 @@
     <Compile Include="Role_StoreIncharge\PrintChallan.aspx.designer.cs">
       <DependentUpon>PrintChallan.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Role_StoreIncharge\Report\MaterialLedger.aspx.cs">
+      <DependentUpon>MaterialLedger.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_StoreIncharge\Report\MaterialLedger.aspx.designer.cs">
+      <DependentUpon>MaterialLedger.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Role_StoreIncharge\RequisitionList.aspx.cs">
       <DependentUpon>RequisitionList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -539,7 +547,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\Materials\" />
-    <Folder Include="Role_StoreIncharge\Report\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

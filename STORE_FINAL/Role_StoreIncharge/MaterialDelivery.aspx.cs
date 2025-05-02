@@ -390,7 +390,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                 string deleteQuery = "DELETE FROM Temp_Delivery WHERE Temp_ID = @Temp_ID AND Session_ID = @Session_ID;";
 
-                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
                     {
@@ -439,7 +439,8 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 🔥 Check if user selected to create challan
                     //bool createChallan = chkCreateChallan.Checked; 
                     bool createChallan = true;
-
+                    
+                    // 3️⃣
                     if (createChallan)
                     {
                         // 🛠 Insert into Challan
@@ -486,7 +487,84 @@ namespace STORE_FINAL.Role_StoreIncharge
                         }
                     }
 
-                    // 3️⃣ Insert into Material_Transaction_Log
+                    // 4️⃣ Insert into Material_Ledger
+                    string insertLedgerQuery = @"
+										WITH LastBalance AS (
+											SELECT
+												Material_ID,
+												MAX(Ledger_ID) AS Last_Ledger_ID
+											FROM Material_Ledger
+											GROUP BY Material_ID
+										),
+										PreviousBalance AS (
+											SELECT
+												ml.Material_ID,
+												ml.Balance_After_Transaction AS Previous_Balance,
+												ml.Valuation_After_Transaction AS Previous_Valuation
+											FROM Material_Ledger ml
+											JOIN LastBalance lb ON ml.Ledger_ID = lb.Last_Ledger_ID
+										),
+										ChallanData AS (
+											SELECT
+												c.Challan_ID,
+												c.Challan_Date,
+												c.Challan_Type,
+												ci.Material_ID,
+												ci.Quantity,
+												m.Unit_Price,
+												ISNULL(pb.Previous_Balance, 0) AS Previous_Balance,
+												ISNULL(pb.Previous_Valuation, 0) AS Previous_Valuation
+											FROM Challan c
+											JOIN Challan_Items ci ON ci.Challan_ID = c.Challan_ID
+											JOIN Material m ON m.Material_ID = ci.Material_ID
+											LEFT JOIN PreviousBalance pb ON pb.Material_ID = ci.Material_ID
+											WHERE c.Challan_ID = @Challan_ID
+										),
+										GroupedData AS (
+											SELECT
+												Material_ID,
+												MAX(Challan_ID) AS Challan_ID,
+												MAX(Challan_Date) AS Challan_Date,
+												MAX(Challan_Type) AS Challan_Type,
+												MAX(Unit_Price) AS Unit_Price,
+												MAX(Previous_Balance) AS Previous_Balance,
+												MAX(Previous_Valuation) AS Previous_Valuation,
+												SUM(CASE WHEN Challan_Type IN ('RETURN', 'RECEIVE') THEN Quantity ELSE 0 END) AS In_Quantity,
+												SUM(CASE WHEN Challan_Type = 'DELIVERY' THEN Quantity ELSE 0 END) AS Out_Quantity
+											FROM ChallanData
+											GROUP BY Material_ID
+										)
+										INSERT INTO Material_Ledger (
+											Material_ID,
+											Challan_ID,
+											Challan_Date,
+											Ledger_Type,
+											In_Quantity,
+    										Out_Quantity,
+    										Unit_Price,
+											Balance_After_Transaction,
+											Valuation_After_Transaction
+										)
+
+										SELECT
+											Material_ID,
+											Challan_ID,
+											Challan_Date,
+											Challan_Type,
+											In_Quantity,
+											Out_Quantity,
+											Unit_Price,
+											Previous_Balance + In_Quantity - Out_Quantity AS New_Balance,
+											(Previous_Balance + In_Quantity - Out_Quantity) * Unit_Price AS New_Valuation
+										FROM GroupedData;";
+
+                    using (SqlCommand cmdinsertLedger = new SqlCommand(insertLedgerQuery, conn, transaction))
+                    {
+                        cmdinsertLedger.Parameters.AddWithValue("@Challan_ID", challanID);
+                        cmdinsertLedger.ExecuteNonQuery();
+                    }
+
+                    // 5️⃣ Insert into Material_Transaction_Log
                     string insertTransactionLogQuery = @"
                                                         INSERT INTO Material_Transaction_Log (
                                                             Material_ID, Stock_ID, Serial_Number, Transaction_Type, Transaction_Date,
@@ -520,7 +598,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdInsertLog.ExecuteNonQuery();
                     }
 
-                    // 4️⃣ Update Stock Based on Serial Number
+                    // 6️⃣ Update Stock Based on Serial Number
                     string updateStockWithSerial = @"
                                                     UPDATE Stock 
                                                     SET Availability = 'DELIVERED', Quantity = Quantity - TD.Delivered_Quantity
@@ -547,7 +625,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdUpdateStockWithoutSerial.ExecuteNonQuery();
                     }
 
-                    // 5️⃣ Mark delivered if Quantity = 0
+                    // 7️⃣ Mark delivered if Quantity = 0
                     string markStockAsDelivered = @"
                                                     UPDATE Stock 
                                                     SET Availability = 'DELIVERED' 
@@ -558,7 +636,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdMarkStockAsDelivered.ExecuteNonQuery();
                     }
 
-                    // 6️⃣ Update Requisition Status
+                    // 8️⃣ Update Requisition Status
                     string updateRequisitionStatus = @"
                                                         UPDATE Requisition 
                                                         SET Store_Status = 'Delivered' 
@@ -574,7 +652,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdUpdateReq.ExecuteNonQuery();
                     }
 
-                    // 7️⃣ Clear Temp_Delivery Table
+                    // 9️⃣ Clear Temp_Delivery Table
                     string deleteTempQuery = "DELETE FROM Temp_Delivery WHERE Session_ID = @Session_ID";
                     using (SqlCommand cmdDeleteTemp = new SqlCommand(deleteTempQuery, conn, transaction))
                     {
@@ -582,10 +660,10 @@ namespace STORE_FINAL.Role_StoreIncharge
                         cmdDeleteTemp.ExecuteNonQuery();
                     }
 
-                    // 8️⃣ Commit Transaction
+                    // 🔟 Commit Transaction
                     transaction.Commit();
 
-                    // 9️⃣ Reset Session & Refresh UI
+                    // 1️⃣1️⃣ Reset Session & Refresh UI
                     Session["DeliverySessionID"] = Guid.NewGuid().ToString();
                     hfDeliverySessionID.Value = Session["DeliverySessionID"].ToString();
                     lblMessage.Text = "New Session ID: " + Session["DeliverySessionID"].ToString();
@@ -690,11 +768,6 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
-
-
-
-
-
 
         protected void btnDeliver_Click(object sender, EventArgs e)
         {
@@ -861,6 +934,5 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
-
     }
 }

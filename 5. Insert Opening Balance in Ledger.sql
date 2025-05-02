@@ -1,13 +1,11 @@
 INSERT INTO Material_Ledger (
-    Material_ID, Stock_ID, Serial_Number, Transaction_ID,
-    Transaction_Date, Transaction_Type, In_Quantity, Out_Quantity,
+    Material_ID, Challan_ID, Challan_Date, 
+	Ledger_Type, In_Quantity, Out_Quantity,
     Unit_Price, Balance_After_Transaction, Valuation_After_Transaction
 )
 select 
 	Material_ID, 
-	NULL AS Stock_ID, 
-	NULL AS Serial_Number, 
-	NULL AS Transaction_ID, 
+	NULL AS Challan_ID, 
 	GETDATE() AS Transaction_Date, 
 	'OPENING' AS Transaction_Type, 
 	Stock_Quantity AS In_Quantity, 

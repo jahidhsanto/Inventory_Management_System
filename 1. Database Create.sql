@@ -134,8 +134,8 @@ CREATE TABLE Material (
     Model_ID INT NOT NULL,
     Control_ID INT NOT NULL,
     Materials_Name NVARCHAR(255) NOT NULL,
-    Unit_Price DECIMAL(10,2),
-    Stock_Quantity DECIMAL(10,2),
+    Unit_Price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    Stock_Quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
     UoM INT NOT NULL,
 	MSQ DECIMAL(10, 2) NOT NULL,
 	Requires_Serial_Number NVARCHAR(3) NOT NULL CHECK (Requires_Serial_Number IN ('Yes', 'No')),
@@ -165,7 +165,7 @@ CREATE TABLE Stock (
     Shelf_Number NVARCHAR(50) NOT NULL,
 	Status NVARCHAR(50) NOT NULL CHECK (Status IN ('ACTIVE', 'DEFECTIVE')),
 	Availability NVARCHAR(50) NOT NULL CHECK (Availability IN('AVAILABLE', 'DELIVERED')),
-	Quantity DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+	Quantity DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     Received_Date DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID)
 );
@@ -178,7 +178,7 @@ WHERE Serial_Number IS NOT NULL;
 CREATE TABLE Challan (
     Challan_ID INT IDENTITY(1,1) PRIMARY KEY,
     Challan_Date DATETIME DEFAULT GETDATE(),
-    Challan_Type NVARCHAR(50) CHECK (Challan_Type IN ('DELIVERY', 'RETURN')),
+    Challan_Type NVARCHAR(50) CHECK (Challan_Type IN ('DELIVERY', 'RETURN', 'RECEIVE')),
 	Reference_Challan_ID INT NULL,
     Remarks NVARCHAR(1000),
 	FOREIGN KEY (Reference_Challan_ID) REFERENCES Challan(Challan_ID)
@@ -209,8 +209,8 @@ CREATE TABLE Material_Transaction_Log (
     Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('DELIVERY', 'RETURN', 'RECEIVE')),
     Transaction_Date DATETIME DEFAULT GETDATE(),
 
-    In_Quantity DECIMAL(10,2) NOT NULL,
-    Out_Quantity DECIMAL(10,2) NOT NULL,
+    In_Quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
+    Out_Quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
     Challan_ID INT NULL, -- Can be linked to Challan
     Requisition_ID INT NOT NULL, -- Optional
     ReceivedBy_Employee_ID INT NULL, -- Who received/delivered/returned
@@ -229,23 +229,20 @@ CREATE TABLE Material_Transaction_Log (
 CREATE TABLE Material_Ledger (
     Ledger_ID INT IDENTITY(1,1) PRIMARY KEY,
     Material_ID INT NOT NULL,
-    Stock_ID INT NULL,
-    Serial_Number NVARCHAR(255) NULL,
-    Transaction_ID INT NULL, -- NULL for opening balance
-    Transaction_Date DATETIME NOT NULL,
-    Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('OPENING', 'RECEIVE', 'DELIVERY', 'RETURN')),
+    Challan_ID INT NULL,
+    Challan_Date DATETIME NOT NULL,
+    Ledger_Type NVARCHAR(50) NOT NULL CHECK (Ledger_Type IN ('OPENING', 'RECEIVE', 'DELIVERY', 'RETURN')),
     
-    In_Quantity DECIMAL(18, 2) DEFAULT 0,
-    Out_Quantity DECIMAL(18, 2) DEFAULT 0,
-    Unit_Price DECIMAL(18, 2) NOT NULL,
+    In_Quantity DECIMAL(10, 2) DEFAULT 0,
+    Out_Quantity DECIMAL(10, 2) DEFAULT 0,
+    Unit_Price DECIMAL(10, 2) NOT NULL,
     Total_Valuation AS ((In_Quantity - Out_Quantity) * Unit_Price) PERSISTED,
 
-    Balance_After_Transaction DECIMAL(18, 2) NOT NULL,
-    Valuation_After_Transaction DECIMAL(18, 2) NOT NULL,
+    Balance_After_Transaction DECIMAL(10, 2) NOT NULL,
+    Valuation_After_Transaction DECIMAL(10, 2) NOT NULL,
 
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID)
-    -- Transaction_ID is optional FK
+    FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID)
 );
 
 -- Create Purchase_Request Table
@@ -274,7 +271,7 @@ CREATE TABLE Procurement (
     Purchase_Request_ID INT,
     Vendor_ID INT,
     Purchase_Date DATETIME DEFAULT GETDATE(),
-    Total_Cost DECIMAL(18,2),
+    Total_Cost DECIMAL(10,2),
     FOREIGN KEY (Purchase_Request_ID) REFERENCES Purchase_Request(Purchase_Request_ID),
     FOREIGN KEY (Vendor_ID) REFERENCES Vendor(Vendor_ID)
 );

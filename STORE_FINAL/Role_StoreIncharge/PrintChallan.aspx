@@ -115,7 +115,7 @@
                <!-- Table -->
                <asp:Repeater ID="rptChallanDetails" runat="server">
                    <HeaderTemplate>
-                       <table class="table table-bordered challan-table">f
+                       <table class="table table-bordered challan-table">
                            <thead class="thead-dark">
                                <tr>
                                    <th style="width: 5%;">SL</th>

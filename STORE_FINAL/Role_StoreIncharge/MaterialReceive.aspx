@@ -32,10 +32,16 @@
         <div class="row">
             <div class="col-md-12 mt-4">
                 <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" CssClass="btn-group w-100" ClientIDMode="Static">
-                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />  <%-- All materials are new and active --%>
-                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" /> <%-- Which materials are already dispatched and active --%>
-                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" /> <%-- Which materials are already dispatched and defective --%>
+                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />              <%-- All materials are new and active --%>
+                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />           <%-- Which materials are already dispatched and active --%>
+                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />     <%-- Which materials are already dispatched and defective --%>
                 </asp:RadioButtonList>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 dropdown-container" id="ReturnAgainst">
+                <label class="form-label">Select Challan:</label>
+                <asp:DropDownList ID="ddlChallanID" runat="server" CssClass="form-control select2"></asp:DropDownList>            
             </div>
         </div>
         <div class="row">

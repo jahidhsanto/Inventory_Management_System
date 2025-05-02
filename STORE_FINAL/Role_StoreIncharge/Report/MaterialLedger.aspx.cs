@@ -8,11 +8,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Configuration;
-using STORE_FINAL.Role_StoreIncharge.Report;
 
-namespace STORE_FINAL.Test
+namespace STORE_FINAL.Role_StoreIncharge.Report
 {
-    public partial class Return : System.Web.UI.Page
+    public partial class MaterialLedger : System.Web.UI.Page
     {
         string connStr = WebConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
@@ -50,12 +49,50 @@ namespace STORE_FINAL.Test
             int materialId = Convert.ToInt32(ddlMaterial.SelectedValue);
             if (materialId > 0)
             {
-                //LoadMaterialLedger(materialId);
+                LoadMaterialLedger(materialId);
             }
             else
             {
-                //gvMaterialLedger.DataSource = null;
-                //gvMaterialLedger.DataBind();
+                gvMaterialLedger.DataSource = null;
+                gvMaterialLedger.DataBind();
+            }
+        }
+
+        private void LoadMaterialLedger(int materialId, DateTime? fromDate = null, DateTime? toDate = null)
+        {
+            string query = @"
+                            SELECT Challan_Date, Ledger_Type, In_Quantity, Out_Quantity, 
+                            Unit_Price, Balance_After_Transaction, Valuation_After_Transaction
+                            FROM Material_Ledger
+                            WHERE Material_ID = @Material_ID";
+
+            if (fromDate.HasValue)
+                query += " AND Challan_Date >= @FromDate";
+
+            if (toDate.HasValue)
+                query += " AND Challan_Date <= @ToDate";
+
+            query += " ORDER BY Challan_Date";
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Material_ID", materialId);
+
+                    if (fromDate.HasValue)
+                        cmd.Parameters.AddWithValue("@FromDate", fromDate.Value);
+
+                    if (toDate.HasValue)
+                        cmd.Parameters.AddWithValue("@ToDate", toDate.Value);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    gvMaterialLedger.DataSource = dt;
+                    gvMaterialLedger.DataBind();
+                }
             }
         }
 
@@ -73,12 +110,24 @@ namespace STORE_FINAL.Test
                 if (DateTime.TryParse(txtToDate.Text, out DateTime tDate))
                     toDate = tDate;
 
-                //LoadMaterialLedger(materialId, fromDate, toDate);
+                // Validate that both dates are provided and fromDate <= toDate
+                if (fromDate.HasValue && toDate.HasValue && fromDate > toDate)
+                {
+                    lblExportError.Text = "From Date must be earlier than or equal to To Date.";
+                    lblExportError.Visible = true;
+
+                    gvMaterialLedger.DataSource = null;
+                    gvMaterialLedger.DataBind();
+                    return;
+                }
+
+                lblExportError.Visible = false;
+                LoadMaterialLedger(materialId, fromDate, toDate);
             }
             else
             {
-                //gvMaterialLedger.DataSource = null;
-                //gvMaterialLedger.DataBind();
+                gvMaterialLedger.DataSource = null;
+                gvMaterialLedger.DataBind();
             }
         }
 
@@ -102,18 +151,19 @@ namespace STORE_FINAL.Test
             using (System.IO.StringWriter sw = new System.IO.StringWriter())
             {
                 HtmlTextWriter hw = new HtmlTextWriter(sw);
-                //gvMaterialLedger.AllowPaging = false;
+                gvMaterialLedger.AllowPaging = false;
                 DateTime? fromDate = null, toDate = null;
                 if (DateTime.TryParse(txtFromDate.Text, out DateTime fDate)) fromDate = fDate;
                 if (DateTime.TryParse(txtToDate.Text, out DateTime tDate)) toDate = tDate;
-                //LoadMaterialLedger(materialId, fromDate, toDate);
+                LoadMaterialLedger(materialId, fromDate, toDate);
 
-                //gvMaterialLedger.RenderControl(hw);
+                gvMaterialLedger.RenderControl(hw);
                 Response.Output.Write(sw.ToString());
                 Response.Flush();
                 Response.End();
             }
         }
 
+        public override void VerifyRenderingInServerForm(Control control) { }
     }
 }

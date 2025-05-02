@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="Return.aspx.cs" Inherits="STORE_FINAL.Test.Return" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="MaterialLedger.aspx.cs" Inherits="STORE_FINAL.Role_StoreIncharge.Report.MaterialLedger" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -31,14 +31,18 @@
                 <div class="row">
                     <asp:Label ID="lblExportError" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
 
-                    <div class="col-md-12">
-                        <asp:CustomValidator ID="cvDateRange" runat="server"
-                            ErrorMessage="From Date must be earlier than or equal to To Date"
-                            ClientValidationFunction="validateDateRange"
-                            ForeColor="Red" Display="Dynamic" ValidateEmptyText="true" />
-                    </div>
+                    <asp:GridView ID="gvMaterialLedger" runat="server" CssClass="table table-striped table-bordered" AutoGenerateColumns="false" EmptyDataText="No data found.">
+                        <Columns>
+                            <asp:BoundField DataField="Challan_Date" HeaderText="Date" DataFormatString="{0:dd/MM/yyyy}" />
+                            <asp:BoundField DataField="Ledger_Type" HeaderText="Type" />
+                            <asp:BoundField DataField="In_Quantity" HeaderText="In Qty" />
+                            <asp:BoundField DataField="Out_Quantity" HeaderText="Out Qty" />
+                            <asp:BoundField DataField="Unit_Price" HeaderText="Unit Price" DataFormatString="{0:N2}" />
+                            <asp:BoundField DataField="Balance_After_Transaction" HeaderText="Balance" />
+                            <asp:BoundField DataField="Valuation_After_Transaction" HeaderText="Valuation" DataFormatString="{0:N2}" />
+                        </Columns>
+                    </asp:GridView>
                 </div>
             </div>
         </div>
-    </div>
 </asp:Content>
