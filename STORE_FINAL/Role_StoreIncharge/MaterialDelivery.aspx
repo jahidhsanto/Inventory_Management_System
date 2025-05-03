@@ -135,7 +135,7 @@
             <asp:DropDownList ID="ddlReceivedByEmployee" runat="server" CssClass="form-control "></asp:DropDownList>
             
             <!-- Deliver Button -->
-            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_TransactionLog" />
+            <asp:Button ID="btnDeliver" runat="server" Text="🚚 Deliver Items" CssClass="btn btn-success btn-lg" OnClick="btnDeliver_Click" />
         </div>
     </div>
 

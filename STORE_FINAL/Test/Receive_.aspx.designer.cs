@@ -11,7 +11,7 @@ namespace STORE_FINAL.Test
 {
 
 
-    public partial class Return
+    public partial class Receive_
     {
 
         /// <summary>
@@ -24,57 +24,48 @@ namespace STORE_FINAL.Test
         protected global::System.Web.UI.WebControls.DropDownList ddlMaterial;
 
         /// <summary>
-        /// txtFromDate control.
+        /// ddlReceiveType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFromDate;
+        protected global::System.Web.UI.WebControls.DropDownList ddlReceiveType;
 
         /// <summary>
-        /// txtToDate control.
+        /// txtQuantity control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtToDate;
+        protected global::System.Web.UI.WebControls.TextBox txtQuantity;
 
         /// <summary>
-        /// btnSearch control.
+        /// txtSerialNumbers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSearch;
+        protected global::System.Web.UI.WebControls.TextBox txtSerialNumbers;
 
         /// <summary>
-        /// btnExportExcel control.
+        /// btnSubmit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportExcel;
+        protected global::System.Web.UI.WebControls.Button btnSubmit;
 
         /// <summary>
-        /// lblExportError control.
+        /// lblMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblExportError;
-
-        /// <summary>
-        /// cvDateRange control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator cvDateRange;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
     }
 }
