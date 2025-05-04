@@ -141,7 +141,7 @@
             // Attach change event to all radio buttons
             document.querySelectorAll('#rblReceiveType input[type="radio"]').forEach(function (rb) {
                 rb.addEventListener("change", showDropdown);
-            });
+            })
         });
     </script>
 
