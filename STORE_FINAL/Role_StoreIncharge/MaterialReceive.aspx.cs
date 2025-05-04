@@ -34,28 +34,100 @@ namespace STORE_FINAL.Role_StoreIncharge
             using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = "SELECT Material_ID, Materials_Name, Part_Id FROM Material";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
 
-                DataTable dt = new DataTable();
-                dt.Load(cmd.ExecuteReader());
+                    DataTable dt = new DataTable();
+                    dt.Load(cmd.ExecuteReader());
 
-                ddlMaterial.DataSource = dt;
-                ddlMaterial.DataTextField = "Materials_Name"; // Show Material Name
-                ddlMaterial.DataValueField = "Material_ID";  // Use Material ID as Value
-                ddlMaterial.DataBind();
+                    ddlMaterial.DataSource = dt;
+                    ddlMaterial.DataTextField = "Materials_Name"; // Show Material Name
+                    ddlMaterial.DataValueField = "Material_ID";  // Use Material ID as Value
+                    ddlMaterial.DataBind();
 
-                ddlPartID.DataSource = dt;
-                ddlPartID.DataTextField = "Part_Id"; // Show Part ID
-                ddlPartID.DataValueField = "Material_ID"; // Use Material ID as Value
-                ddlPartID.DataBind();
+                    ddlPartID.DataSource = dt;
+                    ddlPartID.DataTextField = "Part_Id"; // Show Part ID
+                    ddlPartID.DataValueField = "Material_ID"; // Use Material ID as Value
+                    ddlPartID.DataBind();
 
-                // Add default items
-                ddlMaterial.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Material --", "0"));
-                ddlPartID.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Part ID --", "0"));
+                    // Add default items
+                    ddlMaterial.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Material --", "0"));
+                    ddlPartID.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Part ID --", "0"));
+                }
+            }
+        }
+        private void LoadChallans()
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                string query = "SELECT Challan_ID FROM Challan;";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+
+                    DataTable dt = new DataTable();
+                    dt.Load(cmd.ExecuteReader());
+
+                    ddlChallanID.DataSource = dt;
+                    ddlChallanID.DataTextField = "Challan_ID";
+                    ddlChallanID.DataValueField = "Challan_ID";
+                    ddlChallanID.DataBind();
+
+                    // Add default items
+                    ddlChallanID.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select Challan --", "0"));
+
+                }
             }
         }
 
+        protected void rblReceiveType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedValue = rblReceiveType.SelectedValue;
+
+            if (selectedValue == "ReturnActiveReceive" || selectedValue == "ReturnDefectiveReceive")
+            {
+                LoadChallans();
+            }
+            else
+            {
+                ddlChallanID.Items.Clear();
+                ddlChallanItemsID.Items.Clear();
+            }
+        }
+        protected void ddlChallanID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string challanId = ddlChallanID.SelectedValue;
+
+            if (!string.IsNullOrEmpty(challanId) && challanId != "0")
+            {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = @"
+                                    SELECT ci.Challan_Item_ID, CONCAT(m.Materials_Name, ' - ', ci.Serial_Number) AS Item_Name
+                                    FROM Challan_Items ci
+                                    JOIN Material m
+	                                    ON ci.Material_ID = m.Material_ID
+                                    WHERE Challan_ID = @ChallanID";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ChallanID", challanId);
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        ddlChallanItemsID.DataSource = dt;
+                        ddlChallanItemsID.DataTextField = "Item_Name";
+                        ddlChallanItemsID.DataValueField = "Challan_Item_ID";
+                        ddlChallanItemsID.DataBind();
+
+                        ddlChallanItemsID.Items.Insert(0, new ListItem("-- Select Item --", "0"));
+                    }
+                }
+            }
+        }
         protected void ddlMaterial_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ddlMaterial.SelectedValue != "0")

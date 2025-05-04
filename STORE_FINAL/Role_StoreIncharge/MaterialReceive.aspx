@@ -31,18 +31,25 @@
     <div class="card shadow p-4">
         <div class="row">
             <div class="col-md-12 mt-4">
-                <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" CssClass="btn-group w-100" ClientIDMode="Static">
+                <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" CssClass="btn-group w-100" OnSelectedIndexChanged="rblReceiveType_SelectedIndexChanged" ClientIDMode="Static">
                     <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />              <%-- All materials are new and active --%>
                     <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />           <%-- Which materials are already dispatched and active --%>
                     <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />     <%-- Which materials are already dispatched and defective --%>
                 </asp:RadioButtonList>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 dropdown-container" id="ReturnAgainst">
+        <div class="row d-none" id="ReturnAgainst">
+
+            <div class="col-md-6 form-group">
                 <label class="form-label">Select Challan:</label>
-                <asp:DropDownList ID="ddlChallanID" runat="server" CssClass="form-control select2"></asp:DropDownList>            
+                <asp:DropDownList ID="ddlChallanID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlChallanID_SelectedIndexChanged" />
             </div>
+
+            <div class="col-md-6 form-group">
+                <label class="form-label">Select Challan Item:</label>
+                <asp:DropDownList ID="ddlChallanItemsID" runat="server" CssClass="form-control select2"></asp:DropDownList>
+            </div>
+
         </div>
         <div class="row">
             <div class="col-md-6">
@@ -101,11 +108,10 @@
             <span id="loading" class="spinner-border spinner-border-sm text-success d-none"></span>
         </div>
 
-        <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3 d-none"></asp:Label>
-        <%--<asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>--%>
+        <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>
     </div>
 
-    <%-- JavaScript for requisition type selection --%>
+    <%-- JavaScript for receive type selection --%>
     <script>
         function showDropdown() {
             var selected = document.querySelector('#rblReceiveType input[type="radio"]:checked');
@@ -113,25 +119,17 @@
 
             var selectedValue = selected.value;
 
-            // List of all dropdown IDs
-            const dropdowns = {
-                Project: document.getElementById('dropdownProjectFor'),
-                Employee: document.getElementById('dropdownEmployeeFor'),
-                Department: document.getElementById('dropdownDepartmentFor'),
-                Zone: document.getElementById('dropdownZoneFor')
-            };
+            var returnAgainstContainer = document.getElementById('ReturnAgainst');
 
-            // Loop through each dropdown
-            for (const type in dropdowns) {
-                const container = dropdowns[type];
-                const ddl = container.querySelector('select');
-
-                if (type === selectedValue) {
-                    container.classList.remove('d-none'); // Show
-                } else {
-                    container.classList.add('d-none');    // Hide
-                    if (ddl) ddl.selectedIndex = 0;       // Clear selection
-                }
+            if (selectedValue === 'ReturnActiveReceive' || selectedValue === 'ReturnDefectiveReceive') {
+                returnAgainstContainer.classList.remove('d-none'); // Show
+            } else {
+                returnAgainstContainer.classList.add('d-none');    // Hide
+                // Optionally clear selections:
+                var dropdowns = returnAgainstContainer.querySelectorAll('select');
+                dropdowns.forEach(function (ddl) {
+                    ddl.selectedIndex = 0;
+                });
             }
         }
 
@@ -141,8 +139,9 @@
             // Attach change event to all radio buttons
             document.querySelectorAll('#rblReceiveType input[type="radio"]').forEach(function (rb) {
                 rb.addEventListener("change", showDropdown);
-            })
+            });
         });
     </script>
+
 
 </asp:Content>
