@@ -7,6 +7,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using STORE_FINAL.Pages;
+using WebGrease.ImageAssemble;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -85,19 +87,46 @@ namespace STORE_FINAL.Role_StoreIncharge
         {
             string selectedValue = rblReceiveType.SelectedValue;
 
+            ddlChallanID.Items.Clear();
+            ddlChallanItemsID.Items.Clear();
+            ddlChallanItemsID.Enabled = false;
+
+            ddlMaterial.Items.Clear();
+            ddlPartID.Items.Clear();
+
+            txtSerialNumber.Enabled = false;
+            txtSerialNumber.Text = "";
+            txtQuantity.Enabled = false;
+            txtQuantity.Text = "";
+
             if (selectedValue == "ReturnActiveReceive" || selectedValue == "ReturnDefectiveReceive")
             {
+                ReturnAgainst.Attributes["class"] = "row"; // show
                 LoadChallans();
+                ddlMaterial.Enabled = false;
+                ddlPartID.Enabled = false;
             }
             else
             {
-                ddlChallanID.Items.Clear();
-                ddlChallanItemsID.Items.Clear();
+                ReturnAgainst.Attributes["class"] = "row d-none"; // hide
+                ddlMaterial.Enabled = true;
+                ddlPartID.Enabled = true;
+                LoadMaterialsNameID();
             }
         }
         protected void ddlChallanID_SelectedIndexChanged(object sender, EventArgs e)
         {
             string challanId = ddlChallanID.SelectedValue;
+
+            ddlChallanItemsID.Enabled = false;
+
+            ddlMaterial.Items.Clear();
+            ddlPartID.Items.Clear();
+
+            txtSerialNumber.Enabled = false;
+            txtSerialNumber.Text = "";
+            txtQuantity.Enabled = false;
+            txtQuantity.Text = "";
 
             if (!string.IsNullOrEmpty(challanId) && challanId != "0")
             {
@@ -124,6 +153,53 @@ namespace STORE_FINAL.Role_StoreIncharge
                         ddlChallanItemsID.DataBind();
 
                         ddlChallanItemsID.Items.Insert(0, new ListItem("-- Select Item --", "0"));
+
+                        ddlChallanItemsID.Enabled = true;
+                    }
+                }
+            }
+        }
+        protected void ddlChallanItemsID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string challanItemId = ddlChallanItemsID.SelectedValue;
+
+            ddlMaterial.Items.Clear();
+            ddlPartID.Items.Clear();
+
+            txtSerialNumber.Enabled = false;
+            txtSerialNumber.Text = "";
+            txtQuantity.Enabled = false;
+            txtQuantity.Text = "";
+
+            if (!string.IsNullOrEmpty(challanItemId) && challanItemId != "0")
+            {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = @"
+                                    select ci.Material_ID, m.Part_Id, m.Materials_Name, ci.Challan_Item_ID, ci.Serial_Number
+                                    from Challan_Items ci
+                                    JOIN Material m
+	                                    ON ci.Material_ID = m.Material_ID
+                                    where ci.Challan_Item_ID = @ChallanItemsID;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ChallanItemsID", challanItemId);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string materialId = reader["Material_ID"].ToString();
+                                string partId = reader["Part_Id"].ToString();
+                                string materialName = reader["Materials_Name"].ToString();
+
+                                ddlMaterial.Items.Add(new ListItem(materialName, materialId));
+                                ddlPartID.Items.Add(new ListItem(partId, materialId));
+
+                                ShowHide_SerialQuantity();
+                            }
+                        }
                     }
                 }
             }
@@ -293,13 +369,14 @@ namespace STORE_FINAL.Role_StoreIncharge
 
         private void ClearForm()
         {
-            txtSerialNumber.Text = "";
-            txtRackNumber.Text = "";
-            txtShelfNumber.Text = "";
+            ddlChallanID.SelectedValue = "0";
+            ddlChallanItemsID.SelectedValue = "0";
             ddlMaterial.SelectedValue = "0";
             ddlPartID.SelectedValue = "0";
-            ddlStatus.SelectedIndex = 0;
+            txtSerialNumber.Text = "";
+            txtQuantity.Text = "";
+            txtRackNumber.Text = "";
+            txtShelfNumber.Text = "";
         }
-
     }
 }
