@@ -14,7 +14,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 {
     public partial class MaterialReceive : System.Web.UI.Page
     {
-        string connString = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+        string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,14 +26,23 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             if (!IsPostBack)
             {
+                if (Session["ReceiveSessionID"] == null)
+                {
+                    Session["ReceiveSessionID"] = Guid.NewGuid().ToString();
+                }
+                hfReceiveSessionID.Value = Session["ReceiveSessionID"].ToString();
+
                 LoadMaterialsNameID();
+
+                // Display the DeliverySessionID in the label
+                lblSession_2.Text = "Session ID: " + Session["ReceiveSessionID"].ToString();
             }
         }
 
         // Load DropDowns
         private void LoadMaterialsNameID()
         {
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = "SELECT Material_ID, Materials_Name, Part_Id FROM Material";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -61,7 +70,7 @@ namespace STORE_FINAL.Role_StoreIncharge
         }
         private void LoadChallans()
         {
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = "SELECT Challan_ID FROM Challan;";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -130,7 +139,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             if (!string.IsNullOrEmpty(challanId) && challanId != "0")
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
                     string query = @"
@@ -173,7 +182,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             if (!string.IsNullOrEmpty(challanItemId) && challanItemId != "0")
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
                     string query = @"
@@ -223,7 +232,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
         private void ShowHide_SerialQuantity()
         {
-            using (SqlConnection conn = new SqlConnection(connString))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 int materialID = Convert.ToInt32(ddlMaterial.SelectedValue);
                 if (materialID > 0)
@@ -315,7 +324,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     return;
                 }
 
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     string query = @"
                                     INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity) 

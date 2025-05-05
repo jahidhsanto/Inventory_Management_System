@@ -27,26 +27,29 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
     <h2 class="mb-4"><i class="fas fa-box"></i>Receive New Stock</h2>
-
+    <asp:Label ID="lblSession_2" runat="server" CssClass="alert"></asp:Label>
     <div class="card shadow p-4">
         <div class="row">
             <div class="col-md-12 mt-4">
                 <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" CssClass="btn-group w-100" OnSelectedIndexChanged="rblReceiveType_SelectedIndexChanged" ClientIDMode="Static">
-                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />              <%-- All materials are new and active --%>
-                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />           <%-- Which materials are already dispatched and active --%>
-                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />     <%-- Which materials are already dispatched and defective --%>
+                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />
+                    <%-- All materials are new and active --%>
+                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />
+                    <%-- Which materials are already dispatched and active --%>
+                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />
+                    <%-- Which materials are already dispatched and defective --%>
                 </asp:RadioButtonList>
             </div>
         </div>
         <div class="row d-none" id="ReturnAgainst" runat="server">
 
             <div class="col-md-6 form-group">
-                <label><i class="fas fa-file-invoice"></i> Select Challan:</label>
+                <label><i class="fas fa-file-invoice"></i>Select Challan:</label>
                 <asp:DropDownList ID="ddlChallanID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlChallanID_SelectedIndexChanged" />
             </div>
 
             <div class="col-md-6 form-group">
-                <label><i class="fas fa-list-ul"></i> Select Challan Item:</label>
+                <label><i class="fas fa-list-ul"></i>Select Challan Item:</label>
                 <asp:DropDownList ID="ddlChallanItemsID" runat="server" CssClass="form-control select2" Enabled="false" AutoPostBack="true" OnSelectedIndexChanged="ddlChallanItemsID_SelectedIndexChanged"></asp:DropDownList>
             </div>
 
@@ -55,23 +58,23 @@
             <div class="col-md-6">
 
                 <div class="form-group">
-                    <label><i class="fas fa-cubes"></i> Material Name:</label>
+                    <label><i class="fas fa-cubes"></i>Material Name:</label>
                     <asp:DropDownList ID="ddlMaterial" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlMaterial_SelectedIndexChanged"></asp:DropDownList>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-barcode"></i> Part ID:</label>
+                    <label><i class="fas fa-barcode"></i>Part ID:</label>
                     <asp:DropDownList ID="ddlPartID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlPartID_SelectedIndexChanged"></asp:DropDownList>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-hashtag"></i> Serial Number:</label>
+                    <label><i class="fas fa-hashtag"></i>Serial Number:</label>
                     <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control" placeholder="Enter Serial Number" Enabled="false"></asp:TextBox>
                     <small class="text-danger d-none" id="serialError">Serial Number is required!</small>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-cogs"></i> Quantity:</label>
+                    <label><i class="fas fa-cogs"></i>Quantity:</label>
                     <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" Enabled="false" />
                     <small class="text-danger d-none" id="quantityError">Quantity is required!</small>
                 </div>
@@ -80,19 +83,19 @@
             <div class="col-md-6">
 
                 <div class="form-group">
-                    <label><i class="fas fa-th-large"></i> Rack Number:</label>
+                    <label><i class="fas fa-th-large"></i>Rack Number:</label>
                     <asp:TextBox ID="txtRackNumber" runat="server" CssClass="form-control" placeholder="Enter Rack Number"></asp:TextBox>
                     <small class="text-danger d-none" id="rackError">Rack Number is required!</small>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-align-left"></i> Shelf Number:</label>
+                    <label><i class="fas fa-align-left"></i>Shelf Number:</label>
                     <asp:TextBox ID="txtShelfNumber" runat="server" CssClass="form-control" placeholder="Enter Shelf Number"></asp:TextBox>
                     <small class="text-danger d-none" id="shelfError">Shelf Number is required!</small>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-info-circle"></i> Status:</label>
+                    <label><i class="fas fa-info-circle"></i>Status:</label>
                     <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
                         <asp:ListItem Text="Active" Value="ACTIVE"></asp:ListItem>
                         <asp:ListItem Text="Defective" Value="DEFECTIVE"></asp:ListItem>
@@ -110,6 +113,8 @@
 
         <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>
     </div>
+
+    <asp:HiddenField ID="hfReceiveSessionID" runat="server" />
 
     <%-- JavaScript for receive type selection --%>
 <%--    <script>
@@ -141,7 +146,5 @@
                 rb.addEventListener("change", showDropdown);
             });
         });
-    </script>--%>
-
-
+</script>--%>
 </asp:Content>
