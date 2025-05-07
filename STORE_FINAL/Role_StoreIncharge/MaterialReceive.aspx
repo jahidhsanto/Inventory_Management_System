@@ -26,18 +26,18 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2 class="mb-4"><i class="fas fa-box"></i>Receive New Stock</h2>
+    <h2 class="mb-4">📦 Receive New Stock</h2>
     <asp:Label ID="lblSession_2" runat="server" CssClass="alert"></asp:Label>
     <div class="card shadow p-4">
         <div class="row">
             <div class="col-md-12 mt-4">
                 <asp:RadioButtonList ID="rblReceiveType" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" CssClass="btn-group w-100" OnSelectedIndexChanged="rblReceiveType_SelectedIndexChanged" ClientIDMode="Static">
-                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />
                     <%-- All materials are new and active --%>
-                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />
+                    <asp:ListItem Text="New Receive" Value="NewReceive" Selected="True" />
                     <%-- Which materials are already dispatched and active --%>
-                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />
+                    <asp:ListItem Text="Return Active Receive" Value="ReturnActiveReceive" />
                     <%-- Which materials are already dispatched and defective --%>
+                    <asp:ListItem Text="Return Defective Receive" Value="ReturnDefectiveReceive" />
                 </asp:RadioButtonList>
             </div>
         </div>
@@ -114,10 +114,84 @@
         <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>
     </div>
 
+
+
+
+
+
+    <asp:ScriptManager ID="ScriptManager1" runat="server" />
+
+    <asp:Button ID="btnAddToReceiving" runat="server" Text="➕ Add Serial" CssClass="btn btn-primary" OnClick="btnAddToReceiving_Click" />
+
+    <br />
+
+    <!-- Temporary GridView -->
+    <asp:GridView ID="gvReceivingItems" runat="server" CssClass="table table-bordered" AutoGenerateColumns="False" DataKeyNames="Temp_ID" OnRowCommand="gvReceivingItems_RowCommand">
+        <Columns>
+            <asp:TemplateField HeaderText="S.No">
+                <ItemTemplate>
+                    <%# Container.DataItemIndex + 1 %>
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
+            <asp:BoundField DataField="Rack_Number" HeaderText="Rack" />
+            <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf" />
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove"
+                        CommandArgument='<%# Eval("Temp_ID") %>' CssClass="btn delete-icon">
+                                <i class="fa fa-remove" style="color:red"></i>
+                    </asp:LinkButton>
+                </ItemTemplate>
+            </asp:TemplateField>
+
+        </Columns>
+    </asp:GridView>
+
+    <br />
+
+    <!-- Final Receive Button -->
+    <%--<asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" OnClick="btnReceive_Click" />--%>
+    <asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" />
+    <br />
+    <br />
+    <asp:Label ID="Label1" runat="server" ForeColor="Green" />
+    <asp:HiddenField ID="hfReceivingSessionID" runat="server" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <asp:HiddenField ID="hfReceiveSessionID" runat="server" />
 
     <%-- JavaScript for receive type selection --%>
-<%--    <script>
+    <%--    <script>
         function showDropdown() {
             var selected = document.querySelector('#rblReceiveType input[type="radio"]:checked');
             if (!selected) return;

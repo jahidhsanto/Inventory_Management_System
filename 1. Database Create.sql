@@ -318,12 +318,23 @@ CREATE TABLE Temp_Delivery (
     Temp_ID INT IDENTITY(1,1) PRIMARY KEY, 
     Stock_ID INT NOT NULL, 
     Material_ID INT NOT NULL, 
-    Requisition_ID INT NOT NULL,
+    Requisition_ID INT NULL,
 	Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0), 
     Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
 	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
+);
+
+CREATE TABLE Temp_Receiving (
+    Temp_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Material_ID INT,
+    Serial_Number NVARCHAR(255),
+    Rack_Number NVARCHAR(100),
+    Shelf_Number NVARCHAR(100),
+    Requisition_ID INT,
+    Session_ID NVARCHAR(100),
+    CreatedBy_Employee_ID INT
 );
 
 CREATE TABLE Owner (

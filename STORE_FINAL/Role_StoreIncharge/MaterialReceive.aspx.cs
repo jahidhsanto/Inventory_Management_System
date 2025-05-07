@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using STORE_FINAL.Pages;
 using WebGrease.ImageAssemble;
+using STORE_FINAL.Role_Employee;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -387,5 +388,187 @@ namespace STORE_FINAL.Role_StoreIncharge
             txtRackNumber.Text = "";
             txtShelfNumber.Text = "";
         }
+
+
+
+
+
+
+
+
+
+
+
+
+        protected void btnAddToReceiving_Click(object sender, EventArgs e)
+        {
+            if (Session["ReceiveSessionID"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Session expired. Please refresh the page.');", true);
+                return;
+            }
+
+            string sessionID = Session["ReceiveSessionID"].ToString();
+            string receiveType = rblReceiveType.SelectedValue;
+            string materialID = ddlMaterial.SelectedValue;
+            //int requisitionID = int.Parse(ddlRequisition.SelectedValue);
+            string serialNumber = txtSerialNumber.Text.Trim();
+            string quantityText = txtQuantity.Text.Trim(); 
+            string rackNumber = txtRackNumber.Text.Trim();
+            string shelfNumber = txtShelfNumber.Text.Trim();
+            int createdBy = int.Parse(Session["EmployeeID"].ToString());
+
+            int stockID = 0;
+
+            // Validate that all required fields are filled in
+            if (materialID == "0")
+            {
+                ShowMessage("Please select a valid Material.", false);
+                return;
+            }
+            // Validate Serial Number only if the field is enabled (i.e., required)
+            if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
+            {
+                ShowMessage("Serial Number is required for this material.", false);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
+            {
+                ShowMessage("Please enter a valid Quantity greater than zero.", false);
+                return;
+            }
+            if (string.IsNullOrEmpty(rackNumber))
+            {
+                ShowMessage("Rack Number is required.", false);
+                return;
+            }
+            if (string.IsNullOrEmpty(shelfNumber))
+            {
+                ShowMessage("Shelf Number is required.", false);
+                return;
+            }
+
+
+            // 2️⃣ Insert Selected Item into Temp_Receive
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+
+                // 🔍 Fetch stock entry for this serial (if any)
+                string checkSerialQuery01 = "SELECT Availability FROM Stock WHERE Serial_Number = @Serial";
+                using (SqlCommand cmd = new SqlCommand(checkSerialQuery01, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Serial", serialNumber);
+                    object stockStatus = cmd.ExecuteScalar();
+
+                    // Serial must NOT exist in Stock
+                    if (receiveType == "NewReceive")
+                    {
+                        if (stockStatus != null)
+                        {
+                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Serial number already exists in stock. Cannot receive again.');", true);
+                            return;
+                        }
+                    }
+                    // Serial must exist in Stock and be Availability = 'DELIVERED'
+                    else if (receiveType == "ReturnActiveReceive" || receiveType == "ReturnDefectiveReceive")
+                    {
+                        if (stockStatus == null)
+                        {
+                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Serial number not found in stock. Cannot return.');", true);
+                            return;
+                        }
+                        else if (!string.Equals(stockStatus.ToString(), "DELIVERED", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Serial number must be in DELIVERED state to receive return.');", true);
+                            return;
+                        }
+                    }
+                }
+
+                // 🔍 Prevent duplicate in temp table
+                string checkSerialQuery02 = "SELECT COUNT(*) FROM Temp_Receiving WHERE Serial_Number = @Serial AND Session_ID = @Session_ID";
+                using (SqlCommand checkCmd = new SqlCommand(checkSerialQuery02, conn))
+                {
+                    checkCmd.Parameters.AddWithValue("@Serial", serialNumber);
+                    checkCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+                    int exists = (int)checkCmd.ExecuteScalar();
+
+                    if (exists > 0)
+                    {
+                        ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Serial already added in list.');", true);
+                        return;
+                    }
+                }
+
+                // Insert into Temp_Receiving
+                string insertTemp = @"INSERT INTO Temp_Receiving (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Session_ID, CreatedBy_Employee_ID)
+                                      VALUES (@Material_ID, @Serial, @RackNumber, @ShelfNumber, @Session_ID, @CreatedBy)";
+                using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
+                {
+                    insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
+                    insertCmd.Parameters.AddWithValue("@Serial", serialNumber);
+                    insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //insertCmd.Parameters.AddWithValue("@RequisitionID", requisitionID);
+                    insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+                    insertCmd.Parameters.AddWithValue("@CreatedBy", createdBy);
+                    insertCmd.ExecuteNonQuery();
+
+                }
+            }
+
+            LoadReceivingItems();
+
+            // Clear fields
+            txtSerialNumber.Text = "";
+        }
+
+        void LoadReceivingItems()
+        {
+            string sessionID = Session["ReceiveSessionID"].ToString();
+
+            string query = @"
+                            SELECT 
+                                Temp_ID, Material_ID, Serial_Number, Rack_Number, Shelf_Number 
+                            FROM Temp_Receiving
+                            WHERE Session_ID = @SessionID";
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                da.SelectCommand.Parameters.AddWithValue("@SessionID", sessionID);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                gvReceivingItems.DataSource = dt;
+                gvReceivingItems.DataBind();
+            }
+        }
+
+        protected void gvReceivingItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Remove")
+            {
+                int temp_ID = Convert.ToInt32(e.CommandArgument);
+                string sessionID = Session["ReceiveSessionID"].ToString();
+
+                string deleteQuery = "DELETE FROM Temp_Receiving WHERE Temp_ID = @Temp_ID AND Session_ID = @Session_ID;";
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        deleteCmd.Parameters.AddWithValue("@Temp_ID", temp_ID);
+                        deleteCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+
+                        conn.Open();
+                        deleteCmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+
+                LoadReceivingItems();
+            }
+        }
+
     }
 }
