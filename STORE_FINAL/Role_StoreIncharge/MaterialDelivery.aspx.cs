@@ -434,7 +434,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                 try
                 {
-                    int challanID = 0;
+                    decimal challanID = 0;
 
                     // 🔥 Check if user selected to create challan
                     //bool createChallan = chkCreateChallan.Checked; 
@@ -452,7 +452,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         using (SqlCommand cmdChallan = new SqlCommand(insertChallanQuery, conn, transaction))
                         {
                             object result = cmdChallan.ExecuteScalar();
-                            if (result != null && int.TryParse(result.ToString(), out int newChallanID))
+                            if (result != null && decimal.TryParse(result.ToString(), out decimal newChallanID))
                             {
                                 challanID = newChallanID;
                             }

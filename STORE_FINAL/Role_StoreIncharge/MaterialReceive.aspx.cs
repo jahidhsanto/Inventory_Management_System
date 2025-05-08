@@ -417,13 +417,22 @@ namespace STORE_FINAL.Role_StoreIncharge
                 return;
             }
             // Validate Serial Number only if the field is enabled (i.e., required)
-            if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
+            if (txtSerialNumber.Enabled)
             {
-                ShowMessage("Serial Number is required for this material.", false);
+                if (string.IsNullOrEmpty(serialNumber))
+                {
+                    ShowMessage("Serial Number is required for this material.", false);
+                    return;
+                }
                 requiresSerial = true;
-                return;
             }
-            if (string.IsNullOrWhiteSpace(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
+            //if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
+            //{
+            //    ShowMessage("Serial Number is required for this material.", false);
+            //    requiresSerial = true;
+            //    return;
+            //}
+            if (string.IsNullOrWhiteSpace(quantityText) || !decimal.TryParse(quantityText, out decimal quantity) || quantity <= 0)
             {
                 ShowMessage("Please enter a valid Quantity greater than zero.", false);
                 return;
@@ -441,11 +450,10 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                conn.Open();
 
                 if (requiresSerial)
                 {
-                    conn.Open();
-
                     // 🔍 Fetch stock entry for this serial (if any)
                     string checkSerialQuery01 = "SELECT Availability FROM Stock WHERE Serial_Number = @Serial";
                     using (SqlCommand cmd = new SqlCommand(checkSerialQuery01, conn))
@@ -494,48 +502,38 @@ namespace STORE_FINAL.Role_StoreIncharge
                     }
 
                     // Insert into Temp_Receiving
-                    string insertTemp = @"INSERT INTO Temp_Receiving (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Session_ID, CreatedBy_Employee_ID)
-                                      VALUES (@Material_ID, @Serial, @RackNumber, @ShelfNumber, @Session_ID, @CreatedBy)";
+                    string insertTemp = @"INSERT INTO Temp_Receiving (Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
+                                      VALUES (@Material_ID, @Serial, 1, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
                     using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                     {
                         insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                         insertCmd.Parameters.AddWithValue("@Serial", serialNumber);
                         insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                         insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                        //insertCmd.Parameters.AddWithValue("@RequisitionID", requisitionID);
+                        insertCmd.Parameters.AddWithValue("@ReceiveType", receiveType);
                         insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
-                        insertCmd.Parameters.AddWithValue("@CreatedBy", createdBy);
                         insertCmd.ExecuteNonQuery();
-
                     }
                 }
                 else
                 {
                     // 🔄 Handle Quantity-Based Material (no serial required)
 
-                    // 2️⃣ Parse quantity
-                    decimal receivedQty;
-
-                    if (!decimal.TryParse(txtQuantity.Text.Trim(), out receivedQty) || receivedQty <= 0)
-                    {
-                        ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please enter a valid quantity.');", true);
-                        return;
-                    }
-
+                    // 2️⃣ 
                     if (receiveType == "NewReceive")
                     {
                         // ✅ For new receives, insert into Temp_Receiving
                         string insertTemp = @"
-                                        INSERT INTO Temp_Receiving (Material_ID, Quantity, Rack_Number, Shelf_Number, Session_ID, Status)
-                                        VALUES (@Material_ID, @Quantity, @RackNumber, @ShelfNumber, @Session_ID, @CreatedBy)";
+                                        INSERT INTO Temp_Receiving (Material_ID, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
+                                        VALUES (@Material_ID, @Quantity, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
                         using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                         {
                             insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
-                            insertCmd.Parameters.AddWithValue("@Quantity", receivedQty);
+                            insertCmd.Parameters.AddWithValue("@Quantity", quantity);
                             insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                             insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                            insertCmd.Parameters.AddWithValue("@ReceiveType", receiveType);
                             insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
-                            insertCmd.Parameters.AddWithValue("@CreatedBy", createdBy);
                             insertCmd.ExecuteNonQuery();
                         }
                     }
@@ -561,8 +559,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                         if (issuedQty == 0)
                         {
-                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage",
-                                "alert('This material was not issued in the selected challan.');", true);
+                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('This material was not issued in the selected challan.');", true);
                             return;
                         }
 
@@ -573,7 +570,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                     WHERE Material_ID = @Material_ID
                                       AND Challan_ID = @Challan_ID
                                       AND Session_ID = @Session_ID
-                                      AND Status IN ('ReturnActiveReceive', 'ReturnDefectiveReceive')";
+                                      AND Receive_Type IN ('ReturnActiveReceive', 'ReturnDefectiveReceive')";
 
                         decimal alreadyReturned = 0;
                         using (SqlCommand cmdReturned = new SqlCommand(returnedQtyQuery, conn))
@@ -586,20 +583,34 @@ namespace STORE_FINAL.Role_StoreIncharge
                                 alreadyReturned = Convert.ToDecimal(returned);
                         }
 
+                        // Step 3: Compare quantities
+                        if ((alreadyReturned + quantity) > issuedQty)
+                        {
+                            ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage",
+                                $"alert('Total return quantity ({alreadyReturned + quantity}) exceeds issued quantity ({issuedQty}) for this challan.');", true);
+                            return;
+                        }
 
-
-
-
-
-
-
-
-
-
+                        // Step 4: Insert into Temp_Receiving
+                        string insertTemp = @"
+                                    INSERT INTO Temp_Receiving (Challan_ID, Material_ID, Quantity, Rack_Number, Shelf_Number, Session_ID, Receive_Type)
+                                    VALUES (@Challan_ID, @Material_ID, @Quantity, @RackNumber, @ShelfNumber, @Session_ID, @ReceiveType)";
+                        using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
+                        {
+                            insertCmd.Parameters.AddWithValue("@Challan_ID", challanID); 
+                            insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
+                            insertCmd.Parameters.AddWithValue("@Quantity", quantity);
+                            insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
+                            insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                            insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+                            insertCmd.Parameters.AddWithValue("@ReceiveType", receiveType);
+                            
+                            insertCmd.ExecuteNonQuery();
+                        }
                     }
-                    LoadReceivingItems();
-                    txtQuantity.Text = "";
                 }
+                LoadReceivingItems();
+                txtQuantity.Text = "";
             }
         }
 
