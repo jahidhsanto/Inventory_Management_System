@@ -136,6 +136,14 @@
             <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
             <asp:BoundField DataField="Rack_Number" HeaderText="Rack" />
             <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf" />
+
+            <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
+            <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
+            <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+            <asp:BoundField DataField="Rack_Number" HeaderText="Rack" />
+            <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf" />
+
+
             <asp:TemplateField>
                 <ItemTemplate>
                     <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove"
