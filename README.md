@@ -49,12 +49,14 @@ Inventory_Management_System/
    ```
 2. **Import the SQL Scripts**
    Create a database in SQL Server.
-   Run 1. Database Create.sql, then 2. Reset Tables.sql, and 3. BULK Insert data.sql.
-3. **Open in Visual Studio**
+   Run 1. Database Create.sql,
+   then 2. Reset Tables.sql,
+   and 3. BULK Insert data.sql.
+4. **Open in Visual Studio**
    Open Inventory_Management.sln.
    Update Web.config with your DB connection string.
 
-4. **Run the Application**
+5. **Run the Application**
    Press F5 in Visual Studio or deploy to IIS/localhost.
 
 ## 🔐 Default Login Credentials (for demo)
