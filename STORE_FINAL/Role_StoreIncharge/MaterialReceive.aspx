@@ -63,11 +63,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fas fa-barcode"></i>Part ID:</label>
-                    <asp:DropDownList ID="ddlPartID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlPartID_SelectedIndexChanged"></asp:DropDownList>
-                </div>
-
-                <div class="form-group">
                     <label><i class="fas fa-hashtag"></i>Serial Number:</label>
                     <asp:TextBox ID="txtSerialNumber" runat="server" CssClass="form-control" placeholder="Enter Serial Number" Enabled="false"></asp:TextBox>
                     <small class="text-danger d-none" id="serialError">Serial Number is required!</small>
@@ -81,6 +76,11 @@
 
             </div>
             <div class="col-md-6">
+
+                <div class="form-group">
+                    <label><i class="fas fa-barcode"></i>Part ID:</label>
+                    <asp:DropDownList ID="ddlPartID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlPartID_SelectedIndexChanged"></asp:DropDownList>
+                </div>
 
                 <div class="form-group">
                     <label><i class="fas fa-th-large"></i>Rack Number:</label>

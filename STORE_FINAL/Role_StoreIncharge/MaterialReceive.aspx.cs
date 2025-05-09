@@ -97,28 +97,34 @@ namespace STORE_FINAL.Role_StoreIncharge
         {
             string selectedValue = rblReceiveType.SelectedValue;
 
-            ddlChallanID.Items.Clear();
-            ddlChallanItemsID.Items.Clear();
-            ddlChallanItemsID.Enabled = false;
-
-            ddlMaterial.Items.Clear();
-            ddlPartID.Items.Clear();
-
-            txtSerialNumber.Enabled = false;
-            txtSerialNumber.Text = "";
-            txtQuantity.Enabled = false;
-            txtQuantity.Text = "";
-
             if (selectedValue == "ReturnActiveReceive" || selectedValue == "ReturnDefectiveReceive")
             {
-                ReturnAgainst.Attributes["class"] = "row"; // show
                 LoadChallans();
+                ReturnAgainst.Attributes["class"] = "row"; // show
+
+                ddlChallanItemsID.Enabled = false;
+                ddlChallanItemsID.Items.Clear();
+                ddlChallanItemsID.Items.Add(new ListItem("-- Select A Challan --", "0"));
+
                 ddlMaterial.Enabled = false;
+                ddlMaterial.Items.Clear();
+                ddlMaterial.Items.Add(new ListItem("-- Material --", "0"));
+
                 ddlPartID.Enabled = false;
+                ddlPartID.Items.Clear();
+                ddlPartID.Items.Add(new ListItem("-- Part ID --", "0"));
+
+                txtSerialNumber.Enabled = false;
+                txtSerialNumber.Text = "";
+                txtQuantity.Enabled = false;
+                txtQuantity.Text = "";
             }
             else
             {
+                ddlChallanID.Items.Clear();
+                ddlChallanItemsID.Items.Clear();
                 ReturnAgainst.Attributes["class"] = "row d-none"; // hide
+
                 ddlMaterial.Enabled = true;
                 ddlPartID.Enabled = true;
                 LoadMaterialsNameID();
@@ -130,8 +136,14 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             ddlChallanItemsID.Enabled = false;
 
+            ddlChallanItemsID.Items.Clear();
+            ddlChallanItemsID.Items.Add(new ListItem("-- Select A Challan --", "0"));
+
             ddlMaterial.Items.Clear();
+            ddlMaterial.Items.Add(new ListItem("-- Material --", "0"));
+
             ddlPartID.Items.Clear();
+            ddlPartID.Items.Add(new ListItem("-- Part ID --", "0"));
 
             txtSerialNumber.Enabled = false;
             txtSerialNumber.Text = "";
@@ -174,7 +186,10 @@ namespace STORE_FINAL.Role_StoreIncharge
             string challanItemId = ddlChallanItemsID.SelectedValue;
 
             ddlMaterial.Items.Clear();
+            ddlMaterial.Items.Add(new ListItem("-- Material --", "0"));
+
             ddlPartID.Items.Clear();
+            ddlPartID.Items.Add(new ListItem("-- Part ID --", "0"));
 
             txtSerialNumber.Enabled = false;
             txtSerialNumber.Text = "";
@@ -203,11 +218,17 @@ namespace STORE_FINAL.Role_StoreIncharge
                                 string materialId = reader["Material_ID"].ToString();
                                 string partId = reader["Part_Id"].ToString();
                                 string materialName = reader["Materials_Name"].ToString();
+                                string serialNumber = reader["Serial_Number"].ToString();
 
                                 ddlMaterial.Items.Add(new ListItem(materialName, materialId));
+                                ddlMaterial.SelectedValue = materialId;
                                 ddlPartID.Items.Add(new ListItem(partId, materialId));
+                                ddlPartID.SelectedValue = materialId;
 
                                 ShowHide_SerialQuantity();
+
+                                txtSerialNumber.Enabled = false;
+                                txtSerialNumber.Text = serialNumber;
                             }
                         }
                     }
@@ -216,7 +237,7 @@ namespace STORE_FINAL.Role_StoreIncharge
         }
         protected void ddlMaterial_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ddlMaterial.SelectedValue != "0")
+            //if (ddlMaterial.SelectedValue != "0")
             {
                 ddlPartID.SelectedValue = ddlMaterial.SelectedValue;
                 ShowHide_SerialQuantity();
@@ -224,7 +245,7 @@ namespace STORE_FINAL.Role_StoreIncharge
         }
         protected void ddlPartID_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ddlPartID.SelectedValue != "0")
+            //if (ddlPartID.SelectedValue != "0")
             {
                 ddlMaterial.SelectedValue = ddlPartID.SelectedValue;
                 ShowHide_SerialQuantity();
@@ -270,13 +291,20 @@ namespace STORE_FINAL.Role_StoreIncharge
                     }
                     else  // No material information found
                     {
-                        txtQuantity.Text = "0";
-                        txtQuantity.Enabled = true;
-                        txtQuantity.Attributes.Remove("required");
-
                         txtSerialNumber.Enabled = false;
                         txtSerialNumber.Text = "";
+
+                        txtQuantity.Enabled = true;
+                        txtQuantity.Text = "0";
+                        txtQuantity.Attributes.Remove("required");
                     }
+                }
+                else
+                {
+                    txtSerialNumber.Enabled = false;
+                    txtSerialNumber.Text = "";
+                    txtQuantity.Enabled = false;
+                    txtQuantity.Text = "0";
                 }
             }
         }
@@ -514,6 +542,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
                         insertCmd.ExecuteNonQuery();
                     }
+                    txtSerialNumber.Text = "";
                 }
                 else
                 {
@@ -597,20 +626,20 @@ namespace STORE_FINAL.Role_StoreIncharge
                                     VALUES (@Challan_ID, @Material_ID, @Quantity, @RackNumber, @ShelfNumber, @Session_ID, @ReceiveType)";
                         using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                         {
-                            insertCmd.Parameters.AddWithValue("@Challan_ID", challanID); 
+                            insertCmd.Parameters.AddWithValue("@Challan_ID", challanID);
                             insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                             insertCmd.Parameters.AddWithValue("@Quantity", quantity);
                             insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                             insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
                             insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
                             insertCmd.Parameters.AddWithValue("@ReceiveType", receiveType);
-                            
+
                             insertCmd.ExecuteNonQuery();
                         }
                     }
+                    txtQuantity.Text = "";
                 }
                 LoadReceivingItems();
-                txtQuantity.Text = "";
             }
         }
 
