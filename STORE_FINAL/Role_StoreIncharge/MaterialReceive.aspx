@@ -159,8 +159,7 @@
     <br />
 
     <!-- Final Receive Button -->
-    <%--<asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" OnClick="btnReceive_Click" />--%>
-    <asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" />
+    <asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" OnClick="btnReceive_Click" />
     <br />
     <br />
     <asp:Label ID="Label1" runat="server" ForeColor="Green" />
