@@ -341,7 +341,6 @@ namespace STORE_FINAL.Role_StoreIncharge
                         {
                             txtQuantity.Text = "0";
                             txtQuantity.Enabled = true;
-                            txtQuantity.Attributes["required"] = "true";
 
                             txtSerialNumber.Enabled = false;
                             txtSerialNumber.Text = "";
@@ -354,7 +353,6 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                         txtQuantity.Enabled = true;
                         txtQuantity.Text = "0";
-                        txtQuantity.Attributes.Remove("required");
                     }
                 }
                 else
@@ -470,7 +468,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
-        // by clicking on 'Add Stock'
+        // by clicking on 'Add Stock' - Old Button
         protected void btnAddStock_Click(object sender, EventArgs e)
         {
             try
@@ -561,7 +559,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
-        // by clicking on '➕ Add Serial'
+        // by clicking on 'Add Serial'
         protected void btnAddToReceiving_Click(object sender, EventArgs e)
         {
             if (Session["ReceiveSessionID"] == null)
@@ -846,7 +844,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                                             WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
                                                             ELSE NULL 
                                                         END AS Serial_Number,
-                                                        td.Delivered_Quantity 
+                                                        td.Quantity 
                                                     FROM Temp_Receiving td
                                                     JOIN Material m ON td.Material_ID = m.Material_ID
                                                     LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID 
@@ -860,6 +858,40 @@ namespace STORE_FINAL.Role_StoreIncharge
                         }
                     }
 
+                    // 4️⃣ Insert into Material_Ledger
+
+
+                    // 5️⃣ Insert into Material_Transaction_Log
+                    string insertTransactionLogQuery = @"
+                                                        INSERT INTO Material_Transaction_Log (
+                                                            Material_ID, Stock_ID, Serial_Number, Transaction_Type, Transaction_Date,
+                                                            Out_Quantity, Challan_ID, Requisition_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
+                                                        )
+                                                        SELECT 
+                                                            td.Material_ID,
+                                                            td.Stock_ID,
+                                                            CASE 
+                                                                WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
+                                                                ELSE NULL 
+                                                            END AS Serial_Number,
+                                                            'DELIVERY',
+                                                            GETDATE(),
+                                                            td.Delivered_Quantity,
+                                                            @Challan_ID,
+                                                            td.Requisition_ID,
+                                                            @ReceivedBy_Employee_ID,
+                                                            'Delivered material',
+                                                            @CreatedBy_Employee_ID
+                                                        FROM Temp_Delivery td
+                                                        JOIN Material m ON td.Material_ID = m.Material_ID
+                                                        LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID
+                                                        WHERE td.Session_ID = @Session_ID;";
+
+
+
+
+                    // 🔟 Commit Transaction
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
