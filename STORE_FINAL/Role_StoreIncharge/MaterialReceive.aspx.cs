@@ -864,23 +864,21 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 5️⃣ Insert into Material_Transaction_Log
                     string insertTransactionLogQuery = @"
                                                         INSERT INTO Material_Transaction_Log (
-                                                            Material_ID, Stock_ID, Serial_Number, Transaction_Type, Transaction_Date,
-                                                            Out_Quantity, Challan_ID, Requisition_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
+                                                            Material_ID, Serial_Number, Transaction_Type,
+                                                            In_Quantity, Challan_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
                                                         )
                                                         SELECT 
                                                             td.Material_ID,
-                                                            td.Stock_ID,
                                                             CASE 
                                                                 WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
                                                                 ELSE NULL 
                                                             END AS Serial_Number,
-                                                            'DELIVERY',
-                                                            GETDATE(),
-                                                            td.Delivered_Quantity,
+                                                            'RECEIVE',
+                                                            td.Quantity,
                                                             @Challan_ID,
                                                             td.Requisition_ID,
                                                             @ReceivedBy_Employee_ID,
-                                                            'Delivered material',
+                                                            'Received material',
                                                             @CreatedBy_Employee_ID
                                                         FROM Temp_Delivery td
                                                         JOIN Material m ON td.Material_ID = m.Material_ID
