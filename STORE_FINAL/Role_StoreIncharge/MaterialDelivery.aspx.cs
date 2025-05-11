@@ -115,7 +115,9 @@ namespace STORE_FINAL.Role_StoreIncharge
             lblRequestedBy.Text = "-";
             lblRequestedDate.Text = "-";
             ddlSerialNumber.Items.Clear();
+            ddlSerialNumber.Items.Add(new ListItem("-- Select a Requisition --", "0"));
             ddlLocation.Items.Clear();
+            ddlLocation.Items.Add(new ListItem("-- Select a Requisition --", "0")); 
             txtQuantity.Text = "";
 
             int requisitionByID = Convert.ToInt32(ddlRequisitionBy.SelectedValue);
@@ -151,7 +153,9 @@ namespace STORE_FINAL.Role_StoreIncharge
             lblRequestedBy.Text = "-";
             lblRequestedDate.Text = "-";
             ddlSerialNumber.Items.Clear();
+            ddlSerialNumber.Items.Add(new ListItem("-- Select Resuisition --", "0"));
             ddlLocation.Items.Clear();
+            ddlLocation.Items.Add(new ListItem("-- Select Requisition --", "0")); 
             txtQuantity.Text = "";
 
             int requisitionID = Convert.ToInt32(ddlRequisition.SelectedValue);

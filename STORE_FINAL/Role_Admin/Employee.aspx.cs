@@ -165,9 +165,18 @@ namespace STORE_FINAL.Role_Admin
 
         private void ShowMessage(string message, bool isSuccess)
         {
-            lblMessage.Text = message;
-            lblMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
-            lblMessage.Visible = true;
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
         }
 
         protected void RESET()
@@ -176,8 +185,6 @@ namespace STORE_FINAL.Role_Admin
             txtName.Text = "";
             ddlDepartment.SelectedIndex = 0;
             txtDesignation.Text = "";
-            lblMessage.Text = "";
-            lblMessage.Visible = false;
         }
     }
 }

@@ -424,18 +424,24 @@ namespace STORE_FINAL.Role_Employee
 
         private void ShowMessage(string message, bool isSuccess)
         {
-            lblMessage.Text = message;
-            lblMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
-            lblMessage.Visible = true;
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
         }
 
         protected void RESET()
         {
             txtQuantity.Text = "";
             ddlMaterials.SelectedIndex = 0;
-            lblMessage.Text = "";
-            lblMessage.Visible = false;
-
         }
     }
 }

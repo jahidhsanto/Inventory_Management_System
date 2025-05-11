@@ -4,8 +4,6 @@
 
     <h2>Material Management</h2>
 
-    <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none"></asp:Label>
-
     <div class="accordion mt-4" id="requisitionManagementAccordion">
         <%--Add Material--%>
         <div class="accordion-item">

@@ -10,6 +10,7 @@ using System.Web.UI.WebControls;
 using STORE_FINAL.Pages;
 using WebGrease.ImageAssemble;
 using STORE_FINAL.Role_Employee;
+using iText.Kernel.Utils.Annotationsflattening;
 
 namespace STORE_FINAL.Role_StoreIncharge
 {
@@ -94,7 +95,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
-
+        // Select Receive Type (New Receive, Active Return, Defective Return) 
         protected void rblReceiveType_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Session reset
@@ -121,8 +122,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             if (selectedValue == "ReturnActiveReceive" || selectedValue == "ReturnDefectiveReceive")
             {
                 LoadChallans();
-                ReturnAgainst.Attributes["class"] = "row"; // show
-
+                ReturnAgainst.Visible = true;
                 ddlChallanItemsID.Enabled = false;
                 ddlChallanItemsID.Items.Clear();
                 ddlChallanItemsID.Items.Add(new ListItem("-- Select A Challan --", "0"));
@@ -144,13 +144,14 @@ namespace STORE_FINAL.Role_StoreIncharge
             {
                 ddlChallanID.Items.Clear();
                 ddlChallanItemsID.Items.Clear();
-                ReturnAgainst.Attributes["class"] = "row d-none"; // hide
+                ReturnAgainst.Visible = false;
 
                 ddlMaterial.Enabled = true;
                 ddlPartID.Enabled = true;
                 LoadMaterialsNameID();
             }
         }
+        // Select Challan Number
         protected void ddlChallanID_SelectedIndexChanged(object sender, EventArgs e)
         {
             string challanId = ddlChallanID.SelectedValue;
@@ -202,6 +203,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
+        // Select an item from Challan
         protected void ddlChallanItemsID_SelectedIndexChanged(object sender, EventArgs e)
         {
             string challanItemId = ddlChallanItemsID.SelectedValue;
@@ -256,6 +258,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 }
             }
         }
+        // Select a material to change part ID
         protected void ddlMaterial_SelectedIndexChanged(object sender, EventArgs e)
         {
             //if (ddlMaterial.SelectedValue != "0")
@@ -264,6 +267,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                 ShowHide_SerialQuantity();
             }
         }
+        // Select a partID to change material
         protected void ddlPartID_SelectedIndexChanged(object sender, EventArgs e)
         {
             //if (ddlPartID.SelectedValue != "0")
@@ -273,6 +277,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // Show/Hide serial/quantity option
         private void ShowHide_SerialQuantity()
         {
             //string materialID = ddlMaterial.SelectedValue;
@@ -362,13 +367,24 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // Message show 
         private void ShowMessage(string message, bool isSuccess)
         {
-            lblMessage.Text = message;
-            lblMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
-            lblMessage.Visible = true;
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
         }
 
+        // Clear form
         private void ClearForm()
         {
             ddlChallanID.SelectedValue = "0";
@@ -381,6 +397,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             txtShelfNumber.Text = "";
         }
 
+        // Which items are added to receive at onece load that items
         void LoadReceivingItems()
         {
             string sessionID = Session["ReceiveSessionID"].ToString();
@@ -403,6 +420,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // Check is selected item required Serial number or not
         private bool CheckRequiredSerialNumber(string materialID)
         {
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -445,13 +463,15 @@ namespace STORE_FINAL.Role_StoreIncharge
             string shelfNumber = txtShelfNumber.Text.Trim();
             int createdBy = int.Parse(Session["EmployeeID"].ToString());
 
-            requiresSerial = CheckRequiredSerialNumber(materialID);
-
             // Validate that all required fields are filled in
             if (materialID == "0")
             {
                 ShowMessage("Please select a valid Material.", false);
                 return;
+            }
+            else
+            {
+                requiresSerial = CheckRequiredSerialNumber(materialID);
             }
             // Validate Serial Number only if the field is enabled (i.e., required)
             if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
@@ -642,6 +662,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // Remove from cart which items are selected to receive
         protected void gvReceivingItems_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Remove")

@@ -2,9 +2,6 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <!-- Required Script Manager for AJAX -->
-    <asp:ScriptManager runat="server" />
-
     <div class="container mt-4">
         <h2 class="text-center mb-4">📦 Material Delivery</h2>
         <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3"></asp:Label>
@@ -67,7 +64,9 @@
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         <label ID="lblSerialNumber" runat="server"><strong>Serial Number:</strong></label>
-                        <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2" Enabled="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlSerialNumber" runat="server" CssClass="form-control select2" Enabled="false">
+                            <asp:ListItem Text="Select a Requisition" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />
@@ -78,7 +77,9 @@
                 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
                     <ContentTemplate>
                         <label ID="lblLocation" runat="server"><strong>Stock Location:</strong></label>
-                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2" Enabled="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-control select2" Enabled="false">
+                            <asp:ListItem Text="Select Requisition" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="ddlRequisition" EventName="SelectedIndexChanged" />

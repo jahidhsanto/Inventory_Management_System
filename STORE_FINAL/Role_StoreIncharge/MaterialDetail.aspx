@@ -7,8 +7,6 @@
             <i class="fas fa-box"></i>Material Details
         </h2>
         
-        <asp:Label ID="lblMessage" runat="server" CssClass="alert mt-3"></asp:Label>
-
         <!-- Material Information Card -->
         <div class="card shadow-sm">
             <div class="card-body">

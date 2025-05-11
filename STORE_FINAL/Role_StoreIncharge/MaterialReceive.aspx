@@ -41,7 +41,7 @@
                 </asp:RadioButtonList>
             </div>
         </div>
-        <div class="row d-none" id="ReturnAgainst" runat="server">
+        <div class="row" id="ReturnAgainst" runat="server" visible="false">
 
             <div class="col-md-6 form-group">
                 <label><i class="fas fa-file-invoice"></i>Select Challan:</label>
@@ -111,15 +111,8 @@
             <span id="loading" class="spinner-border spinner-border-sm text-success d-none"></span>
         </div>
 
-        <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none" Visible="false"></asp:Label>
     </div>
 
-
-
-
-
-
-    <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
     <asp:Button ID="btnAddToReceiving" runat="server" Text="➕ Add Serial" CssClass="btn btn-primary" OnClick="btnAddToReceiving_Click" />
 
@@ -193,39 +186,5 @@
 
 
 
-
-
     <asp:HiddenField ID="hfReceiveSessionID" runat="server" />
-
-    <%-- JavaScript for receive type selection --%>
-    <%--    <script>
-        function showDropdown() {
-            var selected = document.querySelector('#rblReceiveType input[type="radio"]:checked');
-            if (!selected) return;
-
-            var selectedValue = selected.value;
-
-            var returnAgainstContainer = document.getElementById('ReturnAgainst');
-
-            if (selectedValue === 'ReturnActiveReceive' || selectedValue === 'ReturnDefectiveReceive') {
-                returnAgainstContainer.classList.remove('d-none'); // Show
-            } else {
-                returnAgainstContainer.classList.add('d-none');    // Hide
-                // Optionally clear selections:
-                var dropdowns = returnAgainstContainer.querySelectorAll('select');
-                dropdowns.forEach(function (ddl) {
-                    ddl.selectedIndex = 0;
-                });
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            showDropdown();
-
-            // Attach change event to all radio buttons
-            document.querySelectorAll('#rblReceiveType input[type="radio"]').forEach(function (rb) {
-                rb.addEventListener("change", showDropdown);
-            });
-        });
-</script>--%>
 </asp:Content>

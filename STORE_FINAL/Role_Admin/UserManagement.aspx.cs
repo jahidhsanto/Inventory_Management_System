@@ -10,10 +10,10 @@ using System.Web.UI.WebControls;
 
 namespace STORE_FINAL.UserAuthentication
 {
-	public partial class UserManagement : System.Web.UI.Page
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class UserManagement : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             // Ensure only admins can access this page
             if (Session["Username"] == null || Session["Role"] == null || Session["Role"].ToString() != "Admin")
             {
@@ -59,7 +59,6 @@ namespace STORE_FINAL.UserAuthentication
             ddlRole.SelectedValue = "2";
             ddlNewRole.SelectedValue = "2";
         }
-
 
         private void LoadUsers()
         {
@@ -134,7 +133,6 @@ namespace STORE_FINAL.UserAuthentication
                     catch (Exception ex)
                     {
                         ShowMessage("Error: " + ex.Message, true);
-                        lblMessage.ForeColor = System.Drawing.Color.Red;
                     }
                 }
             }
@@ -149,8 +147,7 @@ namespace STORE_FINAL.UserAuthentication
             // Validation for empty fields
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(newRole))
             {
-                lblMessage.Text = "Please provide both username and new role.";
-                lblMessage.ForeColor = System.Drawing.Color.Red;
+                ShowMessage("Please provide both username and new role.", false);
                 return;
             }
 
@@ -167,14 +164,12 @@ namespace STORE_FINAL.UserAuthentication
                     {
                         conn.Open();
                         cmd.ExecuteNonQuery();
-                        lblMessage.Text = "User role updated successfully.";
-                        lblMessage.ForeColor = System.Drawing.Color.Green;
+                        ShowMessage("User role updated successfully.", true);
                         LoadUsers(); // Refresh user list
                     }
                     catch (Exception ex)
                     {
-                        lblMessage.Text = "Error: " + ex.Message;
-                        lblMessage.ForeColor = System.Drawing.Color.Red;
+                        ShowMessage("Error: " + ex.Message, false);
                     }
                 }
             }
@@ -188,8 +183,7 @@ namespace STORE_FINAL.UserAuthentication
             // Validation for empty username
             if (string.IsNullOrEmpty(username))
             {
-                lblMessage.Text = "Please provide a username to delete.";
-                lblMessage.ForeColor = System.Drawing.Color.Red;
+                ShowMessage("Please provide a username to delete.", false);
                 return;
             }
 
@@ -205,14 +199,12 @@ namespace STORE_FINAL.UserAuthentication
                     {
                         conn.Open();
                         cmd.ExecuteNonQuery();
-                        lblMessage.Text = "User deleted successfully.";
-                        lblMessage.ForeColor = System.Drawing.Color.Green;
+                        ShowMessage("User deleted successfully.", true);
                         LoadUsers(); // Refresh user list
                     }
                     catch (Exception ex)
                     {
-                        lblMessage.Text = "Error: " + ex.Message;
-                        lblMessage.ForeColor = System.Drawing.Color.Red;
+                        ShowMessage("Error: " + ex.Message, false);
                     }
                 }
             }
@@ -226,18 +218,14 @@ namespace STORE_FINAL.UserAuthentication
             // Validation for empty fields
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(newPassword))
             {
-                lblMessage.Text = "Please fill in all fields.";
-                lblMessage.CssClass = "alert alert-danger";
-                lblMessage.Visible = true;
+                ShowMessage("Please fill in all fields.", false);
                 return;
             }
 
             // Password length validation
             if (newPassword.Length < 6)
             {
-                lblMessage.Text = "Password must be at least 6 characters long.";
-                lblMessage.CssClass = "alert alert-danger";
-                lblMessage.Visible = true;
+                ShowMessage("Password must be at least 6 characters long.", false);
                 return;
             }
 
@@ -257,23 +245,28 @@ namespace STORE_FINAL.UserAuthentication
                     }
                 }
 
-                lblMessage.Text = "Password reset successfully.";
-                lblMessage.CssClass = "alert alert-success";
-                lblMessage.Visible = true;
+                ShowMessage("Password reset successfully.", true);
             }
             catch (Exception ex)
             {
-                lblMessage.Text = "Error: " + ex.Message;
-                lblMessage.CssClass = "alert alert-danger";
-                lblMessage.Visible = true;
+                ShowMessage("Error: " + ex.Message, false);
             }
         }
 
         private void ShowMessage(string message, bool isSuccess)
         {
-            lblMessage.Text = message;
-            lblMessage.CssClass = isSuccess ? "alert alert-success" : "alert alert-danger";
-            lblMessage.Visible = true;
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
         }
     }
 }

@@ -4,8 +4,6 @@
     <div class="container">
         <h2 class="mt-3 text-center">Employee Management</h2>
 
-        <asp:Label ID="lblMessage" runat="server" CssClass="alert d-none"></asp:Label>
-
         <div class="accordion mt-4" id="employeeManagementAccordion">
 
             <div class="accordion-item">
