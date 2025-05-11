@@ -76,7 +76,6 @@
 
             </div>
             <div class="col-md-6">
-
                 <div class="form-group">
                     <label><i class="fas fa-barcode"></i>Part ID:</label>
                     <asp:DropDownList ID="ddlPartID" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlPartID_SelectedIndexChanged"></asp:DropDownList>
@@ -93,30 +92,26 @@
                     <asp:TextBox ID="txtShelfNumber" runat="server" CssClass="form-control" placeholder="Enter Shelf Number"></asp:TextBox>
                     <small class="text-danger d-none" id="shelfError">Shelf Number is required!</small>
                 </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-info-circle"></i>Status:</label>
-                    <asp:DropDownList ID="ddlStatus" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="Active" Value="ACTIVE"></asp:ListItem>
-                        <asp:ListItem Text="Defective" Value="DEFECTIVE"></asp:ListItem>
-                    </asp:DropDownList>
-                </div>
-
             </div>
         </div>
 
         <!-- Submit Button -->
-        <div class="mt-4">
+        <%--        <div class="mt-4">
             <asp:Button ID="btnAddStock" runat="server" Text="Add Stock" CssClass="btn btn-success btn-lg" OnClick="btnAddStock_Click" />
             <span id="loading" class="spinner-border spinner-border-sm text-success d-none"></span>
-        </div>
+        </div>--%>
+
+        <%--<asp:Button ID="btnAddToReceiving" runat="server" Text="➕ Add Serial" CssClass="btn btn-primary btn-lg" OnClick="btnAddToReceiving_Click" />--%>
+
+        <asp:LinkButton ID="btnAddToReceiving" runat="server" CssClass="btn btn-primary btn-lg" OnClick="btnAddToReceiving_Click">
+            <i class="bi bi-cart"></i> Add Serial
+        </asp:LinkButton>
+
 
     </div>
 
 
-    <asp:Button ID="btnAddToReceiving" runat="server" Text="➕ Add Serial" CssClass="btn btn-primary" OnClick="btnAddToReceiving_Click" />
 
-    <br />
 
     <!-- Temporary GridView -->
     <asp:GridView ID="gvReceivingItems" runat="server" CssClass="table table-bordered" AutoGenerateColumns="False" DataKeyNames="Temp_ID" OnRowCommand="gvReceivingItems_RowCommand">
@@ -149,41 +144,10 @@
         </Columns>
     </asp:GridView>
 
-    <br />
 
     <!-- Final Receive Button -->
     <asp:Button ID="btnReceive" runat="server" Text="✅ Final Receive" CssClass="btn btn-success" OnClick="btnReceive_Click" />
-    <br />
-    <br />
     <asp:Label ID="Label1" runat="server" ForeColor="Green" />
-    <asp:HiddenField ID="hfReceivingSessionID" runat="server" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <asp:HiddenField ID="hfReceiveSessionID" runat="server" />

@@ -443,6 +443,125 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
+        // Remove from cart which items are selected to receive
+        protected void gvReceivingItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Remove")
+            {
+                int temp_ID = Convert.ToInt32(e.CommandArgument);
+                string sessionID = Session["ReceiveSessionID"].ToString();
+
+                string deleteQuery = "DELETE FROM Temp_Receiving WHERE Temp_ID = @Temp_ID AND Session_ID = @Session_ID;";
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
+                    {
+                        deleteCmd.Parameters.AddWithValue("@Temp_ID", temp_ID);
+                        deleteCmd.Parameters.AddWithValue("@Session_ID", sessionID);
+
+                        conn.Open();
+                        deleteCmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+
+                LoadReceivingItems();
+            }
+        }
+
+        // by clicking on 'Add Stock'
+        protected void btnAddStock_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string materialID = ddlMaterial.SelectedValue;
+                string serialNumber = txtSerialNumber.Text.Trim();
+                string rackNumber = txtRackNumber.Text.Trim();
+                string shelfNumber = txtShelfNumber.Text.Trim();
+                //string status = ddlStatus.SelectedValue;
+                string status = "0";
+                string quantityText = txtQuantity.Text.Trim();
+
+                // Validate that all required fields are filled in
+                if (materialID == "0")
+                {
+                    ShowMessage("Please select a valid Material.", false);
+                    return;
+                }
+                // Validate Serial Number only if the field is enabled (i.e., required)
+                if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
+                {
+                    ShowMessage("Serial Number is required for this material.", false);
+                    return;
+                }
+                if (string.IsNullOrEmpty(rackNumber))
+                {
+                    ShowMessage("Rack Number is required.", false);
+                    return;
+                }
+                if (string.IsNullOrEmpty(shelfNumber))
+                {
+                    ShowMessage("Shelf Number is required.", false);
+                    return;
+                }
+                if (status == "0")
+                {
+                    ShowMessage("Please select a valid Status.", false);
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
+                {
+                    ShowMessage("Please enter a valid Quantity greater than zero.", false);
+                    return;
+                }
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    string query = @"
+                                    INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity) 
+                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, @Quantity)";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
+                    cmd.Parameters.AddWithValue("@SerialNumber", txtSerialNumber.Enabled ? (object)serialNumber : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    cmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@Quantity", quantity);
+
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        ShowMessage("Stock received successfully!", true);
+                        ClearForm();
+                    }
+                    else
+                    {
+                        ShowMessage("Failed to add stock. Please try again.", false);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627) // Unique constraint error for Serial Number
+                {
+                    ShowMessage("Error: Serial number already exists.", false);
+                }
+                else
+                {
+                    ShowMessage("Database error: " + ex.Message, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage("Unexpected error: " + ex.Message, false);
+            }
+        }
+
+        // by clicking on '➕ Add Serial'
         protected void btnAddToReceiving_Click(object sender, EventArgs e)
         {
             if (Session["ReceiveSessionID"] == null)
@@ -662,122 +781,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
         }
 
-        // Remove from cart which items are selected to receive
-        protected void gvReceivingItems_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "Remove")
-            {
-                int temp_ID = Convert.ToInt32(e.CommandArgument);
-                string sessionID = Session["ReceiveSessionID"].ToString();
-
-                string deleteQuery = "DELETE FROM Temp_Receiving WHERE Temp_ID = @Temp_ID AND Session_ID = @Session_ID;";
-
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
-                    {
-                        deleteCmd.Parameters.AddWithValue("@Temp_ID", temp_ID);
-                        deleteCmd.Parameters.AddWithValue("@Session_ID", sessionID);
-
-                        conn.Open();
-                        deleteCmd.ExecuteNonQuery();
-                        conn.Close();
-                    }
-                }
-
-                LoadReceivingItems();
-            }
-        }
-
-        protected void btnAddStock_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string materialID = ddlMaterial.SelectedValue;
-                string serialNumber = txtSerialNumber.Text.Trim();
-                string rackNumber = txtRackNumber.Text.Trim();
-                string shelfNumber = txtShelfNumber.Text.Trim();
-                string status = ddlStatus.SelectedValue;
-                string quantityText = txtQuantity.Text.Trim();
-
-                // Validate that all required fields are filled in
-                if (materialID == "0")
-                {
-                    ShowMessage("Please select a valid Material.", false);
-                    return;
-                }
-                // Validate Serial Number only if the field is enabled (i.e., required)
-                if (string.IsNullOrEmpty(serialNumber) && txtSerialNumber.Enabled)
-                {
-                    ShowMessage("Serial Number is required for this material.", false);
-                    return;
-                }
-                if (string.IsNullOrEmpty(rackNumber))
-                {
-                    ShowMessage("Rack Number is required.", false);
-                    return;
-                }
-                if (string.IsNullOrEmpty(shelfNumber))
-                {
-                    ShowMessage("Shelf Number is required.", false);
-                    return;
-                }
-                if (status == "0")
-                {
-                    ShowMessage("Please select a valid Status.", false);
-                    return;
-                }
-                if (string.IsNullOrWhiteSpace(quantityText) || !int.TryParse(quantityText, out int quantity) || quantity <= 0)
-                {
-                    ShowMessage("Please enter a valid Quantity greater than zero.", false);
-                    return;
-                }
-
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    string query = @"
-                                    INSERT INTO Stock (Material_ID, Serial_Number, Rack_Number, Shelf_Number, Status, Quantity) 
-                                    VALUES (@MaterialID, @SerialNumber, @RackNumber, @ShelfNumber, @Status, @Quantity)";
-
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@MaterialID", materialID);
-                    cmd.Parameters.AddWithValue("@SerialNumber", txtSerialNumber.Enabled ? (object)serialNumber : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@RackNumber", rackNumber);
-                    cmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                    cmd.Parameters.AddWithValue("@Status", status);
-                    cmd.Parameters.AddWithValue("@Quantity", quantity);
-
-                    conn.Open();
-                    int rowsAffected = cmd.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        ShowMessage("Stock received successfully!", true);
-                        ClearForm();
-                    }
-                    else
-                    {
-                        ShowMessage("Failed to add stock. Please try again.", false);
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                if (ex.Number == 2627) // Unique constraint error for Serial Number
-                {
-                    ShowMessage("Error: Serial number already exists.", false);
-                }
-                else
-                {
-                    ShowMessage("Database error: " + ex.Message, false);
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowMessage("Unexpected error: " + ex.Message, false);
-            }
-        }
-
+        // by clicking on 'btnReceive_Click'
         protected void btnReceive_Click(object sender, EventArgs e)
         {
             // 1️⃣ Validate Session

@@ -114,31 +114,13 @@ namespace STORE_FINAL.Role_StoreIncharge
         protected global::System.Web.UI.WebControls.TextBox txtShelfNumber;
 
         /// <summary>
-        /// ddlStatus control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
-
-        /// <summary>
-        /// btnAddStock control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddStock;
-
-        /// <summary>
         /// btnAddToReceiving control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddToReceiving;
+        protected global::System.Web.UI.WebControls.LinkButton btnAddToReceiving;
 
         /// <summary>
         /// gvReceivingItems control.
@@ -166,15 +148,6 @@ namespace STORE_FINAL.Role_StoreIncharge
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-
-        /// <summary>
-        /// hfReceivingSessionID control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hfReceivingSessionID;
 
         /// <summary>
         /// hfReceiveSessionID control.
