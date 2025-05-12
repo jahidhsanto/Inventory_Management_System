@@ -792,7 +792,10 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             int CreatedBy_Employee_ID = int.Parse(Session["EmployeeID"].ToString());
 
-            string receiveType = rblReceiveType.SelectedValue;
+            string receive_Type = (rblReceiveType.SelectedValue == "NewReceive") ? "RECEIVE" :
+                (rblReceiveType.SelectedValue == "ReturnActiveReceive" || rblReceiveType.SelectedValue == "ReturnDefectiveReceive") ?
+                "RETURN" : "INVALID_RETURN";
+            string material_Status = (rblReceiveType.SelectedValue == "ReturnDefectiveReceive") ? "DEFECTIVE" : "ACTIVE";
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -810,10 +813,6 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 3️⃣
                     if (createChallan)
                     {
-                        string challanType = (receiveType == "NewReceive") ? "RECEIVE" :
-                             (receiveType == "ReturnActiveReceive" || receiveType == "ReturnDefectiveReceive") ?
-                             "RETURN" : "INVALID_RETURN";
-
                         // 🛠 Insert into Challan
                         string insertChallanQuery = @"
                                                     INSERT INTO Challan (Challan_Type, Remarks) 
@@ -822,7 +821,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                         using (SqlCommand cmdChallan = new SqlCommand(insertChallanQuery, conn, transaction))
                         {
-                            cmdChallan.Parameters.AddWithValue("@ChallanType", challanType);
+                            cmdChallan.Parameters.AddWithValue("@ChallanType", receive_Type);
 
                             object result = cmdChallan.ExecuteScalar();
                             if (result != null && decimal.TryParse(result.ToString(), out decimal newChallanID))
@@ -864,8 +863,8 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 5️⃣ Insert into Material_Transaction_Log
                     string insertTransactionLogQuery = @"
                                                         INSERT INTO Material_Transaction_Log (
-                                                            Material_ID, Serial_Number, Transaction_Type,
-                                                            In_Quantity, Challan_ID, ReceivedBy_Employee_ID, Remarks, CreatedBy_Employee_ID
+                                                            Material_ID, Serial_Number, Material_Status, Transaction_Type,
+                                                            In_Quantity, Challan_ID, Remarks, CreatedBy_Employee_ID
                                                         )
                                                         SELECT 
                                                             td.Material_ID,
@@ -873,17 +872,27 @@ namespace STORE_FINAL.Role_StoreIncharge
                                                                 WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
                                                                 ELSE NULL 
                                                             END AS Serial_Number,
-                                                            'RECEIVE',
+                                                            @Material_Status,
+                                                            @Transaction_Type,
                                                             td.Quantity,
                                                             @Challan_ID,
-                                                            td.Requisition_ID,
-                                                            @ReceivedBy_Employee_ID,
                                                             'Received material',
                                                             @CreatedBy_Employee_ID
-                                                        FROM Temp_Delivery td
+                                                        FROM Temp_Receiving td
                                                         JOIN Material m ON td.Material_ID = m.Material_ID
                                                         LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID
                                                         WHERE td.Session_ID = @Session_ID;";
+
+                    using (SqlCommand cmdInsertLog = new SqlCommand(insertTransactionLogQuery, conn, transaction))
+                    {
+                        cmdInsertLog.Parameters.AddWithValue("@Material_Status", material_Status);
+                        cmdInsertLog.Parameters.AddWithValue("@Transaction_Type", receive_Type);
+                        cmdInsertLog.Parameters.AddWithValue("@Challan_ID", challanID);
+                        //cmdInsertLog.Parameters.AddWithValue("@ReceivedBy_Employee_ID", ReceivedBy_Employee_ID);
+                        cmdInsertLog.Parameters.AddWithValue("@CreatedBy_Employee_ID", CreatedBy_Employee_ID);
+                        cmdInsertLog.Parameters.AddWithValue("@Session_ID", sessionID);
+                        cmdInsertLog.ExecuteNonQuery();
+                    }
 
 
 

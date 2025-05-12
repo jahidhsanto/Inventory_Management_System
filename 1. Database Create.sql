@@ -205,6 +205,7 @@ CREATE TABLE Material_Transaction_Log (
     Material_ID INT NOT NULL,
     Stock_ID INT NULL, -- If tracked by stock item
     Serial_Number NVARCHAR(255) NULL,
+	Material_Status NVARCHAR(50) NOT NULL CHECK (Material_Status IN ('ACTIVE', 'DEFECTIVE')),
     
     Transaction_Type NVARCHAR(50) NOT NULL CHECK (Transaction_Type IN ('DELIVERY', 'RETURN', 'RECEIVE')),
     Transaction_Date DATETIME DEFAULT GETDATE(),
