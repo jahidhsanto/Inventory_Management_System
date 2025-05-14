@@ -311,8 +311,8 @@ namespace STORE_FINAL.Role_StoreIncharge
             }
 
             // Validation - Quantity
-            decimal deliveredQuantity;
-            if (!decimal.TryParse(txtQuantity.Text, out deliveredQuantity) || deliveredQuantity <= 0)
+            decimal quantity;
+            if (!decimal.TryParse(txtQuantity.Text, out quantity) || quantity <= 0)
             {
                 ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Invalid Quantity. Enter a valid number.');", true);
                 return;
@@ -334,7 +334,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Temp_Delivery (Requisition_ID, Stock_ID, Material_ID, Delivered_Quantity, Session_ID) 
+                string query = @"INSERT INTO Temp_Delivery (Requisition_ID, Stock_ID, Material_ID, Quantity, Session_ID) 
                                 VALUES (@Requisition_ID, @Stock_ID, @Material_ID, @Delivered_Quantity, @Session_ID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -342,7 +342,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     cmd.Parameters.AddWithValue("@Requisition_ID", requisitionID);
                     cmd.Parameters.AddWithValue("@Stock_ID", stockID);
                     cmd.Parameters.AddWithValue("@Material_ID", materialID);
-                    cmd.Parameters.AddWithValue("@Delivered_Quantity", deliveredQuantity);
+                    cmd.Parameters.AddWithValue("@Delivered_Quantity", quantity);
                     cmd.Parameters.AddWithValue("@Session_ID", sessionID);
 
                     conn.Open();
@@ -370,7 +370,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                         WHEN M.Requires_Serial_Number = 'Yes' THEN S.Serial_Number 
                                         ELSE NULL 
                                     END AS Serial_Number, 
-                                    TD.Delivered_Quantity 
+                                    TD.Quantity 
                                 FROM Temp_Delivery TD
                                 JOIN Stock S ON TD.Stock_ID = S.Stock_ID 
                                 JOIN Material M ON TD.Material_ID = M.Material_ID 
@@ -477,7 +477,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                                             WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
                                                             ELSE NULL 
                                                         END AS Serial_Number,
-                                                        td.Delivered_Quantity 
+                                                        td.Quantity 
                                                     FROM Temp_Delivery td
                                                     JOIN Material m ON td.Material_ID = m.Material_ID
                                                     LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID 
@@ -530,7 +530,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 												MAX(Challan_ID) AS Challan_ID,
 												MAX(Challan_Date) AS Challan_Date,
 												MAX(Challan_Type) AS Challan_Type,
-												MAX(Unit_Price) AS Unit_Price,
+												MAX(ISNULL(Unit_Price, 0)) AS Unit_Price,
 												MAX(Previous_Balance) AS Previous_Balance,
 												MAX(Previous_Valuation) AS Previous_Valuation,
 												SUM(CASE WHEN Challan_Type IN ('RETURN', 'RECEIVE') THEN Quantity ELSE 0 END) AS In_Quantity,
@@ -583,7 +583,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                                                             END AS Serial_Number,
                                                             s.Status,
                                                             'DELIVERY' AS Transaction_Type,
-                                                            td.Delivered_Quantity,
+                                                            td.Quantity,
                                                             @Challan_ID,
                                                             td.Requisition_ID,
                                                             @ReceivedBy_Employee_ID,
@@ -605,7 +605,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 6️⃣ Update Stock Based on Serial Number
                     string updateStockWithSerial = @"
                                                     UPDATE Stock 
-                                                    SET Availability = 'DELIVERED', Quantity = Quantity - TD.Delivered_Quantity
+                                                    SET Availability = 'DELIVERED', Quantity = Quantity - TD.Quantity
                                                     FROM Stock S
                                                     JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                     WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
@@ -618,7 +618,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     string updateStockWithoutSerial = @"
                                                         UPDATE Stock 
-                                                        SET Quantity = Quantity - TD.Delivered_Quantity
+                                                        SET Quantity = Quantity - TD.Quantity
                                                         FROM Stock S
                                                         JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                         WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NULL;";

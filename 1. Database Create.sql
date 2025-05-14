@@ -320,7 +320,7 @@ CREATE TABLE Temp_Delivery (
     Stock_ID INT NOT NULL, 
     Material_ID INT NOT NULL, 
     Requisition_ID INT NULL,
-	Delivered_Quantity DECIMAL(10,2) NOT NULL CHECK (Delivered_Quantity > 0), 
+	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
     Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
@@ -333,7 +333,7 @@ CREATE TABLE Temp_Receiving (
     Material_ID INT NOT NULL,
     Stock_ID INT NULL, 
     Serial_Number NVARCHAR(100) NULL,
-	Quantity DECIMAL(10,2) NOT NULL, 
+	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
     Rack_Number NVARCHAR(100),
     Shelf_Number NVARCHAR(100),
     Receive_Type NVARCHAR(50) NOT NULL, -- NewReceive, ReturnActiveReceive, ReturnDefectiveReceive
