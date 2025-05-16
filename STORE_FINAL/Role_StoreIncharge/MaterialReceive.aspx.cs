@@ -58,7 +58,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     DataTable dt = new DataTable();
                     dt.Load(cmd.ExecuteReader());
 
-                    conn.Close();
+               //     conn.Close();
 
                     ddlMaterial.DataSource = dt;
                     ddlMaterial.DataTextField = "Materials_Name"; // Show Material Name
@@ -83,12 +83,12 @@ namespace STORE_FINAL.Role_StoreIncharge
                 string query = "SELECT Challan_ID FROM Challan;";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    conn.Open();
+                 //   conn.Open();
 
                     DataTable dt = new DataTable();
                     dt.Load(cmd.ExecuteReader());
 
-                    conn.Close();
+               //     conn.Close();
 
                     ddlChallanID.DataSource = dt;
                     ddlChallanID.DataTextField = "Challan_ID";
@@ -109,13 +109,13 @@ namespace STORE_FINAL.Role_StoreIncharge
             string deleteTempQuery = "DELETE FROM Temp_Receiving WHERE Session_ID = @Session_ID";
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                conn.Open();
+           //     conn.Open();
                 using (SqlCommand cmdDeleteTemp = new SqlCommand(deleteTempQuery, conn))
                 {
                     cmdDeleteTemp.Parameters.AddWithValue("@Session_ID", sessionID);
                     cmdDeleteTemp.ExecuteNonQuery();
                 }
-                conn.Close();
+             //   conn.Close();
 
                 Session["ReceiveSessionID"] = Guid.NewGuid().ToString();
                 hfReceiveSessionID.Value = Session["ReceiveSessionID"].ToString();
@@ -183,7 +183,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             {
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
-                    conn.Open();
+                  //  conn.Open();
                     string query = @"
                                     SELECT ci.Challan_Item_ID, CONCAT(m.Materials_Name, ' - ', ci.Serial_Number) AS Item_Name
                                     FROM Challan_Items ci
@@ -245,7 +245,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                         {
                             DataTable dt = new DataTable();
                             adapter.Fill(dt);
-
+                            conn.Close();
                             if (dt.Rows.Count > 0)
                             {
                                 DataRow row = dt.Rows[0];
@@ -322,7 +322,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                             }
                         }
                     }
-                 //   conn.Close();
+                    conn.Close();
                 }
             }
         }
@@ -526,9 +526,9 @@ namespace STORE_FINAL.Role_StoreIncharge
                         deleteCmd.Parameters.AddWithValue("@Temp_ID", temp_ID);
                         deleteCmd.Parameters.AddWithValue("@Session_ID", sessionID);
 
-                        conn.Open();
+                   //     conn.Open();
                         deleteCmd.ExecuteNonQuery();
-                        conn.Close();
+                     //   conn.Close();
                     }
                 }
 
@@ -763,13 +763,14 @@ namespace STORE_FINAL.Role_StoreIncharge
                                         VALUES (@Material_ID, @Quantity, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
                         using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                         {
+                            conn.Open();
                             insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                             insertCmd.Parameters.AddWithValue("@Quantity", quantity);
                             insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
                             insertCmd.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
                             insertCmd.Parameters.AddWithValue("@ReceiveType", receiveType);
                             insertCmd.Parameters.AddWithValue("@Session_ID", sessionID);
-                            conn.Open();
+                           // conn.Open();
                             insertCmd.ExecuteNonQuery();
                         }
                     }
@@ -845,7 +846,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     }
                     txtQuantity.Text = "";
                 }
-           //     conn.Close();
+                conn.Close();
                 LoadReceivingItems();
             }
         }
@@ -1056,143 +1057,285 @@ namespace STORE_FINAL.Role_StoreIncharge
                     //Otherwise if not same location or status then a new row in stock for that materials with new location.
                     //b) Return materials receive(Active / Defective)
                     //check existing materials location &currently selected location, status same then update in excising sock. otherwise insert new row.
-
                     string stockUpdateQuery = @"
-                                                SELECT 
-                                                    tr.Material_ID,
-                                                    tr.Quantity,
-                                                    tr.Rack_Number,
-                                                    tr.Shelf_Number,
-                                                    m.Requires_Serial_Number,
-                                                    s.Serial_Number
-                                                FROM Temp_Receiving tr
-                                                JOIN Material m ON tr.Material_ID = m.Material_ID
-                                                LEFT JOIN Stock s ON tr.Stock_ID = s.Stock_ID
-                                                WHERE tr.Session_ID = @Session_ID;";
+    SELECT 
+        tr.Material_ID,
+        tr.Quantity,
+        tr.Rack_Number,
+        tr.Shelf_Number,
+        m.Requires_Serial_Number,
+        s.Serial_Number
+    FROM Temp_Receiving tr
+    JOIN Material m ON tr.Material_ID = m.Material_ID
+    LEFT JOIN Stock s ON tr.Stock_ID = s.Stock_ID
+    WHERE tr.Session_ID = @Session_ID;";
+
+                    DataTable stockTable = new DataTable();
 
                     using (SqlCommand cmdStockUpdate = new SqlCommand(stockUpdateQuery, conn, transaction))
                     {
                         cmdStockUpdate.Parameters.AddWithValue("@Session_ID", sessionID);
-                        using (SqlDataReader reader = cmdStockUpdate.ExecuteReader())
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmdStockUpdate))
                         {
-                            while (reader.Read())
+                            adapter.Fill(stockTable);
+                        }
+                    }
+
+                    foreach (DataRow row in stockTable.Rows)
+                    {
+                        string materialID = row["Material_ID"].ToString();
+                        decimal quantity = Convert.ToDecimal(row["Quantity"]);
+                        string rackNumber = row["Rack_Number"].ToString();
+                        string shelfNumber = row["Shelf_Number"].ToString();
+                        string requiresSerial = row["Requires_Serial_Number"].ToString();
+                        string serialNumber = row["Serial_Number"] != DBNull.Value ? row["Serial_Number"].ToString() : null;
+
+                        if (requiresSerial == "Yes")
+                        {
+                            if (rblReceiveType.SelectedValue == "NewReceive")
                             {
-                              //  conn.Open();
-                                string materialID = reader["Material_ID"].ToString();
-                                decimal quantity = Convert.ToDecimal(reader["Quantity"]);
-                                string rackNumber = reader["Rack_Number"].ToString();
-                                string shelfNumber = reader["Shelf_Number"].ToString();
-                                string requiresSerial = reader["Requires_Serial_Number"].ToString();
-                                string serialNumber = reader["Serial_Number"] != DBNull.Value ? reader["Serial_Number"].ToString() : null;
-                         //       conn.Close();
+                                string insertSerialQuery = @"
+                INSERT INTO Stock (Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Status, Availability)
+                VALUES (@MaterialID, @SerialNumber, 1, @RackNumber, @ShelfNumber, 'ACTIVE', 'Available');";
 
-                                if (requiresSerial == "Yes")
+                                using (SqlCommand cmdInsertSerial = new SqlCommand(insertSerialQuery, conn, transaction))
                                 {
-                                    if (rblReceiveType.SelectedValue == "NewReceive")
-                                    {
-                                        // Insert new serial into Stock
-                                        string insertSerialQuery = @"
-                                                                INSERT INTO Stock (Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Status, Availability)
-                                                                VALUES (@MaterialID, @SerialNumber, 1, @RackNumber, @ShelfNumber, 'ACTIVE', 'Available');";
+                                    cmdInsertSerial.Parameters.AddWithValue("@MaterialID", materialID);
+                                    cmdInsertSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                                    cmdInsertSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
+                                    cmdInsertSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                                    cmdInsertSerial.ExecuteNonQuery();
+                                }
+                            }
+                            else // Return materials (active/defective)
+                            {
+                                string updateSerialQuery = @"
+                UPDATE Stock
+                SET Quantity = Quantity + @Quantity,
+                    Rack_Number = @RackNumber,
+                    Shelf_Number = @ShelfNumber,
+                    Status = @Status,
+                    Availability = 'AVAILABLE'
+                WHERE Serial_Number = @SerialNumber;";
 
-                                        using (SqlCommand cmdInsertSerial = new SqlCommand(insertSerialQuery, conn, transaction))
-                                        {
-                                            cmdInsertSerial.Parameters.AddWithValue("@MaterialID", materialID);
-                                            cmdInsertSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
-                                            cmdInsertSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
-                                            cmdInsertSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                                            cmdInsertSerial.ExecuteNonQuery();
-                                        }
-                                    }
-                                    else // Return materials receive (Active/Defective)
-                                    {
-                                        // Update existing serial in Stock
-                                        string updateSerialQuery = @"
-                                                                    UPDATE Stock
-                                                                    SET Quantity = Quantity + @Quantity,
-                                                                        Rack_Number = @RackNumber,
-                                                                        Shelf_Number = @ShelfNumber,
-                                                                        Status = @Status,
-                                                                        Availability = 'AVAILABLE'
-                                                                    WHERE Serial_Number = @SerialNumber;";
+                                using (SqlCommand cmdUpdateSerial = new SqlCommand(updateSerialQuery, conn, transaction))
+                                {
+                                    cmdUpdateSerial.Parameters.AddWithValue("@Quantity", quantity);
+                                    cmdUpdateSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
+                                    cmdUpdateSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                                    cmdUpdateSerial.Parameters.AddWithValue("@Status", material_Status);
+                                    cmdUpdateSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                                    cmdUpdateSerial.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string checkStockQuery = @"
+            SELECT COUNT(*) FROM Stock
+            WHERE Material_ID = @MaterialID
+              AND Rack_Number = @RackNumber
+              AND Shelf_Number = @ShelfNumber
+              AND Status = @Status;";
 
-                                        using (SqlCommand cmdUpdateSerial = new SqlCommand(updateSerialQuery, conn, transaction))
-                                        {
-                                            cmdUpdateSerial.Parameters.AddWithValue("@Quantity", quantity);
-                                            cmdUpdateSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
-                                            cmdUpdateSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                                            cmdUpdateSerial.Parameters.AddWithValue("@Status", material_Status);
-                                            cmdUpdateSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
-                                            cmdUpdateSerial.ExecuteNonQuery();
-                                        }
+                            using (SqlCommand cmdCheckStock = new SqlCommand(checkStockQuery, conn, transaction))
+                            {
+                                cmdCheckStock.Parameters.AddWithValue("@MaterialID", materialID);
+                                cmdCheckStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                                cmdCheckStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                                cmdCheckStock.Parameters.AddWithValue("@Status", material_Status);
+
+                                int count = (int)cmdCheckStock.ExecuteScalar();
+
+                                if (count > 0)
+                                {
+                                    string updateStockQuery = @"
+                    UPDATE Stock
+                    SET Quantity = Quantity + @Quantity
+                    WHERE Material_ID = @MaterialID
+                      AND Rack_Number = @RackNumber
+                      AND Shelf_Number = @ShelfNumber
+                      AND Status = @Status;";
+
+                                    using (SqlCommand cmdUpdateStock = new SqlCommand(updateStockQuery, conn, transaction))
+                                    {
+                                        cmdUpdateStock.Parameters.AddWithValue("@Quantity", quantity);
+                                        cmdUpdateStock.Parameters.AddWithValue("@MaterialID", materialID);
+                                        cmdUpdateStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                                        cmdUpdateStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                                        cmdUpdateStock.Parameters.AddWithValue("@Status", material_Status);
+                                        cmdUpdateStock.ExecuteNonQuery();
                                     }
                                 }
                                 else
                                 {
-                                    // Check if same material, location, and status exists
-                                    string checkStockQuery = @"
-                                                            SELECT COUNT(*) FROM Stock
-                                                            WHERE Material_ID = @MaterialID
-                                                              AND Rack_Number = @RackNumber
-                                                              AND Shelf_Number = @ShelfNumber
-                                                              AND Status = @Status;";
+                                    string insertStockQuery = @"
+                    INSERT INTO Stock (Material_ID, Quantity, Rack_Number, Shelf_Number, Status, Availability)
+                    VALUES (@MaterialID, @Quantity, @RackNumber, @ShelfNumber, @Status, 'Available');";
 
-                                    using (SqlCommand cmdCheckStock = new SqlCommand(checkStockQuery, conn, transaction))
+                                    using (SqlCommand cmdInsertStock = new SqlCommand(insertStockQuery, conn, transaction))
                                     {
-                                        conn.Open();
-                                        cmdCheckStock.Parameters.AddWithValue("@MaterialID", materialID);
-                                        cmdCheckStock.Parameters.AddWithValue("@RackNumber", rackNumber);
-                                        cmdCheckStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                                        cmdCheckStock.Parameters.AddWithValue("@Status", material_Status);
-
-                                        int count = (int)cmdCheckStock.ExecuteScalar();
-                                   //     conn.Close();
-                                        //object result = cmdCheckStock.ExecuteScalar();
-                                        //int count = (result != null) ? Convert.ToInt32(result) : 0;
-
-                                        //if (count > 0)
-                                        //{
-                                        //    // Update existing stock
-                                        //    string updateStockQuery = @"
-                                        //                                UPDATE Stock
-                                        //                                SET Quantity = Quantity + @Quantity
-                                        //                                WHERE Material_ID = @MaterialID
-                                        //                                  AND Rack_Number = @RackNumber
-                                        //                                  AND Shelf_Number = @ShelfNumber
-                                        //                                  AND Status = @Status;";
-
-                                        //    using (SqlCommand cmdUpdateStock = new SqlCommand(updateStockQuery, conn, transaction))
-                                        //    {
-                                        //        cmdUpdateStock.Parameters.AddWithValue("@Quantity", quantity);
-                                        //        cmdUpdateStock.Parameters.AddWithValue("@MaterialID", materialID);
-                                        //        cmdUpdateStock.Parameters.AddWithValue("@RackNumber", rackNumber);
-                                        //        cmdUpdateStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                                        //        cmdUpdateStock.Parameters.AddWithValue("@Status", material_Status);
-                                        //        cmdUpdateStock.ExecuteNonQuery();
-                                        //    }
-                                        //}
-                                        //else
-                                        //{
-                                        //    // Insert new stock record
-                                        //    string insertStockQuery = @"
-                                        //                                INSERT INTO Stock (Material_ID, Quantity, Rack_Number, Shelf_Number, Status, Availability)
-                                        //                                VALUES (@MaterialID, @Quantity, @RackNumber, @ShelfNumber, @Status, 'Available');";
-
-                                        //    using (SqlCommand cmdInsertStock = new SqlCommand(insertStockQuery, conn, transaction))
-                                        //    {
-                                        //        cmdInsertStock.Parameters.AddWithValue("@MaterialID", materialID);
-                                        //        cmdInsertStock.Parameters.AddWithValue("@Quantity", quantity);
-                                        //        cmdInsertStock.Parameters.AddWithValue("@RackNumber", rackNumber);
-                                        //        cmdInsertStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
-                                        //        cmdInsertStock.Parameters.AddWithValue("@Status", material_Status);
-                                        //        cmdInsertStock.ExecuteNonQuery();
-                                        //    }
-                                        //}
+                                        cmdInsertStock.Parameters.AddWithValue("@MaterialID", materialID);
+                                        cmdInsertStock.Parameters.AddWithValue("@Quantity", quantity);
+                                        cmdInsertStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                                        cmdInsertStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                                        cmdInsertStock.Parameters.AddWithValue("@Status", material_Status);
+                                        cmdInsertStock.ExecuteNonQuery();
                                     }
                                 }
                             }
                         }
                     }
+
+                    //string stockUpdateQuery = @"
+                    //                            SELECT 
+                    //                                tr.Material_ID,
+                    //                                tr.Quantity,
+                    //                                tr.Rack_Number,
+                    //                                tr.Shelf_Number,
+                    //                                m.Requires_Serial_Number,
+                    //                                s.Serial_Number
+                    //                            FROM Temp_Receiving tr
+                    //                            JOIN Material m ON tr.Material_ID = m.Material_ID
+                    //                            LEFT JOIN Stock s ON tr.Stock_ID = s.Stock_ID
+                    //                            WHERE tr.Session_ID = @Session_ID;";
+
+                    //using (SqlCommand cmdStockUpdate = new SqlCommand(stockUpdateQuery, conn, transaction))
+                    //{
+                    //    cmdStockUpdate.Parameters.AddWithValue("@Session_ID", sessionID);
+                    ////    conn.Close();
+                    //    using (SqlDataReader reader = cmdStockUpdate.ExecuteReader())
+                    //    {
+                    //        while (reader.Read())
+                    //        {
+                    //          //  conn.Open();
+                    //            string materialID = reader["Material_ID"].ToString();
+                    //            decimal quantity = Convert.ToDecimal(reader["Quantity"]);
+                    //            string rackNumber = reader["Rack_Number"].ToString();
+                    //            string shelfNumber = reader["Shelf_Number"].ToString();
+                    //            string requiresSerial = reader["Requires_Serial_Number"].ToString();
+                    //            string serialNumber = reader["Serial_Number"] != DBNull.Value ? reader["Serial_Number"].ToString() : null;
+                    //          // conn.Close();
+
+                    //            if (requiresSerial == "Yes")
+                    //            {
+                    //                if (rblReceiveType.SelectedValue == "NewReceive")
+                    //                {
+                    //                    // Insert new serial into Stock
+                    //                    string insertSerialQuery = @"
+                    //                                            INSERT INTO Stock (Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Status, Availability)
+                    //                                            VALUES (@MaterialID, @SerialNumber, 1, @RackNumber, @ShelfNumber, 'ACTIVE', 'Available');";
+
+                    //                    using (SqlCommand cmdInsertSerial = new SqlCommand(insertSerialQuery, conn, transaction))
+                    //                    {
+                    //                        conn.Open();
+                    //                        cmdInsertSerial.Parameters.AddWithValue("@MaterialID", materialID);
+                    //                        cmdInsertSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                    //                        cmdInsertSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    //                        cmdInsertSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //                        cmdInsertSerial.ExecuteNonQuery();
+                    //                      //  conn.Close();
+                    //                    }
+                    //                }
+                    //                else // Return materials receive (Active/Defective)
+                    //                {
+                    //                    // Update existing serial in Stock
+                    //                    string updateSerialQuery = @"
+                    //                                                UPDATE Stock
+                    //                                                SET Quantity = Quantity + @Quantity,
+                    //                                                    Rack_Number = @RackNumber,
+                    //                                                    Shelf_Number = @ShelfNumber,
+                    //                                                    Status = @Status,
+                    //                                                    Availability = 'AVAILABLE'
+                    //                                                WHERE Serial_Number = @SerialNumber;";
+
+                    //                    using (SqlCommand cmdUpdateSerial = new SqlCommand(updateSerialQuery, conn, transaction))
+                    //                    {
+                    //                        conn.Open();
+                    //                        cmdUpdateSerial.Parameters.AddWithValue("@Quantity", quantity);
+                    //                        cmdUpdateSerial.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    //                        cmdUpdateSerial.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //                        cmdUpdateSerial.Parameters.AddWithValue("@Status", material_Status);
+                    //                        cmdUpdateSerial.Parameters.AddWithValue("@SerialNumber", serialNumber);
+                    //                        cmdUpdateSerial.ExecuteNonQuery();
+
+                    //                    }
+                    //                }
+                    //            }
+                    //            else
+                    //            {
+                    //                // Check if same material, location, and status exists
+                    //                string checkStockQuery = @"
+                    //                                        SELECT COUNT(*) FROM Stock
+                    //                                        WHERE Material_ID = @MaterialID
+                    //                                          AND Rack_Number = @RackNumber
+                    //                                          AND Shelf_Number = @ShelfNumber
+                    //                                          AND Status = @Status;";
+                    //               // string connStr = ConfigurationManager.ConnectionStrings["StoreDB"].ConnectionString;
+                    //                using (SqlConnection con = new SqlConnection(connStr))
+                    //                {
+                    //                    conn.Open();
+                    //                    using (SqlCommand cmdCheckStock = new SqlCommand(checkStockQuery, con, transaction))
+                    //                    {
+
+                    //                        cmdCheckStock.Parameters.AddWithValue("@MaterialID", materialID);
+                    //                        cmdCheckStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    //                        cmdCheckStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //                        cmdCheckStock.Parameters.AddWithValue("@Status", material_Status);
+
+                    //                        int count = (int)cmdCheckStock.ExecuteScalar();
+                    //                        //conn.Close();
+                    //                        //object result = cmdCheckStock.ExecuteScalar();
+                    //                        //int count = (result != null) ? Convert.ToInt32(result) : 0;
+
+                    //                        //if (count > 0)
+                    //                        //{
+                    //                        //    // Update existing stock
+                    //                        //    string updateStockQuery = @"
+                    //                        //                                UPDATE Stock
+                    //                        //                                SET Quantity = Quantity + @Quantity
+                    //                        //                                WHERE Material_ID = @MaterialID
+                    //                        //                                  AND Rack_Number = @RackNumber
+                    //                        //                                  AND Shelf_Number = @ShelfNumber
+                    //                        //                                  AND Status = @Status;";
+
+                    //                        //    using (SqlCommand cmdUpdateStock = new SqlCommand(updateStockQuery, conn, transaction))
+                    //                        //    {
+                    //                        //        cmdUpdateStock.Parameters.AddWithValue("@Quantity", quantity);
+                    //                        //        cmdUpdateStock.Parameters.AddWithValue("@MaterialID", materialID);
+                    //                        //        cmdUpdateStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    //                        //        cmdUpdateStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //                        //        cmdUpdateStock.Parameters.AddWithValue("@Status", material_Status);
+                    //                        //        cmdUpdateStock.ExecuteNonQuery();
+                    //                        //    }
+                    //                        //}
+                    //                        //else
+                    //                        //{
+                    //                        //    // Insert new stock record
+                    //                        //    string insertStockQuery = @"
+                    //                        //                                INSERT INTO Stock (Material_ID, Quantity, Rack_Number, Shelf_Number, Status, Availability)
+                    //                        //                                VALUES (@MaterialID, @Quantity, @RackNumber, @ShelfNumber, @Status, 'Available');";
+
+                    //                        //    using (SqlCommand cmdInsertStock = new SqlCommand(insertStockQuery, conn, transaction))
+                    //                        //    {
+                    //                        //        cmdInsertStock.Parameters.AddWithValue("@MaterialID", materialID);
+                    //                        //        cmdInsertStock.Parameters.AddWithValue("@Quantity", quantity);
+                    //                        //        cmdInsertStock.Parameters.AddWithValue("@RackNumber", rackNumber);
+                    //                        //        cmdInsertStock.Parameters.AddWithValue("@ShelfNumber", shelfNumber);
+                    //                        //        cmdInsertStock.Parameters.AddWithValue("@Status", material_Status);
+                    //                        //        cmdInsertStock.ExecuteNonQuery();
+                    //                        //    }
+                    //                        //}
+                    //                    }
+                    //                }
+
+
+                    //            }
+                    //        }
+
+                    //    }
+                    //   // conn.Close();
+                    //}
 
                     // 🔟 Commit Transaction
                     transaction.Commit();
