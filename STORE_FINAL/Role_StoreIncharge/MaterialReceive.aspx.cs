@@ -1202,6 +1202,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     //using (SqlCommand cmdStockUpdate = new SqlCommand(stockUpdateQuery, conn, transaction))
                     //{
+
                     //    cmdStockUpdate.Parameters.AddWithValue("@Session_ID", sessionID);
                     ////    conn.Close();
                     //    using (SqlDataReader reader = cmdStockUpdate.ExecuteReader())
