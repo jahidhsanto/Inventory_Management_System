@@ -370,7 +370,8 @@ namespace STORE_FINAL.Role_StoreIncharge
                                         WHEN M.Requires_Serial_Number = 'Yes' THEN S.Serial_Number 
                                         ELSE NULL 
                                     END AS Serial_Number, 
-                                    TD.Quantity 
+                                    TD.Quantity, 
+                                    CONCAT(S.Rack_Number, ' - ', S.Shelf_Number) AS Location 
                                 FROM Temp_Delivery TD
                                 JOIN Stock S ON TD.Stock_ID = S.Stock_ID 
                                 JOIN Material M ON TD.Material_ID = M.Material_ID 
@@ -605,7 +606,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     // 6️⃣ Update Stock Based on Serial Number
                     string updateStockWithSerial = @"
                                                     UPDATE Stock 
-                                                    SET Availability = 'DELIVERED', Quantity = Quantity - TD.Quantity
+                                                    SET Availability = 'DELIVERED', Quantity = S.Quantity - TD.Quantity
                                                     FROM Stock S
                                                     JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                     WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NOT NULL;";
@@ -618,7 +619,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     string updateStockWithoutSerial = @"
                                                         UPDATE Stock 
-                                                        SET Quantity = Quantity - TD.Quantity
+                                                        SET Quantity = S.Quantity - TD.Quantity
                                                         FROM Stock S
                                                         JOIN Temp_Delivery TD ON S.Stock_ID = TD.Stock_ID
                                                         WHERE TD.Session_ID = @Session_ID AND S.Serial_Number IS NULL;";

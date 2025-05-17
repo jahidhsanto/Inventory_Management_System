@@ -117,7 +117,8 @@
                     <asp:BoundField DataField="Part_Id" HeaderText="Part ID" />
                     <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
                     <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
-                    <asp:BoundField DataField="Delivered_Quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="Location" HeaderText="Location" />
                     <asp:TemplateField>
                         <ItemTemplate>
                             <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove" 
