@@ -313,9 +313,9 @@ namespace STORE_FINAL.Role_Employee
                     {
                         conn.Open();
                         cmd.ExecuteNonQuery();
-                        RESET();
                         ShowMessage("Requisition submitted successfully!", true);
-                        Response.Redirect("Requisition");
+                        RESET();
+                        //Response.Redirect("Requisition");
                     }
                     catch (Exception ex)
                     {
@@ -440,8 +440,14 @@ namespace STORE_FINAL.Role_Employee
 
         protected void RESET()
         {
-            txtQuantity.Text = "";
+            ddlProjectFor.SelectedValue = "0";
+            ddlRequisitionType.SelectedValue = "0";
+            ddlEmployeeFor.SelectedValue = "0";
+            ddlDepartmentFor.SelectedValue = "0";
+            ddlZoneFor.SelectedValue = "0";
+
             ddlMaterials.SelectedIndex = 0;
+            txtQuantity.Text = "";
         }
     }
 }

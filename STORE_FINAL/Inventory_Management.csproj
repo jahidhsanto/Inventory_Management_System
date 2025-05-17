@@ -285,7 +285,7 @@
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Site.Master" />
     <Content Include="Role_Admin\UserManagement.aspx" />
-    <Content Include="Test\Receive_.aspx" />
+    <Content Include="Test\Test_Dashboard.aspx" />
     <Content Include="UserDashboard\HtmlPage1.html" />
     <Content Include="UserDashboard\Logout.aspx" />
     <Content Include="UserDashboard\StyleSheet_Image.css" />
@@ -501,12 +501,12 @@
     <Compile Include="Role_Admin\UserManagement.aspx.designer.cs">
       <DependentUpon>UserManagement.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Test\Receive_.aspx.cs">
-      <DependentUpon>Receive_.aspx</DependentUpon>
+    <Compile Include="Test\Test_Dashboard.aspx.cs">
+      <DependentUpon>Test_Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Test\Receive_.aspx.designer.cs">
-      <DependentUpon>Receive_.aspx</DependentUpon>
+    <Compile Include="Test\Test_Dashboard.aspx.designer.cs">
+      <DependentUpon>Test_Dashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="UserDashboard\Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
