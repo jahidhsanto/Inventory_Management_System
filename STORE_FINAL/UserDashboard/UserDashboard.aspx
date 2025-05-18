@@ -26,7 +26,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Dashboard</h5>
-                    <a href="/Dashboard" class="btn btn-primary">Switch Dashboard</a>
+                    <a href="/Dashboard" class="btn btn-primary">Switch Dashboard 01</a>
+                    <a href="/Test/Test_Dashboard" class="btn btn-primary">Switch Dashboard 02</a>
                 </div>
             </div>
         </div>

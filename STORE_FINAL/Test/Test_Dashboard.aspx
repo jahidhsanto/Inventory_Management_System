@@ -37,7 +37,7 @@
         }
 
         .chart-container {
-            height: 220px;
+            height: 150px;
         }
     </style>
 
@@ -47,7 +47,7 @@
         <%--        <h2 class="mb-4">Inventory Overview</h2>--%>
 
         <!-- Summary Info Cards -->
-        <div class="row mb-4">
+        <div class="row mb-1">
             <div class="col-md-3 mb-3">
                 <div class="info-card">
                     <div class="d-flex justify-content-between align-items-center">
