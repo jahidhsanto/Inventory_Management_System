@@ -292,6 +292,7 @@
     <Content Include="Test\PurposeWiseReport.aspx" />
     <Content Include="Test\Reports.aspx" />
     <Content Include="Test\Report_Requisition.aspx" />
+    <Content Include="Role_Employee\Requisitions_Test.aspx" />
     <Content Include="Test\TestPendingReport.aspx" />
     <Content Include="Test\Test_Dashboard.aspx" />
     <Content Include="UserDashboard\HtmlPage1.html" />
@@ -557,6 +558,13 @@
     </Compile>
     <Compile Include="Test\Report_Requisition.aspx.designer.cs">
       <DependentUpon>Report_Requisition.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Role_Employee\Requisitions_Test.aspx.cs">
+      <DependentUpon>Requisitions_Test.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Role_Employee\Requisitions_Test.aspx.designer.cs">
+      <DependentUpon>Requisitions_Test.aspx</DependentUpon>
     </Compile>
     <Compile Include="Test\TestPendingReport.aspx.cs">
       <DependentUpon>TestPendingReport.aspx</DependentUpon>

@@ -188,7 +188,7 @@ CREATE TABLE Challan (
 CREATE TABLE Challan_Items (
     Challan_Item_ID INT IDENTITY(1,1) PRIMARY KEY,
     Challan_ID INT NOT NULL,
-    Requisition_ID INT NOT,
+    Requisition_ID INT NULL,
     Material_ID INT NOT NULL,
     Stock_ID INT NOT NULL,
 	Serial_Number NVARCHAR(50) NULL,
