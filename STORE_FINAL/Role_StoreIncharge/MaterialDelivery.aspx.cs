@@ -264,7 +264,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             // Handle missing session scenario
             if (Session["DeliverySessionID"] == null)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Session expired. Please refresh the page.');", true);
+                ShowMessage("Session expired. Please refresh the page.", true);
                 return;
             }
 
@@ -285,7 +285,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             else
             {
                 // Show an error message if neither dropdown is selected
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select either a Serial Number or a Stock Location.');", true);
+                ShowMessage("Please select either a Serial Number or a Stock Location.", false);
                 return; // Stop execution to prevent errors
             }
 
@@ -304,7 +304,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     if (existingCount > 0)
                     {
-                        ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('This stock item has already been added!');", true);
+                        ShowMessage("This stock item has already been added!", false);
                         return;
                     }
                 }
@@ -314,7 +314,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             decimal quantity;
             if (!decimal.TryParse(txtQuantity.Text, out quantity) || quantity <= 0)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Invalid Quantity. Enter a valid number.');", true);
+                ShowMessage("Invalid Quantity. Enter a valid number.", false);
                 return;
             }
 
@@ -326,7 +326,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             // Handle case where no material is found for the requisition
             if (dtMaterial.Rows.Count == 0)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select a Material.');", true);
+                ShowMessage("Please select a Material.", false);
                 return;
             }
 
@@ -347,6 +347,8 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
+
+                    ShowMessage("Enlisted item", true);
                 }
             }
 
@@ -418,7 +420,8 @@ namespace STORE_FINAL.Role_StoreIncharge
             // 1️⃣ Validate Session
             if (Session["DeliverySessionID"] == null)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Session expired. Please refresh the page.');", true);
+
+                ShowMessage("Session expired. Please refresh the page.", false);
                 return;
             }
             string sessionID = Session["DeliverySessionID"].ToString();
@@ -426,7 +429,7 @@ namespace STORE_FINAL.Role_StoreIncharge
             // 2️⃣ Validate Required Selections
             if (ddlReceivedByEmployee.SelectedValue == "0")
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Please select an employee.');", true);
+                ShowMessage("Please select an employee.", false);
                 return;
             }
             int ReceivedBy_Employee_ID = int.Parse(ddlReceivedByEmployee.SelectedValue);
@@ -680,7 +683,7 @@ namespace STORE_FINAL.Role_StoreIncharge
                     gvDeliveryItems.DataBind();
 
                     // ✅ Success Message
-                    ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Delivery processed successfully!');", true);
+                    ShowMessage("Delivery processed successfully!", true);
                 }
                 catch (Exception ex)
                 {
@@ -689,6 +692,23 @@ namespace STORE_FINAL.Role_StoreIncharge
                     ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Error processing delivery: " + ex.Message + "');", true);
                 }
             }
+        }
+
+        // Message show 
+        private void ShowMessage(string message, bool isSuccess)
+        {
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
         }
     }
 }

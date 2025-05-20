@@ -100,7 +100,6 @@ namespace STORE_FINAL.Role_StoreIncharge
         // Select Receive Type (New Receive, Active Return, Defective Return) 
         protected void rblReceiveType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Session reset
             string sessionID = Session["ReceiveSessionID"].ToString();
             string deleteTempQuery = "DELETE FROM Temp_Receiving WHERE Session_ID = @Session_ID";
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -156,6 +155,8 @@ namespace STORE_FINAL.Role_StoreIncharge
         // Select Challan Number
         protected void ddlChallanID_SelectedIndexChanged(object sender, EventArgs e)
         {
+            string sessionID = Session["ReceiveSessionID"].ToString();
+
             string challanId = ddlChallanID.SelectedValue;
 
             ddlChallanItemsID.Enabled = false;
@@ -174,6 +175,25 @@ namespace STORE_FINAL.Role_StoreIncharge
             txtQuantity.Enabled = false;
             txtQuantity.Text = "";
 
+            // Delete existing items and reset session
+            string deleteTempQuery = "DELETE FROM Temp_Receiving WHERE Session_ID = @Session_ID";
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                using (SqlCommand cmdDeleteTemp = new SqlCommand(deleteTempQuery, conn))
+                {
+                    cmdDeleteTemp.Parameters.AddWithValue("@Session_ID", sessionID);
+                    cmdDeleteTemp.ExecuteNonQuery();
+                }
+
+                Session["ReceiveSessionID"] = Guid.NewGuid().ToString();
+                hfReceiveSessionID.Value = Session["ReceiveSessionID"].ToString();
+                lblSession_2.Text = "New Session ID: " + Session["ReceiveSessionID"].ToString();
+
+                LoadReceivingItems();
+            }
+
+            // If any challan selected then proceed to next step
             if (!string.IsNullOrEmpty(challanId) && challanId != "0")
             {
                 using (SqlConnection conn = new SqlConnection(connStr))
@@ -646,6 +666,8 @@ namespace STORE_FINAL.Role_StoreIncharge
 
             string sessionID = Session["ReceiveSessionID"].ToString();
             string receiveType = rblReceiveType.SelectedValue;
+            string challanID = ddlChallanID.SelectedValue; // Assume you have a dropdown for challans
+            string reference_Challan_Item_ID = ddlChallanItemsID.SelectedValue; 
             string materialID = ddlMaterial.SelectedValue;
             //int requisitionID = int.Parse(ddlRequisition.SelectedValue);
             string serialNumber = txtSerialNumber.Text.Trim();
@@ -741,10 +763,12 @@ namespace STORE_FINAL.Role_StoreIncharge
                     }
 
                     // Insert into Temp_Receiving
-                    string insertTemp = @"INSERT INTO Temp_Receiving (Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
-                                      VALUES (@Material_ID, @Serial, 1, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
+                    string insertTemp = @"INSERT INTO Temp_Receiving (Challan_ID, Reference_Challan_Item_ID, Material_ID, Serial_Number, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
+                                      VALUES (@Challan_ID, @Reference_Challan_Item_ID, @Material_ID, @Serial, 1, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
                     using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                     {
+                        insertCmd.Parameters.AddWithValue("@Challan_ID", challanID);
+                        insertCmd.Parameters.AddWithValue("@Reference_Challan_Item_ID", reference_Challan_Item_ID);
                         insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                         insertCmd.Parameters.AddWithValue("@Serial", serialNumber);
                         insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
@@ -764,10 +788,12 @@ namespace STORE_FINAL.Role_StoreIncharge
                     {
                         // ✅ For new receives, insert into Temp_Receiving
                         string insertTemp = @"
-                                        INSERT INTO Temp_Receiving (Material_ID, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
-                                        VALUES (@Material_ID, @Quantity, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
+                                        INSERT INTO Temp_Receiving (Challan_ID, Reference_Challan_Item_ID, Material_ID, Quantity, Rack_Number, Shelf_Number, Receive_Type, Session_ID)
+                                        VALUES (@Challan_ID, @Reference_Challan_Item_ID, @Material_ID, @Quantity, @RackNumber, @ShelfNumber, @ReceiveType, @Session_ID)";
                         using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                         {
+                            insertCmd.Parameters.AddWithValue("@Challan_ID", challanID);
+                            insertCmd.Parameters.AddWithValue("@Reference_Challan_Item_ID", reference_Challan_Item_ID);
                             insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                             insertCmd.Parameters.AddWithValue("@Quantity", quantity);
                             insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
@@ -779,8 +805,6 @@ namespace STORE_FINAL.Role_StoreIncharge
                     }
                     else
                     {
-                        string challanID = ddlChallanID.SelectedValue; // Assume you have a dropdown for challans
-
                         // Step 1: Validate the challan item
                         string issuedQtyQuery = @"
                                     SELECT ISNULL(SUM(Quantity), 0) 
@@ -832,11 +856,12 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                         // Step 4: Insert into Temp_Receiving
                         string insertTemp = @"
-                                    INSERT INTO Temp_Receiving (Challan_ID, Material_ID, Quantity, Rack_Number, Shelf_Number, Session_ID, Receive_Type)
-                                    VALUES (@Challan_ID, @Material_ID, @Quantity, @RackNumber, @ShelfNumber, @Session_ID, @ReceiveType)";
+                                    INSERT INTO Temp_Receiving (Challan_ID, Reference_Challan_Item_ID, Material_ID, Quantity, Rack_Number, Shelf_Number, Session_ID, Receive_Type)
+                                    VALUES (@Challan_ID, @Reference_Challan_Item_ID, @Material_ID, @Quantity, @RackNumber, @ShelfNumber, @Session_ID, @ReceiveType)";
                         using (SqlCommand insertCmd = new SqlCommand(insertTemp, conn))
                         {
                             insertCmd.Parameters.AddWithValue("@Challan_ID", challanID);
+                            insertCmd.Parameters.AddWithValue("@Reference_Challan_Item_ID", reference_Challan_Item_ID);
                             insertCmd.Parameters.AddWithValue("@Material_ID", materialID);
                             insertCmd.Parameters.AddWithValue("@Quantity", quantity);
                             insertCmd.Parameters.AddWithValue("@RackNumber", rackNumber);
@@ -915,16 +940,15 @@ namespace STORE_FINAL.Role_StoreIncharge
                                                     INSERT INTO Challan_Items (Challan_ID, Material_ID, Serial_Number, Quantity) 
                                                     SELECT 
                                                         @Challan_ID, 
-                                                        td.Material_ID, 
+                                                        tr.Material_ID, 
                                                         CASE 
-                                                            WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
+                                                            WHEN m.Requires_Serial_Number = 'Yes' THEN tr.Serial_Number 
                                                             ELSE NULL 
                                                         END AS Serial_Number,
-                                                        td.Quantity 
-                                                    FROM Temp_Receiving td
-                                                    JOIN Material m ON td.Material_ID = m.Material_ID
-                                                    LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID 
-                                                    WHERE td.Session_ID = @Session_ID;";
+                                                        tr.Quantity 
+                                                    FROM Temp_Receiving tr
+                                                    JOIN Material m ON tr.Material_ID = m.Material_ID
+                                                    WHERE tr.Session_ID = @Session_ID;";
 
                         using (SqlCommand cmdInsertItems = new SqlCommand(insertItemsQuery, conn, transaction))
                         {
@@ -1015,24 +1039,24 @@ namespace STORE_FINAL.Role_StoreIncharge
                     string insertTransactionLogQuery = @"
                                                         INSERT INTO Material_Transaction_Log (
                                                             Material_ID, Serial_Number, Material_Status, Transaction_Type,
-                                                            In_Quantity, Challan_ID, Remarks, CreatedBy_Employee_ID
+                                                            In_Quantity, Challan_ID, Reference_Challan_Item_ID, Remarks, CreatedBy_Employee_ID
                                                         )
                                                         SELECT 
-                                                            td.Material_ID,
+                                                            tr.Material_ID,
                                                             CASE 
-                                                                WHEN m.Requires_Serial_Number = 'Yes' THEN s.Serial_Number 
+                                                                WHEN m.Requires_Serial_Number = 'Yes' THEN tr.Serial_Number 
                                                                 ELSE NULL 
                                                             END AS Serial_Number,
                                                             @Material_Status,
                                                             @Transaction_Type,
-                                                            td.Quantity,
+                                                            tr.Quantity,
                                                             @Challan_ID,
+                                                            tr.Reference_Challan_Item_ID,
                                                             'Received material',
                                                             @CreatedBy_Employee_ID
-                                                        FROM Temp_Receiving td
-                                                        JOIN Material m ON td.Material_ID = m.Material_ID
-                                                        LEFT JOIN Stock s ON td.Stock_ID = s.Stock_ID
-                                                        WHERE td.Session_ID = @Session_ID;";
+                                                        FROM Temp_Receiving tr
+                                                        JOIN Material m ON tr.Material_ID = m.Material_ID
+                                                        WHERE tr.Session_ID = @Session_ID;";
 
                     using (SqlCommand cmdInsertLog = new SqlCommand(insertTransactionLogQuery, conn, transaction))
                     {
@@ -1194,7 +1218,7 @@ namespace STORE_FINAL.Role_StoreIncharge
 
                     // 🔟 Commit Transaction
                     transaction.Commit();
-                    ScriptManager.RegisterStartupScript(this, GetType(), "alertMessage", "alert('Success!'); ", true);
+                    ShowMessage("Success!", true);
                 }
                 catch (Exception ex)
                 {

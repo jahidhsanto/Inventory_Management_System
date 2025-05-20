@@ -55,7 +55,6 @@
                                     <asp:ListItem Text="Free of cost" Value="Free of cost" />
                                     <asp:ListItem Text="Spare Sale" Value="Spare Sale" />
                                     <asp:ListItem Text="Test Purpose" Value="Test Purpose" />
-                                    <asp:ListItem Text="" Value="" />
                                 </asp:DropDownList>
                             </div>
                             <div class="col-md-6 dropdown-container d-none" id="dropdownEmployeeFor">

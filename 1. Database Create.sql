@@ -213,7 +213,8 @@ CREATE TABLE Material_Transaction_Log (
     In_Quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
     Out_Quantity DECIMAL(10,2) NOT NULL DEFAULT 0,
     Challan_ID INT NULL, -- Can be linked to Challan
-    Requisition_ID INT NOT NULL, -- Optional
+    Reference_Challan_Item_ID INT NULL, -- To track retun challan
+	Requisition_ID INT NOT NULL, -- Optional
     ReceivedBy_Employee_ID INT NULL, -- Who received/delivered/returned
     Remarks NVARCHAR(500) NULL,
     CreatedBy_Employee_ID INT NOT NULL,
@@ -221,6 +222,7 @@ CREATE TABLE Material_Transaction_Log (
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
     FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID),
+	FOREIGN KEY (Reference_Challan_Item_ID) REFERENCES Challan_Items(Challan_Item_ID),
     FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID),
     FOREIGN KEY (ReceivedBy_Employee_ID) REFERENCES Employee(Employee_ID),
     FOREIGN KEY (CreatedBy_Employee_ID) REFERENCES Employee(Employee_ID)
@@ -244,6 +246,32 @@ CREATE TABLE Material_Ledger (
 
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
     FOREIGN KEY (Challan_ID) REFERENCES Challan(Challan_ID)
+);
+
+CREATE TABLE Temp_Delivery (
+    Temp_ID INT IDENTITY(1,1) PRIMARY KEY, 
+    Stock_ID INT NOT NULL, 
+    Material_ID INT NOT NULL, 
+    Requisition_ID INT NULL,
+	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
+    Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
+    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
+    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
+	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
+);
+
+CREATE TABLE Temp_Receiving (
+    Temp_ID INT IDENTITY(1,1) PRIMARY KEY,
+    Challan_ID INT NULL, -- Only for returns
+	Reference_Challan_Item_ID INT NULL, -- To track retun challan
+    Material_ID INT NOT NULL,
+    Stock_ID INT NULL, 
+    Serial_Number NVARCHAR(100) NULL,
+	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
+    Rack_Number NVARCHAR(100),
+    Shelf_Number NVARCHAR(100),
+    Receive_Type NVARCHAR(50) NOT NULL, -- NewReceive, ReturnActiveReceive, ReturnDefectiveReceive
+    Session_ID NVARCHAR(100) NOT NULL,
 );
 
 -- Create Purchase_Request Table
@@ -313,31 +341,6 @@ CREATE TABLE Warranty (
     Status NVARCHAR(50) CHECK (Status IN ('Under Warranty', 'Expired', 'Replaced')),
     FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
     FOREIGN KEY (Serial_Number) REFERENCES Stock(Serial_Number)
-);
-
-CREATE TABLE Temp_Delivery (
-    Temp_ID INT IDENTITY(1,1) PRIMARY KEY, 
-    Stock_ID INT NOT NULL, 
-    Material_ID INT NOT NULL, 
-    Requisition_ID INT NULL,
-	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
-    Session_ID NVARCHAR(100) NOT NULL,  -- To track user session
-    FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID),
-    FOREIGN KEY (Material_ID) REFERENCES Material(Material_ID),
-	FOREIGN KEY (Requisition_ID) REFERENCES Requisition(Requisition_ID)
-);
-
-CREATE TABLE Temp_Receiving (
-    Temp_ID INT IDENTITY(1,1) PRIMARY KEY,
-    Challan_ID INT NULL, -- Only for returns
-    Material_ID INT NOT NULL,
-    Stock_ID INT NULL, 
-    Serial_Number NVARCHAR(100) NULL,
-	Quantity DECIMAL(10,2) NOT NULL CHECK (Quantity > 0), 
-    Rack_Number NVARCHAR(100),
-    Shelf_Number NVARCHAR(100),
-    Receive_Type NVARCHAR(50) NOT NULL, -- NewReceive, ReturnActiveReceive, ReturnDefectiveReceive
-    Session_ID NVARCHAR(100) NOT NULL,
 );
 
 CREATE TABLE Owner (
