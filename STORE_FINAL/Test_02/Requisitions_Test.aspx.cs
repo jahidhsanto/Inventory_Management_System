@@ -457,57 +457,6 @@ namespace STORE_FINAL.Test
 
 
         }
-        protected void btnSubmit_Click_00(object sender, EventArgs e)
-        {
-            if (Session["EmployeeID"] == null)
-            {
-                ShowMessage("Session expired. Please log in again.", false);
-                Response.Redirect("~/");
-                return;
-            }
-
-            string CreatedByEmployee_ID = Session["EmployeeID"]?.ToString();
-
-            if (ViewState["Items"] != null)
-            {
-                DataTable dt = (DataTable)ViewState["Items"];
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-                    SqlTransaction transaction = conn.BeginTransaction();
-
-                    try
-                    {
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            string query = @"
-                                        INSERT INTO MaterialReceipt (Material_ID, Quantity, Received_Date)
-                                        VALUES (@Material_ID, @Quantity, GETDATE());";
-
-                            SqlCommand cmd = new SqlCommand(query, conn, transaction);
-                            cmd.Parameters.AddWithValue("@Material_ID", row["Material_ID"]);
-                            cmd.Parameters.AddWithValue("@Quantity", row["Quantity"]);
-
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        transaction.Commit();
-                        ShowMessage("Data successfully saved to the database.", true);
-
-                        Clear_ViewStateAndGrid();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        ShowMessage("Error saving to database: " + ex.Message, false);
-                    }
-                }
-            }
-            else
-            {
-                ShowMessage("No data to save.", false);
-            }
-        }
 
         private bool ValidateInput(string selectedRequisitionFor, string quantityText)
         {
