@@ -11,20 +11,23 @@
             user-select: none;
             transition: all 0.2s ease-in-out;
         }
+
         #rblRequisitionFor input[type="radio"] {
             display: none;
         }
-        #rblRequisitionFor input[type="radio"]:checked + label {
-            background-color: #0d6efd;
-            color: white;
-            border-color: #0d6efd;
-        }
+
+            #rblRequisitionFor input[type="radio"]:checked + label {
+                background-color: #0d6efd;
+                color: white;
+                border-color: #0d6efd;
+            }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <h2 class="mt-3 text-center">Requisition Management</h2>
+        <a href="/Dashboard" class="btn btn-primary">Switch Dashboard 01</a>
 
         <div class="accordion mt-4" id="requisitionManagementAccordion">
 
@@ -68,8 +71,8 @@
                             <div class="col-md-6 dropdown-container d-none" id="dropdownZoneFor">
                                 <label class="form-label">Select Zone:</label>
                                 <asp:DropDownList ID="ddlZoneFor" runat="server" CssClass="form-control select2"></asp:DropDownList>
-                            </div>                            
-                            
+                            </div>
+
                             <div class="col-md-6 dropdown-container">
                                 <label class="form-label">Select Material:</label>
                                 <asp:DropDownList ID="ddlMaterials" runat="server" CssClass="form-control select2" Width="100%"></asp:DropDownList>
