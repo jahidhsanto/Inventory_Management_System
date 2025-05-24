@@ -281,7 +281,6 @@ namespace STORE_FINAL.Test
             return imagePath;
         }
 
-
         private DataTable CreateItemTable()
         {
             DataTable dt = new DataTable();

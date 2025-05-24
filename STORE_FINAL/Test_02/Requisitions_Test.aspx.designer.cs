@@ -24,6 +24,15 @@ namespace STORE_FINAL.Test
         protected global::System.Web.UI.WebControls.RadioButtonList rblRequisitionFor;
 
         /// <summary>
+        /// UpdatePanelForDropDowns control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanelForDropDowns;
+
+        /// <summary>
         /// dropdownProjectFor control.
         /// </summary>
         /// <remarks>
@@ -105,6 +114,15 @@ namespace STORE_FINAL.Test
         protected global::System.Web.UI.WebControls.DropDownList ddlZoneFor;
 
         /// <summary>
+        /// UpdatePanel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel3;
+
+        /// <summary>
         /// ddlMaterial control.
         /// </summary>
         /// <remarks>
@@ -114,6 +132,15 @@ namespace STORE_FINAL.Test
         protected global::System.Web.UI.WebControls.DropDownList ddlMaterial;
 
         /// <summary>
+        /// UpdatePanel4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel4;
+
+        /// <summary>
         /// txtQuantity control.
         /// </summary>
         /// <remarks>
@@ -121,6 +148,15 @@ namespace STORE_FINAL.Test
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtQuantity;
+
+        /// <summary>
+        /// UpdatePanel2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanel2;
 
         /// <summary>
         /// imgMaterial control.
@@ -141,6 +177,15 @@ namespace STORE_FINAL.Test
         protected global::System.Web.UI.WebControls.LinkButton btnAddItem;
 
         /// <summary>
+        /// UpdatePanelReceivingItems control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanelReceivingItems;
+
+        /// <summary>
         /// gvItems control.
         /// </summary>
         /// <remarks>
@@ -148,15 +193,6 @@ namespace STORE_FINAL.Test
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvItems;
-
-        /// <summary>
-        /// gvReceivingItems control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvReceivingItems;
 
         /// <summary>
         /// btnSubmit control.

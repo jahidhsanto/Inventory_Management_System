@@ -94,9 +94,7 @@
                 width: 100%;
                 margin-bottom: 1rem;
             }
-        }
 
-        @media (max-width: 768px) {
             .table-responsive {
                 overflow-x: auto;
             }
@@ -127,35 +125,43 @@
                     <asp:ListItem Text="Zone" Value="Zone" />
                 </asp:RadioButtonList>
             </div>
+
             <div class="col-6">
-                <div class="row" id="dropdownProjectFor" runat="server" visible="true">
-                    <div class="col-md-6 dropdown-container">
-                        <label class="form-label">Select Project:</label>
-                        <asp:DropDownList ID="ddlProjectFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
-                    </div>
-                    <div class="col-md-6 dropdown-container">
-                        <label class="form-label">Requisition Purpose:</label>
-                        <asp:DropDownList ID="ddlRequisitionPurpose" runat="server" CssClass="form-control" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static">
-                            <asp:ListItem Text="-- Select Purpose --" Value="0" />
-                            <asp:ListItem Text="Warranty Replacement" Value="Warranty Replacement" />
-                            <asp:ListItem Text="Free of cost" Value="Free of cost" />
-                            <asp:ListItem Text="Spare Sale" Value="Spare Sale" />
-                            <asp:ListItem Text="Test Purpose" Value="Test Purpose" />
-                        </asp:DropDownList>
-                    </div>
-                </div>
-                <div class="col-md-6 dropdown-container" id="dropdownEmployeeFor" runat="server" visible="false">
-                    <label class="form-label">Select Employee:</label>
-                    <asp:DropDownList ID="ddlEmployeeFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
-                </div>
-                <div class="col-md-6 dropdown-container" id="dropdownDepartmentFor" runat="server" visible="false">
-                    <label class="form-label">Select Department:</label>
-                    <asp:DropDownList ID="ddlDepartmentFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
-                </div>
-                <div class="col-md-6 dropdown-container" id="dropdownZoneFor" runat="server" visible="false">
-                    <label class="form-label">Select Zone:</label>
-                    <asp:DropDownList ID="ddlZoneFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
-                </div>
+                <asp:UpdatePanel ID="UpdatePanelForDropDowns" runat="server" UpdateMode="Always" ChildrenAsTriggers="true">
+                    <ContentTemplate>
+                        <div class="row" id="dropdownProjectFor" runat="server" visible="true">
+                            <div class="col-md-6 dropdown-container">
+                                <label class="form-label">Select Project:</label>
+                                <asp:DropDownList ID="ddlProjectFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
+                            </div>
+                            <div class="col-md-6 dropdown-container">
+                                <label class="form-label">Requisition Purpose:</label>
+                                <asp:DropDownList ID="ddlRequisitionPurpose" runat="server" CssClass="form-control" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static">
+                                    <asp:ListItem Text="-- Select Purpose --" Value="0" />
+                                    <asp:ListItem Text="Warranty Replacement" Value="Warranty Replacement" />
+                                    <asp:ListItem Text="Free of cost" Value="Free of cost" />
+                                    <asp:ListItem Text="Spare Sale" Value="Spare Sale" />
+                                    <asp:ListItem Text="Test Purpose" Value="Test Purpose" />
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-md-6 dropdown-container" id="dropdownEmployeeFor" runat="server" visible="false">
+                            <label class="form-label">Select Employee:</label>
+                            <asp:DropDownList ID="ddlEmployeeFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
+                        </div>
+                        <div class="col-md-6 dropdown-container" id="dropdownDepartmentFor" runat="server" visible="false">
+                            <label class="form-label">Select Department:</label>
+                            <asp:DropDownList ID="ddlDepartmentFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
+                        </div>
+                        <div class="col-md-6 dropdown-container" id="dropdownZoneFor" runat="server" visible="false">
+                            <label class="form-label">Select Zone:</label>
+                            <asp:DropDownList ID="ddlZoneFor" runat="server" CssClass="form-control select2" OnSelectedIndexChanged="resetSelection_SelectedIndexChanged" AutoPostBack="true" ClientIDMode="Static" />
+                        </div>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="rblRequisitionFor" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
         </div>
 
@@ -164,25 +170,47 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label><i class="fas fa-cubes"></i>Material Name:</label>
-                    <asp:DropDownList ID="ddlMaterial" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlMaterial_SelectedIndexChanged" />
+                    <asp:UpdatePanel ID="UpdatePanel3" runat="server" UpdateMode="Always" ChildrenAsTriggers="true">
+                        <ContentTemplate>
+                            <asp:DropDownList ID="ddlMaterial" runat="server" CssClass="form-control select2" AutoPostBack="true" OnSelectedIndexChanged="ddlMaterial_SelectedIndexChanged" />
+                        </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="rblRequisitionFor" EventName="SelectedIndexChanged" />
+                        </Triggers>
+                    </asp:UpdatePanel>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
                     <label><i class="fas fa-cogs"></i>Quantity:</label>
-                    <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" />
+                    <asp:UpdatePanel ID="UpdatePanel4" runat="server" UpdateMode="Always" ChildrenAsTriggers="true">
+                        <ContentTemplate>
+                            <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" placeholder="Enter Quantity" />
+                        </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="rblRequisitionFor" EventName="SelectedIndexChanged" />
+                        </Triggers>
+                    </asp:UpdatePanel>
                 </div>
             </div>
 
             <!-- Material Image -->
             <div class="col-md-3 text-center">
                 <!-- Material Image (Thumbnail - Click to View) -->
-                <asp:Image ID="imgMaterial" runat="server" CssClass="img-thumbnail shadow border p-1 bg-white"
-                    Width="180px" Height="180px" AlternateText="Material Image"
-                    onerror="this.onerror=null; this.src='~/images/LoGo.png';"
-                    Style="cursor: pointer; transition: transform 0.3s ease;"
-                    onclick="showLargeImage(this.src)" Visible="false" />
+                <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:Image ID="imgMaterial" runat="server" CssClass="img-thumbnail shadow border p-1 bg-white"
+                            Width="180px" Height="180px" AlternateText="Material Image"
+                            onerror="this.onerror=null; this.src='~/images/LoGo.png';"
+                            Style="cursor: pointer; transition: transform 0.3s ease;"
+                            onclick="showLargeImage(this.src)" Visible="false" />
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="ddlMaterial" EventName="SelectedIndexChanged" />
+                        <asp:AsyncPostBackTrigger ControlID="rblRequisitionFor" EventName="SelectedIndexChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
             </div>
 
         </div>
@@ -195,73 +223,51 @@
 
     </div>
 
-    <asp:GridView ID="gvItems" runat="server" CssClass="table table-bordered table-hover table-striped align-middle"
-        AutoGenerateColumns="False" OnRowDeleting="gvItems_RowDeleting" DataKeyNames="Material_ID">
-        <HeaderStyle CssClass="table-primary text-center" />
-        <RowStyle CssClass="text-center" />
-
-        <Columns>
-            <asp:TemplateField HeaderText="S.No">
-                <ItemTemplate>
-                    <%# Container.DataItemIndex + 1 %>
-                </ItemTemplate>
-            </asp:TemplateField>
-
-            <%--            <asp:BoundField DataField="Material_ID" HeaderText="Material ID" />--%>
-            <asp:BoundField DataField="Material_Name" HeaderText="Material Name" />
-            <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-
-            <asp:TemplateField HeaderText="Actions">
-                <ItemTemplate>
-                    <asp:LinkButton
-                        ID="btnDelete"
-                        runat="server"
-                        CommandName="Delete"
-                        Text="🗑 Delete"
-                        CssClass="btn btn-danger btn-sm"
-                        OnClientClick="return confirm('Are you sure you want to delete this item?');">
-                    </asp:LinkButton>
-                </ItemTemplate>
-            </asp:TemplateField>
-        </Columns>
-    </asp:GridView>
-
-
-
     <!-- Temporary GridView -->
     <div class="table-responsive">
+        <asp:UpdatePanel ID="UpdatePanelReceivingItems" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:GridView ID="gvItems" runat="server" CssClass="table table-bordered table-hover table-striped align-middle"
+                    AutoGenerateColumns="False" OnRowDeleting="gvItems_RowDeleting" DataKeyNames="Material_ID">
+                    <HeaderStyle CssClass="table-primary text-center" />
+                    <RowStyle CssClass="text-center" />
 
-        <%--<asp:GridView ID="gvReceivingItems" runat="server" CssClass="table table-bordered table-hover table-striped align-middle" AutoGenerateColumns="False" DataKeyNames="Temp_ID" OnRowCommand="gvReceivingItems_RowCommand">--%>
-        <asp:GridView ID="gvReceivingItems" runat="server" CssClass="table table-bordered table-hover table-striped align-middle"
-            AutoGenerateColumns="False" DataKeyNames="Temp_ID">
-            <HeaderStyle CssClass="table-primary text-center" />
-            <RowStyle CssClass="text-center" />
-            <Columns>
-                <asp:TemplateField HeaderText="S.No">
-                    <ItemTemplate>
-                        <%# Container.DataItemIndex + 1 %>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:BoundField DataField="Materials_Name" HeaderText="Material Name" />
-                <asp:BoundField DataField="Serial_Number" HeaderText="Serial Number" />
-                <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
-                <asp:BoundField DataField="Rack_Number" HeaderText="Rack" />
-                <asp:BoundField DataField="Shelf_Number" HeaderText="Shelf" />
+                    <Columns>
+                        <asp:TemplateField HeaderText="S.No">
+                            <ItemTemplate>
+                                <%# Container.DataItemIndex + 1 %>
+                            </ItemTemplate>
+                        </asp:TemplateField>
 
-                <asp:TemplateField>
-                    <ItemTemplate>
-                        <asp:LinkButton ID="btnRemove" runat="server" CommandName="Remove"
-                            CommandArgument='<%# Eval("Temp_ID") %>' CssClass="btn delete-icon">
-                                <i class="fa fa-remove" style="color:red"></i>
-                        </asp:LinkButton>
-                    </ItemTemplate>
-                </asp:TemplateField>
+                        <asp:BoundField DataField="Material_Name" HeaderText="Material Name" />
+                        <asp:BoundField DataField="Quantity" HeaderText="Quantity" />
 
-            </Columns>
-        </asp:GridView>
+                        <asp:TemplateField HeaderText="Actions">
+                            <ItemTemplate>
+                                <asp:LinkButton
+                                    ID="btnDelete"
+                                    runat="server"
+                                    CommandName="Delete"
+                                    Text="🗑 Delete"
+                                    CssClass="btn btn-danger btn-sm"
+                                    OnClientClick="return confirm('Are you sure you want to delete this item?');">
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+            </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="rblRequisitionFor" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="ddlProjectFor" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="ddlRequisitionPurpose" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="ddlEmployeeFor" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="ddlDepartmentFor" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="ddlZoneFor" EventName="SelectedIndexChanged" />
+                <asp:AsyncPostBackTrigger ControlID="btnAddItem" EventName="Click" />
+            </Triggers>
+        </asp:UpdatePanel>
     </div>
-
     <!-- Final Receive Button -->
     <asp:Button ID="btnSubmit" runat="server" Text="✅ Submit" CssClass="btn btn-success" OnClick="btnSubmit_Click" />
-
 </asp:Content>
