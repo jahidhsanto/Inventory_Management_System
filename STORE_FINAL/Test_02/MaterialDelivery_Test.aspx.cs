@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Org.BouncyCastle.Asn1.Cmp;
 using System.Configuration;
+using System.Web.Services;
 
 namespace STORE_FINAL.Test_02
 {
@@ -18,15 +19,15 @@ namespace STORE_FINAL.Test_02
         {
             if (!IsPostBack)
             {
-                LoadRequisitionDropdown();
+                LoadRequisitions();
             }
         }
 
-        private void LoadRequisitionDropdown()
+        private void LoadRequisitions()
         {
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand("SELECT Requisition_ID FROM Requisition_Parent WHERE Dept_Status = 'Approved' AND Store_Status = 'Pending';", con);
+                SqlCommand cmd = new SqlCommand("SELECT Requisition_ID FROM Requisition_Parent", con);
                 con.Open();
                 ddlRequisition.DataSource = cmd.ExecuteReader();
                 ddlRequisition.DataTextField = "Requisition_ID";
@@ -38,76 +39,98 @@ namespace STORE_FINAL.Test_02
 
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ddlRequisition.SelectedValue != "0")
+            int requisitionId = int.Parse(ddlRequisition.SelectedValue);
+            if (requisitionId > 0)
             {
-                LoadRequisitionItems(int.Parse(ddlRequisition.SelectedValue));
+                LoadMaterials(requisitionId);
             }
         }
 
-        private void LoadRequisitionItems(int requisitionId)
+        private void LoadMaterials(int requisitionId)
         {
-            DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 string query = @"
-                SELECT RIC.Material_ID, M.Materials_Name, M.Requires_Serial_Number
-                FROM Requisition_Item_Child RIC
-                JOIN Material M ON RIC.Material_ID = M.Material_ID
-                WHERE RIC.Requisition_ID = @ReqID";
+                    SELECT m.Material_ID, m.Materials_Name, m.Requires_Serial_Number
+                    FROM Requisition_Item_Child ric
+                    JOIN Material m ON m.Material_ID = ric.Material_ID
+                    WHERE ric.Requisition_ID = @Requisition_ID";
 
                 SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@ReqID", requisitionId);
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                da.Fill(dt);
-            }
+                cmd.Parameters.AddWithValue("@Requisition_ID", requisitionId);
 
-            ViewState["RequisitionItems"] = dt;
-            gvItems.DataSource = dt;
-            gvItems.DataBind();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                ViewState["MaterialsData"] = dt;
+                gvMaterials.DataSource = dt;
+                gvMaterials.DataBind();
+            }
         }
 
-        protected void gvItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void gvMaterials_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                string requiresSerial = DataBinder.Eval(e.Row.DataItem, "Requires_Serial_Number").ToString();
-                string materialId = DataBinder.Eval(e.Row.DataItem, "Material_ID").ToString();
+                var dataItem = (DataRowView)e.Row.DataItem;
 
-                TextBox txtQty = (TextBox)e.Row.FindControl("txtQuantity");
-                ListBox lstSerial = (ListBox)e.Row.FindControl("lstSerials");
+                bool requiresSerial = dataItem["Requires_Serial_Number"].ToString() == "Yes";
+                int materialId = Convert.ToInt32(dataItem["Material_ID"]);
 
-                if (requiresSerial == "Yes")
+                TextBox txtQty = (TextBox)e.Row.FindControl("txtQty");
+                ListBox lstSerials = (ListBox)e.Row.FindControl("lstSerialNumbers");
+
+                if (requiresSerial)
                 {
-                    lstSerial.Visible = true;
-                    LoadAvailableSerials(lstSerial, int.Parse(materialId));
+                    txtQty.Visible = false;
+                    lstSerials.Visible = true;
+
+                    // Fetch from DB or ViewState
+                    lstSerials.DataSource = GetAvailableSerials(materialId); // Your method
+                    lstSerials.DataTextField = "Serial_Number";
+                    lstSerials.DataValueField = "Serial_Number";
+                    lstSerials.DataBind();
                 }
                 else
                 {
                     txtQty.Visible = true;
+                    txtQty.Attributes["min"] = "1";
+                    lstSerials.Visible = false;
                 }
             }
         }
 
-        private void LoadAvailableSerials(ListBox listBox, int materialId)
+        private DataTable GetAvailableSerials(int materialId)
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            DataTable dtSerials = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT Stock_ID, Serial_Number FROM Stock 
-                                 WHERE Material_ID = @MaterialID 
-                                 AND Availability = 'AVAILABLE'
-                                 AND Serial_Number IS NOT NULL";
+                string query = @"SELECT Serial_Number 
+                         FROM Stock 
+                         WHERE Material_ID = @MaterialID 
+                           AND Availability = 'AVAILABLE'
+                           AND Status = 'ACTIVE'
+                           AND Serial_Number IS NOT NULL";
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@MaterialID", materialId);
-                con.Open();
-                SqlDataReader dr = cmd.ExecuteReader();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaterialID", materialId);
 
-                listBox.DataSource = dr;
-                listBox.DataTextField = "Serial_Number";
-                listBox.DataValueField = "Stock_ID";
-                listBox.DataBind();
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        da.Fill(dtSerials);
+                    }
+                }
             }
+
+            return dtSerials;
         }
+
+
+
+
 
 
 

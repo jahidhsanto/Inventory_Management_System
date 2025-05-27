@@ -24,12 +24,12 @@ namespace STORE_FINAL.Test_02
         protected global::System.Web.UI.WebControls.DropDownList ddlRequisition;
 
         /// <summary>
-        /// gvItems control.
+        /// gvMaterials control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvItems;
+        protected global::System.Web.UI.WebControls.GridView gvMaterials;
     }
 }
