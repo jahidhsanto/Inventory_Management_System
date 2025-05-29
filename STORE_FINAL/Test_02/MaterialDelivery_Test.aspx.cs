@@ -19,54 +19,62 @@ namespace STORE_FINAL.Test_02
         {
             if (!IsPostBack)
             {
-                LoadRequisitions();
+                LoadRequisitionDropdown();
             }
         }
 
-        private void LoadRequisitions()
+        private void LoadRequisitionDropdown()
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                SqlCommand cmd = new SqlCommand("SELECT Requisition_ID FROM Requisition_Parent", con);
-                con.Open();
-                ddlRequisition.DataSource = cmd.ExecuteReader();
+                string query = @"
+                    select Requisition_ID 
+                    from Requisition_Parent
+                    where Dept_Status = 'Approved' 
+                        AND Store_Status = 'Pending';";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                ddlRequisition.DataSource = dr;
                 ddlRequisition.DataTextField = "Requisition_ID";
                 ddlRequisition.DataValueField = "Requisition_ID";
                 ddlRequisition.DataBind();
-                ddlRequisition.Items.Insert(0, new ListItem("-- Select Requisition --", "0"));
             }
+
+            ddlRequisition.Items.Insert(0, new ListItem("-- Select Requisition --", ""));
         }
 
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int requisitionId = int.Parse(ddlRequisition.SelectedValue);
-            if (requisitionId > 0)
-            {
-                LoadMaterials(requisitionId);
-            }
+            int requisitionId = Convert.ToInt32(ddlRequisition.SelectedValue);
+            LoadMaterialsByRequisition(requisitionId);
         }
 
-        private void LoadMaterials(int requisitionId)
+        private void LoadMaterialsByRequisition(int requisitionId)
         {
-            using (SqlConnection con = new SqlConnection(connStr))
+            DataTable dt = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = @"
-                    SELECT m.Material_ID, m.Materials_Name, m.Requires_Serial_Number
+                    SELECT 
+                        ric.Material_ID,
+                        m.Materials_Name,
+                        ric.Quantity,
+                        m.Requires_Serial_Number
                     FROM Requisition_Item_Child ric
                     JOIN Material m ON m.Material_ID = ric.Material_ID
                     WHERE ric.Requisition_ID = @Requisition_ID";
 
-                SqlCommand cmd = new SqlCommand(query, con);
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Requisition_ID", requisitionId);
-
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
                 da.Fill(dt);
-
-                ViewState["MaterialsData"] = dt;
-                gvMaterials.DataSource = dt;
-                gvMaterials.DataBind();
             }
+
+            gvMaterials.DataSource = dt;
+            gvMaterials.DataBind();
         }
 
         protected void gvMaterials_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -78,28 +86,29 @@ namespace STORE_FINAL.Test_02
                 bool requiresSerial = dataItem["Requires_Serial_Number"].ToString() == "Yes";
                 int materialId = Convert.ToInt32(dataItem["Material_ID"]);
 
-                TextBox txtQty = (TextBox)e.Row.FindControl("txtQty");
-                ListBox lstSerials = (ListBox)e.Row.FindControl("lstSerialNumbers");
+                Panel pnlSerialInput = (Panel)e.Row.FindControl("pnlSerialInput");
+                Panel pnlQtyInput = (Panel)e.Row.FindControl("pnlQtyInput");
+                ListBox txtSerialNumbers = (ListBox)e.Row.FindControl("txtSerialNumbers");
 
                 if (requiresSerial)
                 {
-                    txtQty.Visible = false;
-                    lstSerials.Visible = true;
+                    pnlSerialInput.Visible = true;
 
                     // Fetch from DB or ViewState
-                    lstSerials.DataSource = GetAvailableSerials(materialId); // Your method
-                    lstSerials.DataTextField = "Serial_Number";
-                    lstSerials.DataValueField = "Serial_Number";
-                    lstSerials.DataBind();
+                    txtSerialNumbers.DataSource = GetAvailableSerials(materialId);
+                    txtSerialNumbers.DataTextField = "Serial_Number";
+                    txtSerialNumbers.DataValueField = "Serial_Number";
+                    txtSerialNumbers.DataBind();
                 }
                 else
                 {
-                    txtQty.Visible = true;
-                    txtQty.Attributes["min"] = "1";
-                    lstSerials.Visible = false;
+                    pnlQtyInput.Visible = true;
+                    pnlQtyInput.Attributes["min"] = "1";
                 }
             }
         }
+
+
 
         private DataTable GetAvailableSerials(int materialId)
         {
@@ -107,12 +116,13 @@ namespace STORE_FINAL.Test_02
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT Serial_Number 
-                         FROM Stock 
-                         WHERE Material_ID = @MaterialID 
-                           AND Availability = 'AVAILABLE'
-                           AND Status = 'ACTIVE'
-                           AND Serial_Number IS NOT NULL";
+                string query = @"
+                    SELECT Serial_Number 
+                    FROM Stock 
+                    WHERE Material_ID = @MaterialID 
+                        AND Availability = 'AVAILABLE'
+                        AND Status = 'ACTIVE'
+                        AND Serial_Number IS NOT NULL";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -129,8 +139,36 @@ namespace STORE_FINAL.Test_02
         }
 
 
+        protected void btnDeliver_Click(object sender, EventArgs e)
+        {
+            foreach (GridViewRow row in gvMaterials.Rows)
+            {
+                int materialId = Convert.ToInt32(gvMaterials.DataKeys[row.RowIndex].Value);
 
+                Panel pnlSerialInput = (Panel)row.FindControl("pnlSerialInput");
+                Panel pnlQtyInput = (Panel)row.FindControl("pnlQtyInput");
 
+                if (pnlSerialInput.Visible)
+                {
+                    TextBox txtSerialNumbers = (TextBox)row.FindControl("txtSerialNumbers");
+                    string[] serials = txtSerialNumbers.Text.Split(',');
+
+                    foreach (string serial in serials)
+                    {
+                        // Insert serial into Stock table and mark as DELIVERED
+                    }
+                }
+                else if (pnlQtyInput.Visible)
+                {
+                    TextBox txtQuantity = (TextBox)row.FindControl("txtQuantity");
+                    int quantity = int.Parse(txtQuantity.Text);
+
+                    // Deduct stock from Stock table by quantity and mark as DELIVERED
+                }
+            }
+
+            // Update Store_Status = 'Delivered' in Requisition_Parent
+        }
 
 
 

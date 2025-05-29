@@ -266,9 +266,10 @@ namespace STORE_FINAL.Test_02
             {
                 // Prepare the SQL query for updating the requisition status
                 string updateQuery = string.Empty;
-                string status = string.Empty;
+                string Dept_Status = string.Empty;
+                string Store_Status = string.Empty;
                 string remarks = string.Empty;
-
+                
                 // Get the Remarks textbox from the Repeater Item
                 TextBox txtRemarks = (TextBox)e.Item.FindControl("txtRemarks");
                 remarks = txtRemarks?.Text ?? string.Empty;
@@ -276,15 +277,16 @@ namespace STORE_FINAL.Test_02
                 // Determine the action based on the CommandName
                 if (e.CommandName == "Approve")
                 {
-                    status = "Approved";  // Set the status to "Approved"
+                    Dept_Status = "Approved";  // Set the department status to "Approved"
+                    Store_Status = "Pending";
                 }
                 else if (e.CommandName == "Reject")
                 {
-                    status = "Rejected";  // Set the status to "Rejected"
+                    Dept_Status = "Rejected";  // Set the department status to "Rejected"
                 }
                 else if (e.CommandName == "Pending")
                 {
-                    status = "Pending";   // Set the status to "Pending"
+                    Dept_Status = "Pending";   // Set the department status to "Pending"
                 }
 
                 // Only update if Store_Status is either "Pending" or NULL
@@ -292,7 +294,8 @@ namespace STORE_FINAL.Test_02
                 {
                     updateQuery = @"
                         UPDATE Requisition_Parent
-                        SET Dept_Status = @Status,
+                        SET Dept_Status = @Dept_Status,
+                            Store_Status = @Store_Status,
                             Dept_Approved_By = @ApprovedBy,
                             Dept_Approval_Remarks = @Remarks,
                             Dept_Approval_Date = GETDATE()
@@ -300,7 +303,8 @@ namespace STORE_FINAL.Test_02
 
                     // Prepare the SQL command and add parameters
                     SqlCommand cmd = new SqlCommand(updateQuery, con);
-                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.Parameters.AddWithValue("@Dept_Status", Dept_Status);
+                    cmd.Parameters.AddWithValue("@Store_Status", string.IsNullOrEmpty(Store_Status) ? (object)DBNull.Value : Store_Status);
                     cmd.Parameters.AddWithValue("@ApprovedBy", Convert.ToInt32(Session["EmployeeID"])); // Assuming EmployeeID is stored in the session
                     cmd.Parameters.AddWithValue("@Remarks", remarks);
                     cmd.Parameters.AddWithValue("@Requisition_ID", requisitionId);

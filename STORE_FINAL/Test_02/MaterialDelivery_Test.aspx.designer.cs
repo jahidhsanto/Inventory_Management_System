@@ -15,6 +15,15 @@ namespace STORE_FINAL.Test_02
     {
 
         /// <summary>
+        /// pnlMaterialDelivery control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMaterialDelivery;
+
+        /// <summary>
         /// ddlRequisition control.
         /// </summary>
         /// <remarks>
@@ -31,5 +40,14 @@ namespace STORE_FINAL.Test_02
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvMaterials;
+
+        /// <summary>
+        /// btnDeliver control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDeliver;
     }
 }
