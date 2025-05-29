@@ -31,7 +31,30 @@
                 </asp:DropDownList>
             </div>
         </div>
-
+<!-- Requisition Info Panel -->
+<asp:Panel ID="pnlRequisitionInfo" runat="server" CssClass="card shadow-sm border-info mb-4" Visible="false">
+    <div class="card-header bg-info text-white fw-bold">
+        Requisition Information
+    </div>
+    <div class="card-body row">
+        <div class="col-md-4">
+            <label class="form-label">Requisition Date:</label>
+            <asp:Label ID="lblRequisitionDate" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Requested By:</label>
+            <asp:Label ID="lblRequestedBy" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Department:</label>
+            <asp:Label ID="lblDepartment" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
+        </div>
+        <div class="col-md-12 mt-3">
+            <label class="form-label">Purpose:</label>
+            <asp:Label ID="lblPurpose" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
+        </div>
+    </div>
+</asp:Panel>
         <!-- GridView for Materials -->
         <div class="table-scroll">
             <asp:GridView ID="gvMaterials" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered fixed-table"

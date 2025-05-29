@@ -33,6 +33,51 @@ namespace STORE_FINAL.Test_02
         protected global::System.Web.UI.WebControls.DropDownList ddlRequisition;
 
         /// <summary>
+        /// pnlRequisitionInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlRequisitionInfo;
+
+        /// <summary>
+        /// lblRequisitionDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRequisitionDate;
+
+        /// <summary>
+        /// lblRequestedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRequestedBy;
+
+        /// <summary>
+        /// lblDepartment control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDepartment;
+
+        /// <summary>
+        /// lblPurpose control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPurpose;
+
+        /// <summary>
         /// gvMaterials control.
         /// </summary>
         /// <remarks>

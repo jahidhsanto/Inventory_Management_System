@@ -48,10 +48,48 @@ namespace STORE_FINAL.Test_02
         protected void ddlRequisition_SelectedIndexChanged(object sender, EventArgs e)
         {
             int requisitionId = Convert.ToInt32(ddlRequisition.SelectedValue);
-            LoadMaterialsByRequisition(requisitionId);
+
+            LoadRequisitionDetails(requisitionId);
+            LoadRequisitionMaterials(requisitionId);
         }
 
-        private void LoadMaterialsByRequisition(int requisitionId)
+        private void LoadRequisitionDetails(int requisitionId)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"SELECT RP.Created_Date AS Requisition_Date, E.Name AS Requested_By, D.DepartmentName AS Department, RP.Requisition_For AS Purpose 
+                         FROM Requisition_Parent RP
+                         JOIN Employee E ON RP.CreatedByEmployee_ID = E.Employee_ID
+                         JOIN Department D ON E.Department_ID = D.Department_ID
+                         WHERE Requisition_ID = @ReqID";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ReqID", requisitionId);
+                    conn.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            lblRequisitionDate.Text = Convert.ToDateTime(reader["Requisition_Date"]).ToString("dd MMM yyyy");
+                            lblRequestedBy.Text = reader["Requested_By"].ToString();
+                            lblDepartment.Text = reader["Department"].ToString();
+                            lblPurpose.Text = reader["Purpose"].ToString();
+
+                            pnlRequisitionInfo.Visible = true;
+                        }
+                        else
+                        {
+                            pnlRequisitionInfo.Visible = false;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private void LoadRequisitionMaterials(int requisitionId)
         {
             DataTable dt = new DataTable();
 
