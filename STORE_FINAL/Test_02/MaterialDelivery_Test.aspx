@@ -23,41 +23,99 @@
     <asp:Panel ID="pnlMaterialDelivery" runat="server" CssClass="container mt-4">
 
         <!-- Requisition Number Dropdown -->
-        <div class="form-group row mb-3">
-            <label for="ddlRequisition" class="col-sm-2 col-form-label fw-bold">Requisition No:</label>
+        <div class="form-group row mb-3 align-items-center">
+            <label for="ddlRequisition" class="col-sm-2 col-form-label">Requisition No:</label>
             <div class="col-sm-6">
-                <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-control" AutoPostBack="true"
-                    OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged">
+                <asp:DropDownList ID="ddlRequisition" runat="server" CssClass="form-select" AutoPostBack="true"
+                    OnSelectedIndexChanged="ddlRequisition_SelectedIndexChanged" ToolTip="Select Requisition Number">
                 </asp:DropDownList>
             </div>
         </div>
-<!-- Requisition Info Panel -->
-<asp:Panel ID="pnlRequisitionInfo" runat="server" CssClass="card shadow-sm border-info mb-4" Visible="false">
-    <div class="card-header bg-info text-white fw-bold">
-        Requisition Information
-    </div>
-    <div class="card-body row">
-        <div class="col-md-4">
-            <label class="form-label">Requisition Date:</label>
-            <asp:Label ID="lblRequisitionDate" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Requested By:</label>
-            <asp:Label ID="lblRequestedBy" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Department:</label>
-            <asp:Label ID="lblDepartment" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
-        </div>
-        <div class="col-md-12 mt-3">
-            <label class="form-label">Purpose:</label>
-            <asp:Label ID="lblPurpose" runat="server" CssClass="form-control-plaintext text-dark"></asp:Label>
-        </div>
-    </div>
-</asp:Panel>
+
+        <!-- Requisition Info Panel -->
+        <asp:Panel ID="pnlRequisitionDeliveryInfo" runat="server" CssClass="card shadow border-start border-3 border-primary mb-3" Visible="false">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-info-circle-fill me-2"></i>Material Delivery Context
+            </div>
+            <div class="card-body">
+                <!-- Requisition Basic Info -->
+                <div class="row g-2 mb-2">
+                    <div class="col-md-2 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Requisition No:</label>
+                        <asp:Label ID="lblReqNo" runat="server" CssClass="badge bg-primary ms-2" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Created Date:</label>
+                        <asp:Label ID="lblCreatedDate" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Requisition Type:</label>
+                        <asp:Label ID="lblReqType" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Requested By:</label>
+                        <asp:Label ID="lblRequestedBy" runat="server" CssClass="text-dark" />
+                    </div>
+                </div>
+
+                <!-- Recipient Info -->
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Recipient Info:</label>
+                        <asp:Label ID="lblRecipientInfo" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Purpose:</label>
+                        <asp:Label ID="lblPurpose" runat="server" CssClass="text-dark" />
+                    </div>
+                </div>
+
+                <!-- Department Approval -->
+                <div class="row g-2 border-top pt-3 mb-2">
+                    <div class="col-md-2 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Dept Status:</label>
+                        <asp:Label ID="lblDeptStatus" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Approved By:</label>
+                        <asp:Label ID="lblDeptApprovedBy" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Approval Date:</label>
+                        <asp:Label ID="lblDeptApprovalDate" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold mb-1">Remarks:</label>
+                        <asp:Label ID="lblDeptRemarks" runat="server" CssClass="text-dark d-block" />
+                    </div>
+                </div>
+
+                <!-- Store Approval -->
+                <div class="row g-2 border-top pt-3">
+                    <div class="col-md-2 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Store Status:</label>
+                        <asp:Label ID="lblStoreStatus" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Approved By:</label>
+                        <asp:Label ID="lblStoreApprovedBy" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-3 d-flex">
+                        <label class="form-label fw-semibold me-2 mb-0 flex-shrink-0">Approval Date:</label>
+                        <asp:Label ID="lblStoreApprovalDate" runat="server" CssClass="text-dark" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold mb-1">Remarks:</label>
+                        <asp:Label ID="lblStoreRemarks" runat="server" CssClass="text-dark d-block" />
+                    </div>
+                </div>
+            </div>
+        </asp:Panel>
+
         <!-- GridView for Materials -->
         <div class="table-scroll">
-            <asp:GridView ID="gvMaterials" runat="server" AutoGenerateColumns="False" CssClass="table table-striped table-bordered fixed-table"
+            <asp:GridView ID="gvMaterials" runat="server" DataKeyNames="Material_ID" AutoGenerateColumns="False"
+                CssClass="table table-hover table-bordered fixed-table align-middle"
                 OnRowDataBound="gvMaterials_RowDataBound">
                 <Columns>
                     <asp:BoundField DataField="Material_ID" HeaderText="Material ID" ReadOnly="true"
@@ -73,7 +131,7 @@
                         <ItemTemplate>
                             <asp:Panel ID="pnlSerialInput" runat="server" Visible="false">
                                 <asp:ListBox ID="txtSerialNumbers" runat="server" CssClass="form-control select2"
-                                    SelectionMode="Multiple" data-placeholder="Enter Serial Numbers"></asp:ListBox>
+                                    SelectionMode="Multiple" data-placeholder="Enter Serial Numbers" ToolTip="Enter Serial Numbers separated by commas"></asp:ListBox>
                             </asp:Panel>
                             <asp:Panel ID="pnlQtyInput" runat="server" Visible="false">
                                 <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control"
@@ -84,9 +142,10 @@
                 </Columns>
             </asp:GridView>
         </div>
+
         <!-- Submit Button -->
         <div class="text-end mt-4">
-            <asp:Button ID="btnDeliver" runat="server" Text="Deliver Materials" CssClass="btn btn-primary"
+            <asp:Button ID="btnDeliver" runat="server" Text="Deliver Materials" CssClass="btn btn-success px-4 py-2 shadow-sm"
                 OnClick="btnDeliver_Click" />
         </div>
     </asp:Panel>
@@ -96,6 +155,7 @@
             if (parseFloat(input.value) <= 0) {
                 alert("Quantity must be greater than 0.");
                 input.value = "";
+                input.focus();
             }
         }
     </script>

@@ -57,11 +57,42 @@ namespace STORE_FINAL.Test_02
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT RP.Created_Date AS Requisition_Date, E.Name AS Requested_By, D.DepartmentName AS Department, RP.Requisition_For AS Purpose 
-                         FROM Requisition_Parent RP
-                         JOIN Employee E ON RP.CreatedByEmployee_ID = E.Employee_ID
-                         JOIN Department D ON E.Department_ID = D.Department_ID
-                         WHERE Requisition_ID = @ReqID";
+                string query = @"
+        SELECT 
+            RP.Requisition_ID,
+            RP.Created_Date,
+            RP.Requisition_For,
+            RP.Requisition_Purpose,
+            RP.Dept_Status,
+            RP.Dept_Approval_Date,
+            RP.Dept_Approval_Remarks,
+            DeptApprover.Name AS Dept_Approved_By,
+            RP.Store_Status,
+            RP.Store_Approval_Date,
+            RP.Store_Approval_Remarks,
+            StoreApprover.Name AS Store_Approved_By,
+            E.Name AS Requested_By,
+            D.DepartmentName AS Requester_Department,
+
+            -- Recipient names
+            EmpFor.Name AS Employee_For_Name,
+            DeptFor.DepartmentName AS Department_For_Name,
+            Z.Zone_Name AS Zone_For_Name,
+            P.Project_Name AS Project_For_Name
+
+        FROM Requisition_Parent RP
+        INNER JOIN Employee E ON RP.CreatedByEmployee_ID = E.Employee_ID
+        LEFT JOIN Department D ON E.Department_ID = D.Department_ID
+
+        LEFT JOIN Employee DeptApprover ON RP.Dept_Approved_By = DeptApprover.Employee_ID
+        LEFT JOIN Employee StoreApprover ON RP.Store_Approved_By = StoreApprover.Employee_ID
+
+        LEFT JOIN Employee EmpFor ON RP.Employee_ID_For = EmpFor.Employee_ID
+        LEFT JOIN Department DeptFor ON RP.Department_ID_For = DeptFor.Department_ID
+        LEFT JOIN Zone Z ON RP.Zone_ID_For = Z.Zone_ID
+        LEFT JOIN Project P ON RP.Project_Code_For = P.Project_Code
+
+        WHERE RP.Requisition_ID = @ReqID";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -72,22 +103,60 @@ namespace STORE_FINAL.Test_02
                     {
                         if (reader.Read())
                         {
-                            lblRequisitionDate.Text = Convert.ToDateTime(reader["Requisition_Date"]).ToString("dd MMM yyyy");
+                            // Basic Info
+                            lblReqNo.Text = requisitionId.ToString();
+                            lblCreatedDate.Text = Convert.ToDateTime(reader["Created_Date"]).ToString("dd MMM yyyy");
+                            lblReqType.Text = reader["Requisition_For"].ToString();
                             lblRequestedBy.Text = reader["Requested_By"].ToString();
-                            lblDepartment.Text = reader["Department"].ToString();
-                            lblPurpose.Text = reader["Purpose"].ToString();
 
-                            pnlRequisitionInfo.Visible = true;
+                            // Purpose (if applicable)
+                            string reqFor = reader["Requisition_For"].ToString();
+                            lblPurpose.Text = reqFor == "Project" ? reader["Requisition_Purpose"]?.ToString() : "-";
+
+                            // Recipient Info
+                            switch (reqFor)
+                            {
+                                case "Employee":
+                                    lblRecipientInfo.Text = reader["Employee_For_Name"]?.ToString();
+                                    break;
+                                case "Department":
+                                    lblRecipientInfo.Text = reader["Department_For_Name"]?.ToString();
+                                    break;
+                                case "Zone":
+                                    lblRecipientInfo.Text = reader["Zone_For_Name"]?.ToString();
+                                    break;
+                                case "Project":
+                                    lblRecipientInfo.Text = reader["Project_For_Name"]?.ToString();
+                                    break;
+                                default:
+                                    lblRecipientInfo.Text = "-";
+                                    break;
+                            }
+
+                            // Department Approval
+                            lblDeptStatus.Text = reader["Dept_Status"]?.ToString();
+                            lblDeptApprovedBy.Text = reader["Dept_Approved_By"]?.ToString();
+                            lblDeptApprovalDate.Text = reader["Dept_Approval_Date"] == DBNull.Value ? "-" :
+                                Convert.ToDateTime(reader["Dept_Approval_Date"]).ToString("dd MMM yyyy");
+                            lblDeptRemarks.Text = reader["Dept_Approval_Remarks"]?.ToString();
+
+                            // Store Approval
+                            lblStoreStatus.Text = reader["Store_Status"]?.ToString();
+                            lblStoreApprovedBy.Text = reader["Store_Approved_By"]?.ToString();
+                            lblStoreApprovalDate.Text = reader["Store_Approval_Date"] == DBNull.Value ? "-" :
+                                Convert.ToDateTime(reader["Store_Approval_Date"]).ToString("dd MMM yyyy");
+                            lblStoreRemarks.Text = reader["Store_Approval_Remarks"]?.ToString();
+
+                            pnlRequisitionDeliveryInfo.Visible = true;
                         }
                         else
                         {
-                            pnlRequisitionInfo.Visible = false;
+                            pnlRequisitionDeliveryInfo.Visible = false;
                         }
                     }
                 }
             }
         }
-
 
         private void LoadRequisitionMaterials(int requisitionId)
         {
@@ -146,8 +215,6 @@ namespace STORE_FINAL.Test_02
             }
         }
 
-
-
         private DataTable GetAvailableSerials(int materialId)
         {
             DataTable dtSerials = new DataTable();
@@ -179,35 +246,104 @@ namespace STORE_FINAL.Test_02
 
         protected void btnDeliver_Click(object sender, EventArgs e)
         {
-            foreach (GridViewRow row in gvMaterials.Rows)
+            int requisitionId = Convert.ToInt32(ddlRequisition.SelectedValue);
+            bool isSuccess = true;
+
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                int materialId = Convert.ToInt32(gvMaterials.DataKeys[row.RowIndex].Value);
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
 
-                Panel pnlSerialInput = (Panel)row.FindControl("pnlSerialInput");
-                Panel pnlQtyInput = (Panel)row.FindControl("pnlQtyInput");
-
-                if (pnlSerialInput.Visible)
+                try
                 {
-                    TextBox txtSerialNumbers = (TextBox)row.FindControl("txtSerialNumbers");
-                    string[] serials = txtSerialNumbers.Text.Split(',');
-
-                    foreach (string serial in serials)
+                    foreach (GridViewRow row in gvMaterials.Rows)
                     {
-                        // Insert serial into Stock table and mark as DELIVERED
+                        int materialId = Convert.ToInt32(gvMaterials.DataKeys[row.RowIndex].Value);
+                        Panel pnlSerialInput = (Panel)row.FindControl("pnlSerialInput");
+                        Panel pnlQtyInput = (Panel)row.FindControl("pnlQtyInput");
+
+                        if (pnlSerialInput.Visible)
+                        {
+                            ListBox lstSerialNumbers = (ListBox)row.FindControl("txtSerialNumbers");
+                            foreach (ListItem item in lstSerialNumbers.Items)
+                            {
+                                if (item.Selected)
+                                {
+                                    // Insert into Material_Delivery
+                                    SqlCommand cmdInsert = new SqlCommand("INSERT INTO Material_Delivery (Requisition_ID, Material_ID, Serial_Number, Quantity) VALUES (@Requisition_ID, @Material_ID, @Serial_Number, 1)", conn, transaction);
+                                    cmdInsert.Parameters.AddWithValue("@Requisition_ID", requisitionId);
+                                    cmdInsert.Parameters.AddWithValue("@Material_ID", materialId);
+                                    cmdInsert.Parameters.AddWithValue("@Serial_Number", item.Value);
+                                    cmdInsert.ExecuteNonQuery();
+
+                                    // Update Stock
+                                    //SqlCommand cmdUpdate = new SqlCommand("UPDATE Stock SET Availability = 'DELIVERED' WHERE Serial_Number = @Serial_Number", conn, transaction);
+                                    //cmdUpdate.Parameters.AddWithValue("@Serial_Number", item.Value);
+                                    //cmdUpdate.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        else if (pnlQtyInput.Visible)
+                        {
+                            TextBox txtQuantity = (TextBox)row.FindControl("txtQuantity");
+                            int quantity;
+                            if (int.TryParse(txtQuantity.Text.Trim(), out quantity) && quantity > 0)
+                            {
+                                // Insert into Material_Delivery
+                                SqlCommand cmdInsert = new SqlCommand("INSERT INTO Material_Delivery (Requisition_ID, Material_ID, Quantity) VALUES (@Requisition_ID, @Material_ID, @Quantity)", conn, transaction);
+                                cmdInsert.Parameters.AddWithValue("@Requisition_ID", requisitionId);
+                                cmdInsert.Parameters.AddWithValue("@Material_ID", materialId);
+                                cmdInsert.Parameters.AddWithValue("@Quantity", quantity);
+                                cmdInsert.ExecuteNonQuery();
+
+                                // Update Stock
+                                SqlCommand cmdUpdate = new SqlCommand("UPDATE Stock SET Quantity = Quantity - @Quantity WHERE Material_ID = @Material_ID", conn, transaction);
+                                cmdUpdate.Parameters.AddWithValue("@Quantity", quantity);
+                                cmdUpdate.Parameters.AddWithValue("@Material_ID", materialId);
+                                cmdUpdate.ExecuteNonQuery();
+                            }
+                            else
+                            {
+                                isSuccess = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isSuccess)
+                    {
+                        transaction.Commit();
+                        ShowMessage("Materials delivered successfully.", true);
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        ShowMessage("Failed to deliver materials. Please check the inputs.", false);
                     }
                 }
-                else if (pnlQtyInput.Visible)
+                catch (Exception ex)
                 {
-                    TextBox txtQuantity = (TextBox)row.FindControl("txtQuantity");
-                    int quantity = int.Parse(txtQuantity.Text);
-
-                    // Deduct stock from Stock table by quantity and mark as DELIVERED
+                    transaction.Rollback();
+                    ShowMessage("An error occurred: " + ex.Message, false);
                 }
             }
-
-            // Update Store_Status = 'Delivered' in Requisition_Parent
         }
 
+        private void ShowMessage(string message, bool isSuccess)
+        {
+            string messageType = isSuccess ? "success" : "error";
+            string escapedMessage = message.Replace("'", "\\'"); // Escape single quotes
+
+            string js = $@"
+                            setTimeout(function() {{
+                                if (typeof showToast === 'function') {{
+                                    showToast('{escapedMessage}', '{messageType}');
+                                }}
+                            }}, 100);
+                        ";
+
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "ShowToastMessage", js, true);
+        }
 
 
         //        private DataTable CreateItemTable()

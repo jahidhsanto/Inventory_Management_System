@@ -33,22 +33,40 @@ namespace STORE_FINAL.Test_02
         protected global::System.Web.UI.WebControls.DropDownList ddlRequisition;
 
         /// <summary>
-        /// pnlRequisitionInfo control.
+        /// pnlRequisitionDeliveryInfo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlRequisitionInfo;
+        protected global::System.Web.UI.WebControls.Panel pnlRequisitionDeliveryInfo;
 
         /// <summary>
-        /// lblRequisitionDate control.
+        /// lblReqNo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRequisitionDate;
+        protected global::System.Web.UI.WebControls.Label lblReqNo;
+
+        /// <summary>
+        /// lblCreatedDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCreatedDate;
+
+        /// <summary>
+        /// lblReqType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblReqType;
 
         /// <summary>
         /// lblRequestedBy control.
@@ -60,13 +78,13 @@ namespace STORE_FINAL.Test_02
         protected global::System.Web.UI.WebControls.Label lblRequestedBy;
 
         /// <summary>
-        /// lblDepartment control.
+        /// lblRecipientInfo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDepartment;
+        protected global::System.Web.UI.WebControls.Label lblRecipientInfo;
 
         /// <summary>
         /// lblPurpose control.
@@ -76,6 +94,78 @@ namespace STORE_FINAL.Test_02
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPurpose;
+
+        /// <summary>
+        /// lblDeptStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDeptStatus;
+
+        /// <summary>
+        /// lblDeptApprovedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDeptApprovedBy;
+
+        /// <summary>
+        /// lblDeptApprovalDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDeptApprovalDate;
+
+        /// <summary>
+        /// lblDeptRemarks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDeptRemarks;
+
+        /// <summary>
+        /// lblStoreStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStoreStatus;
+
+        /// <summary>
+        /// lblStoreApprovedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStoreApprovedBy;
+
+        /// <summary>
+        /// lblStoreApprovalDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStoreApprovalDate;
+
+        /// <summary>
+        /// lblStoreRemarks control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStoreRemarks;
 
         /// <summary>
         /// gvMaterials control.
