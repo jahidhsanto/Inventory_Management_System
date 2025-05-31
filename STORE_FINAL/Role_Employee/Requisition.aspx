@@ -27,7 +27,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <h2 class="mt-3 text-center">Requisition Management</h2>
-        <a href="/Dashboard" class="btn btn-primary">Switch Dashboard 01</a>
+        <a href="/Test_02/Requisitions_Test" class="btn btn-primary">Switch Dashboard 01</a>
 
         <div class="accordion mt-4" id="requisitionManagementAccordion">
 

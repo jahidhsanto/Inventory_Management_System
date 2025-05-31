@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="MaterialDelivery_Test.aspx.cs" Inherits="STORE_FINAL.Test_02.MaterialDelivery_Test" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/UserDashboard/MasterDashboard.Master" AutoEventWireup="true" CodeBehind="MaterialDelivery_Test_01.aspx.cs" Inherits="STORE_FINAL.Test_02.MaterialDelivery_Test" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
@@ -123,19 +123,28 @@
                     <asp:BoundField DataField="Materials_Name" HeaderText="Material Name"
                         HeaderStyle-Width="200px" ItemStyle-Width="200px" />
                     <asp:BoundField DataField="Quantity" HeaderText="Required Qty"
-                        HeaderStyle-Width="120px" ItemStyle-Width="120px" />
+                        HeaderStyle-Width="80px" ItemStyle-Width="80px" />
 
                     <%--Serial Number or Quantity Entry--%>
-                    <asp:TemplateField HeaderText="Delivery Input"
-                        HeaderStyle-Width="150px" ItemStyle-Width="150px">
+                    <asp:TemplateField HeaderText="Quantity / Serial / Location"
+                        HeaderStyle-Width="200px" ItemStyle-Width="200px">
                         <ItemTemplate>
                             <asp:Panel ID="pnlSerialInput" runat="server" Visible="false">
                                 <asp:ListBox ID="txtSerialNumbers" runat="server" CssClass="form-control select2"
                                     SelectionMode="Multiple" data-placeholder="Enter Serial Numbers" ToolTip="Enter Serial Numbers separated by commas"></asp:ListBox>
                             </asp:Panel>
                             <asp:Panel ID="pnlQtyInput" runat="server" Visible="false">
-                                <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control"
-                                    TextMode="Number" placeholder="Enter Quantity" onblur="validateQty(this)"></asp:TextBox>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div>
+                                        <asp:Label runat="server" Text="Qty: " AssociatedControlID="txtQuantity" />
+                                        <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control"
+                                            TextMode="Number" placeholder="Enter Quantity" onblur="validateQty(this)"></asp:TextBox>
+                                    </div>
+                                    <div>
+                                        <asp:Label runat="server" Text="Location: " AssociatedControlID="ddlLocation" />
+                                        <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-select"></asp:DropDownList>
+                                    </div>
+                                </div>
                             </asp:Panel>
                         </ItemTemplate>
                     </asp:TemplateField>

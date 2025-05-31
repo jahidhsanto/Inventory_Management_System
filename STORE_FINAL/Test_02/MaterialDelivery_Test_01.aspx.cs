@@ -180,6 +180,8 @@ namespace STORE_FINAL.Test_02
                 da.Fill(dt);
             }
 
+            ViewState["MaterialsTable"] = dt;
+
             gvMaterials.DataSource = dt;
             gvMaterials.DataBind();
         }
@@ -196,6 +198,7 @@ namespace STORE_FINAL.Test_02
                 Panel pnlSerialInput = (Panel)e.Row.FindControl("pnlSerialInput");
                 Panel pnlQtyInput = (Panel)e.Row.FindControl("pnlQtyInput");
                 ListBox txtSerialNumbers = (ListBox)e.Row.FindControl("txtSerialNumbers");
+                DropDownList ddlLocation = (DropDownList)e.Row.FindControl("ddlLocation");
 
                 if (requiresSerial)
                 {
@@ -211,10 +214,44 @@ namespace STORE_FINAL.Test_02
                 {
                     pnlQtyInput.Visible = true;
                     pnlQtyInput.Attributes["min"] = "1";
+
+                    // Bind locations
+                    ddlLocation.DataSource = GetAvailableLocations(materialId); // ← Implement this method
+                    ddlLocation.DataTextField = "Location_Name";
+                    ddlLocation.DataValueField = "Location_ID";
+                    ddlLocation.DataBind();
+                    ddlLocation.Items.Insert(0, new ListItem("-- Select Location --", ""));
                 }
             }
         }
 
+        private DataTable GetAvailableLocations(int materialId)
+        {
+            DataTable dtLocations = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = @"
+                    SELECT DISTINCT Stock_ID AS Location_ID, CONCAT(Rack_Number, ' ', Shelf_Number) AS Location_Name 
+                    FROM Stock 
+                    WHERE Material_ID = @MaterialID 
+                        AND Availability = 'AVAILABLE'
+                        AND Status = 'ACTIVE'
+                        AND Stock_ID IS NOT NULL";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaterialID", materialId);
+
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        da.Fill(dtLocations);
+                    }
+                }
+            }
+
+            return dtLocations;
+        }
         private DataTable GetAvailableSerials(int materialId)
         {
             DataTable dtSerials = new DataTable();
@@ -243,88 +280,77 @@ namespace STORE_FINAL.Test_02
             return dtSerials;
         }
 
-
         protected void btnDeliver_Click(object sender, EventArgs e)
         {
-            int requisitionId = Convert.ToInt32(ddlRequisition.SelectedValue);
-            bool isSuccess = true;
+            DataTable finalTable = new DataTable();
+            finalTable.Columns.Add("Material_ID", typeof(int));
+            finalTable.Columns.Add("Quantity", typeof(int));
+            finalTable.Columns.Add("Serial_Number", typeof(string));
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            for (int i = 0; i < gvMaterials.Rows.Count; i++)
             {
-                conn.Open();
-                SqlTransaction transaction = conn.BeginTransaction();
+                GridViewRow row = gvMaterials.Rows[i];
 
-                try
+                int materialId = Convert.ToInt32(gvMaterials.DataKeys[row.RowIndex].Value);
+                Panel pnlSerialInput = (Panel)row.FindControl("pnlSerialInput");
+                Panel pnlQtyInput = (Panel)row.FindControl("pnlQtyInput");
+
+                if (pnlSerialInput.Visible)
                 {
-                    foreach (GridViewRow row in gvMaterials.Rows)
+                    ListBox lstSerials = (ListBox)row.FindControl("txtSerialNumbers");
+
+                    foreach (ListItem serial in lstSerials.Items)
                     {
-                        int materialId = Convert.ToInt32(gvMaterials.DataKeys[row.RowIndex].Value);
-                        Panel pnlSerialInput = (Panel)row.FindControl("pnlSerialInput");
-                        Panel pnlQtyInput = (Panel)row.FindControl("pnlQtyInput");
-
-                        if (pnlSerialInput.Visible)
+                        if (serial.Selected)
                         {
-                            ListBox lstSerialNumbers = (ListBox)row.FindControl("txtSerialNumbers");
-                            foreach (ListItem item in lstSerialNumbers.Items)
-                            {
-                                if (item.Selected)
-                                {
-                                    // Insert into Material_Delivery
-                                    SqlCommand cmdInsert = new SqlCommand("INSERT INTO Material_Delivery (Requisition_ID, Material_ID, Serial_Number, Quantity) VALUES (@Requisition_ID, @Material_ID, @Serial_Number, 1)", conn, transaction);
-                                    cmdInsert.Parameters.AddWithValue("@Requisition_ID", requisitionId);
-                                    cmdInsert.Parameters.AddWithValue("@Material_ID", materialId);
-                                    cmdInsert.Parameters.AddWithValue("@Serial_Number", item.Value);
-                                    cmdInsert.ExecuteNonQuery();
-
-                                    // Update Stock
-                                    //SqlCommand cmdUpdate = new SqlCommand("UPDATE Stock SET Availability = 'DELIVERED' WHERE Serial_Number = @Serial_Number", conn, transaction);
-                                    //cmdUpdate.Parameters.AddWithValue("@Serial_Number", item.Value);
-                                    //cmdUpdate.ExecuteNonQuery();
-                                }
-                            }
-                        }
-                        else if (pnlQtyInput.Visible)
-                        {
-                            TextBox txtQuantity = (TextBox)row.FindControl("txtQuantity");
-                            int quantity;
-                            if (int.TryParse(txtQuantity.Text.Trim(), out quantity) && quantity > 0)
-                            {
-                                // Insert into Material_Delivery
-                                SqlCommand cmdInsert = new SqlCommand("INSERT INTO Material_Delivery (Requisition_ID, Material_ID, Quantity) VALUES (@Requisition_ID, @Material_ID, @Quantity)", conn, transaction);
-                                cmdInsert.Parameters.AddWithValue("@Requisition_ID", requisitionId);
-                                cmdInsert.Parameters.AddWithValue("@Material_ID", materialId);
-                                cmdInsert.Parameters.AddWithValue("@Quantity", quantity);
-                                cmdInsert.ExecuteNonQuery();
-
-                                // Update Stock
-                                SqlCommand cmdUpdate = new SqlCommand("UPDATE Stock SET Quantity = Quantity - @Quantity WHERE Material_ID = @Material_ID", conn, transaction);
-                                cmdUpdate.Parameters.AddWithValue("@Quantity", quantity);
-                                cmdUpdate.Parameters.AddWithValue("@Material_ID", materialId);
-                                cmdUpdate.ExecuteNonQuery();
-                            }
-                            else
-                            {
-                                isSuccess = false;
-                                break;
-                            }
+                            DataRow dr = finalTable.NewRow();
+                            dr["Material_ID"] = materialId;
+                            dr["Quantity"] = 1; // Each serial is treated as 1 quantity
+                            dr["Serial_Number"] = serial.Value;
+                            finalTable.Rows.Add(dr);
                         }
                     }
+                }
+                else if (pnlQtyInput.Visible)
+                {
+                    TextBox txtQty = (TextBox)row.FindControl("txtQuantity");
 
-                    if (isSuccess)
+                    int qty;
+                    if (int.TryParse(txtQty.Text.Trim(), out qty) && qty > 0)
                     {
-                        transaction.Commit();
-                        ShowMessage("Materials delivered successfully.", true);
+                        DataRow dr = finalTable.NewRow();
+                        dr["Material_ID"] = materialId;
+                        dr["Quantity"] = qty;
+                        dr["Serial_Number"] = DBNull.Value; // No serial number for bulk delivery
+                        finalTable.Rows.Add(dr);
                     }
                     else
                     {
-                        transaction.Rollback();
-                        ShowMessage("Failed to deliver materials. Please check the inputs.", false);
+                        ShowMessage("Invalid quantity for material: " + materialId, false);
+                        return;
                     }
                 }
-                catch (Exception ex)
+            }
+
+            // Now send to procedure
+            SendDataToProcedure(finalTable);
+        }
+
+        private void SendDataToProcedure(DataTable dt)
+        {
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("usp_DeliverMaterials", conn))
                 {
-                    transaction.Rollback();
-                    ShowMessage("An error occurred: " + ex.Message, false);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RequisitionID", Convert.ToInt32(ddlRequisition.SelectedValue));
+
+                    SqlParameter tvp = cmd.Parameters.AddWithValue("@Materials", dt);
+                    tvp.SqlDbType = SqlDbType.Structured;
+                    tvp.TypeName = "dbo.MaterialDeliveryTableType";
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

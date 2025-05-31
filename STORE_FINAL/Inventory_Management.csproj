@@ -295,7 +295,8 @@
     <Content Include="Test\PurposeWiseReport.aspx" />
     <Content Include="Test\Reports.aspx" />
     <Content Include="Test\Report_Requisition.aspx" />
-    <Content Include="Test_02\MaterialDelivery_Test.aspx" />
+    <Content Include="Test_02\MaterialDelivery_Test_01.aspx" />
+    <Content Include="Test_02\MaterialDelivery_Test_02.aspx" />
     <Content Include="Test_02\RequisitionsApproval_Test.aspx" />
     <Content Include="Test_02\Requisitions_Test.aspx" />
     <Content Include="Test\TestPendingReport.aspx" />
@@ -564,12 +565,19 @@
     <Compile Include="Test\Report_Requisition.aspx.designer.cs">
       <DependentUpon>Report_Requisition.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Test_02\MaterialDelivery_Test.aspx.cs">
-      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
+    <Compile Include="Test_02\MaterialDelivery_Test_01.aspx.cs">
+      <DependentUpon>MaterialDelivery_Test_01.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Test_02\MaterialDelivery_Test.aspx.designer.cs">
-      <DependentUpon>MaterialDelivery_Test.aspx</DependentUpon>
+    <Compile Include="Test_02\MaterialDelivery_Test_01.aspx.designer.cs">
+      <DependentUpon>MaterialDelivery_Test_01.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test_02\MaterialDelivery_Test_02.aspx.cs">
+      <DependentUpon>MaterialDelivery_Test_02.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Test_02\MaterialDelivery_Test_02.aspx.designer.cs">
+      <DependentUpon>MaterialDelivery_Test_02.aspx</DependentUpon>
     </Compile>
     <Compile Include="Test_02\RequisitionsApproval_Test.aspx.cs">
       <DependentUpon>RequisitionsApproval_Test.aspx</DependentUpon>

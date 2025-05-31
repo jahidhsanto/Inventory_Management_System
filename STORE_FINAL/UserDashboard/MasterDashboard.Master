@@ -328,9 +328,25 @@
         }
 
         // Select2 Initialization
-        $(document).ready(function () {
+        //$(document).ready(function () {
+        //    $(".select2").select2({ width: '100%' });
+        //    $('.select2').on('select2:open', function (e) {
+        //        setTimeout(function () {
+        //            var $searchBox = $('.select2-container--open .select2-search__field');
+        //            if ($searchBox.length) {
+        //                $searchBox[0].focus();
+        //            }
+        //        }, 0);
+        //    });
+        //});
+
+
+        //============================================================
+        // Select2 Initialization Function
+        function initSelect2() {
             $(".select2").select2({ width: '100%' });
-            $('.select2').on('select2:open', function (e) {
+
+            $('.select2').off('select2:open').on('select2:open', function () {
                 setTimeout(function () {
                     var $searchBox = $('.select2-container--open .select2-search__field');
                     if ($searchBox.length) {
@@ -338,7 +354,20 @@
                     }
                 }, 0);
             });
+        }
+
+        // Run on full page load
+        $(document).ready(function () {
+            initSelect2();
         });
+
+        // Run after AJAX partial postbacks (UpdatePanel)
+        if (typeof Sys !== "undefined" && Sys.Application) {
+            Sys.Application.add_load(function () {
+                initSelect2();
+            });
+        }
+        //============================================================
 
         <%-- Show Message or notification --%>
         function showToast(message, type) {
