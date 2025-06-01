@@ -242,42 +242,12 @@ namespace STORE_FINAL.Test_02
             }
         }
 
-        protected void gvMaterials_RowCommand_00(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "AddRow")
-            {
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-
-                string materialId = e.CommandArgument.ToString();
-
-                DataTable dt = DeliveryMaterials;
-
-                // Find original row
-                DataRow[] originalRows = dt.Select($"Material_ID = '{materialId}'");
-                if (originalRows.Length > 0)
-                {
-                    DataRow newRow = dt.NewRow();
-                    newRow["Material_ID"] = originalRows[0]["Material_ID"];
-                    newRow["Materials_Name"] = originalRows[0]["Materials_Name"];
-                    newRow["Quantity"] = 0;
-                    newRow["Requires_Serial_Number"] = originalRows[0]["Requires_Serial_Number"];
-                    //dt.Rows.Add(newRow);
-                    dt.Rows.InsertAt(newRow, rowIndex + 1);
-                }
-
-                DeliveryMaterials = dt;
-                gvMaterials.DataSource = dt;
-                gvMaterials.DataBind();
-            }
-        }
-
         protected void gvMaterials_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 var dataItem = (DataRowView)e.Row.DataItem;
                 bool requiresSerial = dataItem["Requires_Serial_Number"].ToString() == "Yes";
-                //bool requiresSerial = dataItem["Requires_Serial_Number"] != DBNull.Value && dataItem["Requires_Serial_Number"].ToString() == "Yes";
                 int materialId = dataItem["Material_ID"] != DBNull.Value ? Convert.ToInt32(dataItem["Material_ID"]) : 0;
 
                 // Get controls from the GridView row
@@ -295,6 +265,12 @@ namespace STORE_FINAL.Test_02
                     txtSerialNumbers.DataTextField = "Serial_Number";
                     txtSerialNumbers.DataValueField = "Serial_Number";
                     txtSerialNumbers.DataBind();
+
+                    // Get the quantity limit
+                    int quantityLimit = dataItem["Quantity"] != DBNull.Value ? Convert.ToInt32(dataItem["Quantity"]) : 0;
+
+                    // Set the JS onchange attribute with the correct limit
+                    txtSerialNumbers.Attributes["onchange"] = $"limitSelection(this, {quantityLimit})";
                 }
                 else
                 {

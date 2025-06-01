@@ -141,8 +141,12 @@
                                 HeaderStyle-Width="200px" ItemStyle-Width="200px">
                                 <ItemTemplate>
                                     <asp:Panel ID="pnlSerialInput" runat="server" Visible="false">
+                                        <%--                                        <asp:ListBox ID="txtSerialNumbers" runat="server" CssClass="form-control select2"
+                                            SelectionMode="Multiple" data-placeholder="Enter Serial Numbers"
+                                            onchange="limitSelection(this, 3)"></asp:ListBox>--%>
                                         <asp:ListBox ID="txtSerialNumbers" runat="server" CssClass="form-control select2"
-                                            SelectionMode="Multiple" data-placeholder="Enter Serial Numbers" ToolTip="Enter Serial Numbers separated by commas"></asp:ListBox>
+                                            SelectionMode="Multiple" data-placeholder="Enter Serial Numbers"
+                                            onchange=""></asp:ListBox>
                                     </asp:Panel>
                                     <asp:Panel ID="pnlQtyInput" runat="server" Visible="false">
                                         <div style="display: flex; gap: 10px; align-items: center;">
@@ -181,6 +185,32 @@
                 OnClick="btnDeliver_Click" />
         </div>
     </asp:Panel>
+    <script type="text/javascript">
+        // Keep track of previous selection
+        var previousSelections = [];
+
+        function limitSelection(listBox, maxSelection) {
+            var currentSelections = [];
+            for (var i = 0; i < listBox.options.length; i++) {
+                if (listBox.options[i].selected) {
+                    currentSelections.push(i);
+                }
+            }
+
+            if (currentSelections.length > maxSelection) {
+                // Determine the new selection (last clicked)
+                let newlySelectedIndex = currentSelections.find(i => !previousSelections.includes(i));
+
+                if (newlySelectedIndex !== undefined) {
+                    listBox.options[newlySelectedIndex].selected = false;
+                    alert("You can select up to " + maxSelection + " items only.");
+                }
+            } else {
+                // Update previousSelections only when within limit
+                previousSelections = currentSelections;
+            }
+        }
+    </script>
 
     <script>
         function validateQty(input) {
